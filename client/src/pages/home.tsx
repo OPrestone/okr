@@ -38,9 +38,11 @@ export default function Home() {
                 <span>Create OKRs Manually</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              <Sparkles className="mr-2 h-4 w-4" />
-              <span>Create OKRs with AI</span>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/create-okr-ai">
+                <Sparkles className="mr-2 h-4 w-4" />
+                <span>Create OKRs with AI</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <FileEdit className="mr-2 h-4 w-4" />

@@ -18,6 +18,7 @@ import Resources from "./pages/resources";
 import Configure from "./pages/configure";
 import CreateObjective from "./pages/create-objective";
 import CreateKeyResult from "./pages/create-key-result";
+import CreateOkrAi from "./pages/create-okr-ai";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
           <Route path="/configure" component={Configure} />
           <Route path="/create-objective" component={CreateObjective} />
           <Route path="/create-key-result" component={CreateKeyResult} />
+          <Route path="/create-okr-ai" component={CreateOkrAi} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
