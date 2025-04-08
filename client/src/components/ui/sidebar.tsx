@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
-import { BarChart3, BookOpen, Flag, Home, LogOut, Rocket, Settings, Users, UserCog, UsersRound, PieChart } from "lucide-react";
+import { BarChart3, BookOpen, Flag, Home, LogOut, Rocket, Settings, Users, UserCog, UsersRound } from "lucide-react";
 import { Separator } from "./separator";
 
 interface SidebarItem {
@@ -60,11 +60,6 @@ export function Sidebar({ className }: SidebarProps) {
       </svg>,
       label: "Strategy Map",
       href: "/strategy-map",
-    },
-    {
-      icon: <PieChart className="h-5 w-5" />,
-      label: "Reporting",
-      href: "/reporting",
     },
     {
       icon: <BookOpen className="h-5 w-5" />,
