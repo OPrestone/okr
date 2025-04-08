@@ -27,8 +27,8 @@ export default function CreateOkrAi() {
 
   const handleSuggestOKRs = () => {
     // Here you would normally process the data and generate OKRs
-    // For now, we'll just redirect to the home page
-    setLocation("/");
+    // Then redirect to the suggested OKRs page
+    setLocation("/suggested-okrs");
   };
 
   const handleGoalChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
