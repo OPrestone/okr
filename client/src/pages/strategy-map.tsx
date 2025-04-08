@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Download, Edit, Plus, ZoomIn, ZoomOut } from "lucide-react";
 import { useState } from "react";
+import CompanyAlignmentMap from "@/components/strategy/company-alignment-map";
 
 // Component to render strategy map elements
 const StrategyMap = () => {
@@ -14,14 +15,14 @@ const StrategyMap = () => {
   const zoomOut = () => setZoomLevel(prev => Math.max(prev - 10, 50));
   
   // Company objectives
-  const { data: objectives } = useQuery({
+  const { data: objectives = [] } = useQuery({
     queryKey: ['/api/objectives/company'],
-  });
+  }) as { data: any[] };
   
   // Teams
-  const { data: teams } = useQuery({
+  const { data: teams = [] } = useQuery({
     queryKey: ['/api/teams'],
-  });
+  }) as { data: any[] };
   
   return (
     <div className="relative">
@@ -148,11 +149,23 @@ export default function StrategyMapPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="map" className="mb-8">
+      <Tabs defaultValue="alignment" className="mb-8">
         <TabsList>
+          <TabsTrigger value="alignment">Company Alignment</TabsTrigger>
           <TabsTrigger value="map">Visual Map</TabsTrigger>
           <TabsTrigger value="table">Table View</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="alignment" className="pt-4">
+          <Card>
+            <CardHeader className="pb-0">
+              <CardTitle>Company Alignment Map</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CompanyAlignmentMap />
+            </CardContent>
+          </Card>
+        </TabsContent>
         
         <TabsContent value="map" className="pt-4">
           <Card>
