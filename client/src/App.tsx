@@ -20,6 +20,7 @@ import CreateObjective from "./pages/create-objective";
 import CreateKeyResult from "./pages/create-key-result";
 import CreateOkrAi from "./pages/create-okr-ai";
 import SuggestedOKRs from "./pages/suggested-okrs";
+import Mission from "./pages/mission";
 
 function Router() {
   return (
@@ -28,6 +29,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/quick-start" component={QuickStart} />
+          <Route path="/mission" component={Mission} />
           <Route path="/dashboards" component={Dashboards} />
           <Route path="/company-objectives" component={CompanyObjectives} />
           <Route path="/teams" component={Teams} />

@@ -61,10 +61,7 @@ export default function OneOnOne() {
   // Create Meeting Mutation
   const createMeetingMutation = useMutation({
     mutationFn: async (meetingData: InsertMeeting) => {
-      return await apiRequest('/api/meetings', {
-        method: 'POST',
-        body: JSON.stringify(meetingData),
-      });
+      return await apiRequest('POST', '/api/meetings', meetingData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/meetings/upcoming'] });
@@ -114,8 +111,8 @@ export default function OneOnOne() {
     const meetingData: InsertMeeting = {
       title: meetingTitle,
       description: meetingDescription,
-      startTime: startDate.toISOString(),
-      endTime: endDate.toISOString(),
+      startTime: startDate instanceof Date ? startDate : new Date(startDate),
+      endTime: endDate instanceof Date ? endDate : new Date(endDate),
       userId1: currentUserId,
       userId2: selectedUserId,
       status: "scheduled",
