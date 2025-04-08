@@ -3,19 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import MyOKRs from "./my-okrs";
 
 export default function Dashboards() {
-  const { data: teamsData } = useQuery({
+  const { data: teamsData = [] } = useQuery({
     queryKey: ['/api/teams'],
-  });
+  }) as { data: any[] };
 
-  const { data: objectivesData } = useQuery({
+  const { data: objectivesData = [] } = useQuery({
     queryKey: ['/api/objectives'],
-  });
+  }) as { data: any[] };
 
   // Prepare data for pie chart
   const preparePieData = () => {
-    if (!objectivesData) return [];
+    if (!objectivesData || !Array.isArray(objectivesData)) return [];
     
     const statusCounts = {
       completed: 0,
@@ -46,7 +47,7 @@ export default function Dashboards() {
 
   // Prepare data for bar chart
   const prepareBarData = () => {
-    if (!teamsData) return [];
+    if (!teamsData || !Array.isArray(teamsData)) return [];
     
     return teamsData.map((team: any) => ({
       name: team.name,
@@ -67,12 +68,18 @@ export default function Dashboards() {
         <Button>Export Report</Button>
       </div>
 
-      <Tabs defaultValue="overview" className="mb-8">
-        <TabsList className="grid w-full md:w-auto grid-cols-3 md:grid-flow-col md:auto-cols-max gap-2">
+      <Tabs defaultValue="my-okrs" className="mb-8">
+        <TabsList className="grid w-full md:w-auto grid-cols-4 md:grid-flow-col md:auto-cols-max gap-2">
+          <TabsTrigger value="my-okrs">My OKRs</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="team">Team Performance</TabsTrigger>
           <TabsTrigger value="individual">Individual Progress</TabsTrigger>
         </TabsList>
+        
+        {/* My OKRs Tab */}
+        <TabsContent value="my-okrs" className="pt-4">
+          <MyOKRs />
+        </TabsContent>
         
         {/* Overview Tab */}
         <TabsContent value="overview" className="pt-4">
