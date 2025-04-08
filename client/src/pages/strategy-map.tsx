@@ -6,6 +6,7 @@ import { Download, Edit, Plus, ZoomIn, ZoomOut } from "lucide-react";
 import { useState } from "react";
 import CompanyAlignmentMap from "@/components/strategy/company-alignment-map";
 import TeamsOKRView from "@/components/strategy/teams-okr-view";
+import KeyResultSummary from "@/components/strategy/key-results-summary";
 
 // Component to render strategy map elements
 const StrategyMap = () => {
@@ -154,6 +155,7 @@ export default function StrategyMapPage() {
         <TabsList>
           <TabsTrigger value="alignment">Company Alignment</TabsTrigger>
           <TabsTrigger value="teams-okr">Teams OKR</TabsTrigger>
+          <TabsTrigger value="key-results">Key Results Summary</TabsTrigger>
           <TabsTrigger value="map">Visual Map</TabsTrigger>
           <TabsTrigger value="table">Table View</TabsTrigger>
         </TabsList>
@@ -176,6 +178,17 @@ export default function StrategyMapPage() {
             </CardHeader>
             <CardContent>
               <TeamsOKRView />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="key-results" className="pt-4">
+          <Card>
+            <CardHeader className="pb-0">
+              <CardTitle>Key Results Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <KeyResultSummary />
             </CardContent>
           </Card>
         </TabsContent>
