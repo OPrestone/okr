@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { PlusCircle, Sparkles, FileEdit } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Home() {
   return (
@@ -31,9 +32,11 @@ export default function Home() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem className="cursor-pointer">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              <span>Create OKRs Manually</span>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href="/create-objective">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                <span>Create OKRs Manually</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Sparkles className="mr-2 h-4 w-4" />

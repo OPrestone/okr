@@ -16,6 +16,7 @@ import StrategyMap from "./pages/strategy-map";
 import Reporting from "./pages/reporting";
 import Resources from "./pages/resources";
 import Configure from "./pages/configure";
+import CreateObjective from "./pages/create-objective";
 
 function Router() {
   return (
@@ -33,6 +34,7 @@ function Router() {
           <Route path="/reporting" component={Reporting} />
           <Route path="/resources" component={Resources} />
           <Route path="/configure" component={Configure} />
+          <Route path="/create-objective" component={CreateObjective} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
