@@ -19,6 +19,7 @@ import Configure from "./pages/configure";
 import CreateObjective from "./pages/create-objective";
 import CreateKeyResult from "./pages/create-key-result";
 import CreateOkrAi from "./pages/create-okr-ai";
+import SuggestedOKRs from "./pages/suggested-okrs";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/create-objective" component={CreateObjective} />
           <Route path="/create-key-result" component={CreateKeyResult} />
           <Route path="/create-okr-ai" component={CreateOkrAi} />
+          <Route path="/suggested-okrs" component={SuggestedOKRs} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
