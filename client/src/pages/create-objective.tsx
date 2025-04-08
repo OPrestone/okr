@@ -43,7 +43,8 @@ export default function CreateObjective() {
 
   const handleSave = () => {
     // Here you would normally save the data
-    setLocation("/");
+    // After saving, redirect to create key result page
+    setLocation("/create-key-result");
   };
 
   return (
