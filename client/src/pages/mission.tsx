@@ -30,6 +30,7 @@ import {
   Check,
   X
 } from "lucide-react";
+import { TeamsOkrsView } from "@/components/mission/teams-okrs-view";
 
 export default function Mission() {
   // State for full page edit mode
@@ -845,6 +846,11 @@ Kenyans.`;
             )}
           </CardContent>
         </Card>
+        
+        {/* Teams OKRs Section */}
+        <div className="lg:col-span-2 mt-6">
+          <TeamsOkrsView />
+        </div>
       </div>
     </div>
   );
