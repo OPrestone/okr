@@ -336,6 +336,16 @@ Kenyans.`;
                   </Label>
                 </div>
               </div>
+
+              <div className="mt-10">
+                <Button 
+                  onClick={saveFullPageEdit}
+                  className="bg-primary text-white"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
+              </div>
             </div>
           )}
 
@@ -422,6 +432,16 @@ Kenyans.`;
                   </div>
                 </div>
               </div>
+
+              <div className="mt-10">
+                <Button 
+                  onClick={saveFullPageEdit}
+                  className="bg-primary text-white"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
+              </div>
             </div>
           )}
 
@@ -461,6 +481,16 @@ Kenyans.`;
                     Add
                   </Button>
                 </div>
+              </div>
+
+              <div className="mt-10">
+                <Button 
+                  onClick={saveFullPageEdit}
+                  className="bg-primary text-white"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save
+                </Button>
               </div>
             </div>
           )}
