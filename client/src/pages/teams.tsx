@@ -97,11 +97,11 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
 }
 
 export default function Teams() {
-  const { data: teams, isLoading: teamsLoading } = useQuery({
+  const { data: teams = [], isLoading: teamsLoading } = useQuery<any[]>({
     queryKey: ['/api/teams'],
   });
   
-  const { data: users, isLoading: usersLoading } = useQuery({
+  const { data: users = [], isLoading: usersLoading } = useQuery<any[]>({
     queryKey: ['/api/users'],
   });
   
