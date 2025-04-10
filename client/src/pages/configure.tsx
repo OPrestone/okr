@@ -58,7 +58,46 @@ export default function Configure() {
                 Manage your account information and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Company Logo Upload */}
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <Label className="text-base font-medium mb-4 block">Company Logo</Label>
+                <div className="flex flex-col md:flex-row gap-6 items-start">
+                  <div className="flex-shrink-0 w-32 h-32 bg-white rounded-lg border flex items-center justify-center overflow-hidden">
+                    <div className="text-center">
+                      <Building className="h-12 w-12 mx-auto text-gray-300" />
+                      <span className="text-xs text-gray-500 mt-2 block">No logo uploaded</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">Upload your company logo to use throughout the application.</p>
+                      <p className="text-xs text-gray-500">Recommended size: 400x400px. Maximum file size: 2MB.</p>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full md:w-auto"
+                        onClick={() => document.getElementById('logo-upload')?.click()}
+                      >
+                        Upload Logo
+                      </Button>
+                      <Input 
+                        type="file" 
+                        id="logo-upload" 
+                        className="hidden" 
+                        accept="image/png, image/jpeg, image/svg+xml" 
+                        onChange={(e) => {
+                          // In a real app, this would upload the file and update the logo
+                          console.log('File selected:', e.target.files?.[0]?.name);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="company-name">Company Name</Label>
@@ -70,6 +109,55 @@ export default function Configure() {
                 </div>
               </div>
               
+              {/* Company Address */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">Company Address</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="street-address">Street Address</Label>
+                    <Input id="street-address" placeholder="123 Main Street" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address-line2">Address Line 2</Label>
+                    <Input id="address-line2" placeholder="Suite 100" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input id="city" placeholder="San Francisco" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State/Province</Label>
+                    <Input id="state" placeholder="CA" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="postal-code">Postal Code</Label>
+                    <Input id="postal-code" placeholder="94103" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Select defaultValue="us">
+                    <SelectTrigger id="country">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="us">United States</SelectItem>
+                      <SelectItem value="ca">Canada</SelectItem>
+                      <SelectItem value="uk">United Kingdom</SelectItem>
+                      <SelectItem value="au">Australia</SelectItem>
+                      <SelectItem value="de">Germany</SelectItem>
+                      <SelectItem value="fr">France</SelectItem>
+                      <SelectItem value="jp">Japan</SelectItem>
+                      <SelectItem value="in">India</SelectItem>
+                      <SelectItem value="br">Brazil</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              {/* Regional Settings */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
