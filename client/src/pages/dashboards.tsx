@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import MyOKRs from "./my-okrs";
 import { TeamsOKRPerformance } from "@/components/dashboard/teams-okr-performance";
+import { IndividualProgress } from "@/components/dashboard/individual-progress";
 
 export default function Dashboards() {
   const { data: teamsData = [] } = useQuery({
@@ -148,16 +149,7 @@ export default function Dashboards() {
         
         {/* Individual Progress Tab */}
         <TabsContent value="individual" className="pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Individual Progress Tracking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-neutral-600 mb-4">
-                Individual user progress towards their assigned objectives would be displayed here.
-              </p>
-            </CardContent>
-          </Card>
+          <IndividualProgress />
         </TabsContent>
       </Tabs>
     </div>
