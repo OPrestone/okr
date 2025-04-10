@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import MyOKRs from "./my-okrs";
+import { TeamsOKRPerformance } from "@/components/dashboard/teams-okr-performance";
 
 export default function Dashboards() {
   const { data: teamsData = [] } = useQuery({
@@ -142,16 +143,7 @@ export default function Dashboards() {
         
         {/* Team Performance Tab */}
         <TabsContent value="team" className="pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Detailed Team Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-neutral-600 mb-4">
-                Detailed metrics and analytics for all teams would be displayed here.
-              </p>
-            </CardContent>
-          </Card>
+          <TeamsOKRPerformance />
         </TabsContent>
         
         {/* Individual Progress Tab */}
