@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -118,9 +119,11 @@ export default function Teams() {
             <BarChart className="h-4 w-4" />
             Performance Report
           </Button>
-          <Button className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            Add Team
+          <Button className="flex items-center gap-1" asChild>
+            <Link href="/create-team">
+              <Plus className="h-4 w-4" />
+              Add Team
+            </Link>
           </Button>
         </div>
       </div>
@@ -182,9 +185,11 @@ export default function Teams() {
           <p className="text-sm text-neutral-500 text-center mb-4 px-8">
             Set up a new team and assign team members and objectives
           </p>
-          <Button variant="default" className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            Add Team
+          <Button variant="default" className="flex items-center gap-1" asChild>
+            <Link href="/create-team">
+              <Plus className="h-4 w-4" />
+              Add Team
+            </Link>
           </Button>
         </Card>
       </div>
