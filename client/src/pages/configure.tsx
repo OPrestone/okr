@@ -1548,12 +1548,18 @@ export default function Configure() {
                   OKR Cycles
                 </CardTitle>
                 <CardDescription>
-                  Configure time periods for OKR cycles
+                  Configure time periods for tracking objectives and key results
                 </CardDescription>
               </div>
               <CycleCreateDialog />
             </CardHeader>
             <CardContent>
+              <div className="mb-4">
+                <p className="text-sm text-neutral-600">
+                  Cycles help you organize OKRs into specific time periods. Most companies use quarterly OKR cycles, 
+                  but you can create monthly, yearly, or custom cycles as needed.
+                </p>
+              </div>
               <CyclesList />
             </CardContent>
           </Card>
