@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import { 
   Select, 
   SelectContent, 
@@ -26,16 +27,65 @@ import {
   Plus,
   Target, 
   Users,
-  X
+  X,
+  Check,
+  Tag
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { getQueryFn } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
+
+interface User {
+  id: number;
+  fullName: string;
+  username: string;
+  teamId: number | null;
+}
+
+interface Team {
+  id: number;
+  name: string;
+  description: string | null;
+  leaderId: number | null;
+  memberCount: number | null;
+}
 
 export default function CreateObjective() {
   const [_, setLocation] = useLocation();
   const [alignmentOption, setAlignmentOption] = useState<string>("strategic-pillar");
   const [progressDriver, setProgressDriver] = useState<string>("key-results");
+  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedContributors, setSelectedContributors] = useState<number[]>([]);
+  
+  // Set of tags based on request
+  const availableTags = [
+    "Innovation",
+    "Customer Experience",
+    "Growth",
+    "Operational Excellence",
+    "Sustainability"
+  ];
+
+  // Fetch teams from API
+  const { data: teams = [] } = useQuery<Team[]>({
+    queryKey: ['/api/teams'],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+
+  // Fetch users from API
+  const { data: users = [] } = useQuery<User[]>({
+    queryKey: ['/api/users'],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+
+  // Filter team members based on the selected team
+  const teamMembers = users?.filter((user: User) => 
+    selectedTeam && user.teamId === selectedTeam
+  ) || [];
 
   const handleCancel = () => {
     setLocation("/");
@@ -45,6 +95,28 @@ export default function CreateObjective() {
     // Here you would normally save the data
     // After saving, redirect to create key result page
     setLocation("/create-key-result");
+  };
+
+  const handleTeamChange = (teamId: string) => {
+    setSelectedTeam(Number(teamId));
+    // Reset selected contributors when team changes
+    setSelectedContributors([]);
+  };
+
+  const handleContributorToggle = (userId: number) => {
+    if (selectedContributors.includes(userId)) {
+      setSelectedContributors(selectedContributors.filter(id => id !== userId));
+    } else {
+      setSelectedContributors([...selectedContributors, userId]);
+    }
+  };
+
+  const handleTagToggle = (tag: string) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
   };
 
   return (
@@ -122,36 +194,25 @@ export default function CreateObjective() {
           </div>
         </div>
 
-        {/* Owner */}
+        {/* Team (renamed from Owner) */}
         <div>
-          <Label>Owner</Label>
+          <Label>Team</Label>
           <div className="mt-1">
-            <Select>
+            <Select onValueChange={handleTeamChange}>
               <SelectTrigger className="w-full">
-                <div className="flex items-center">
-                  <div className="h-7 w-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-800 font-medium text-sm mr-2">
-                    RA
-                  </div>
-                  <span>RAG</span>
-                </div>
+                <SelectValue placeholder="Select Team..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="rag">
-                  <div className="flex items-center">
-                    <div className="h-7 w-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-800 font-medium text-sm mr-2">
-                      RA
+                {teams?.map((team: Team) => (
+                  <SelectItem key={team.id} value={team.id.toString()}>
+                    <div className="flex items-center">
+                      <div className="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-medium text-sm mr-2">
+                        {team.name.substring(0, 2).toUpperCase()}
+                      </div>
+                      <span>{team.name}</span>
                     </div>
-                    RAG
-                  </div>
-                </SelectItem>
-                <SelectItem value="alex">
-                  <div className="flex items-center">
-                    <div className="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-medium text-sm mr-2">
-                      AM
-                    </div>
-                    Alex Morgan
-                  </div>
-                </SelectItem>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -227,11 +288,83 @@ export default function CreateObjective() {
                 {/* Contributors */}
                 <div>
                   <Label>Contributors</Label>
-                  <div className="mt-1 flex items-center">
-                    <Button variant="outline" size="sm" className="mr-2">
-                      <Plus className="h-4 w-4 mr-1" />
-                      <span>Add Contributors</span>
-                    </Button>
+                  <div className="mt-1">
+                    {selectedTeam ? (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {selectedContributors.length > 0 ? (
+                            selectedContributors.map(userId => {
+                              const user = users.find(u => u.id === userId);
+                              if (!user) return null;
+                              const initials = user.fullName
+                                .split(' ')
+                                .map(name => name[0])
+                                .join('')
+                                .toUpperCase();
+                              
+                              return (
+                                <Badge 
+                                  key={user.id} 
+                                  variant="outline" 
+                                  className="flex items-center gap-1 px-3 py-1"
+                                >
+                                  <Avatar className="h-6 w-6">
+                                    <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
+                                      {initials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span>{user.fullName}</span>
+                                  <button 
+                                    className="ml-1 text-gray-500 hover:text-gray-900"
+                                    onClick={() => handleContributorToggle(user.id)}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </Badge>
+                              );
+                            })
+                          ) : (
+                            <p className="text-sm text-gray-500">No contributors selected. Select team members below.</p>
+                          )}
+                        </div>
+                        
+                        <div className="mt-2 border rounded-md p-3">
+                          <h4 className="text-sm font-medium mb-2">{teamMembers.length > 0 ? 'Team Members' : 'No team members found'}</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {teamMembers.map(user => {
+                              const initials = user.fullName
+                                .split(' ')
+                                .map(name => name[0])
+                                .join('')
+                                .toUpperCase();
+                              const isSelected = selectedContributors.includes(user.id);
+                              
+                              return (
+                                <div 
+                                  key={user.id}
+                                  className={`flex items-center p-2 rounded-md cursor-pointer ${
+                                    isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
+                                  }`}
+                                  onClick={() => handleContributorToggle(user.id)}
+                                >
+                                  <Avatar className="h-8 w-8 mr-2">
+                                    <AvatarFallback className="bg-blue-100 text-blue-700">
+                                      {initials}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="flex-1">{user.fullName}</span>
+                                  {isSelected && <Check className="h-4 w-4 text-blue-600" />}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-md mt-2">
+                        Please select a team first to see available contributors.
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -313,11 +446,48 @@ export default function CreateObjective() {
                 {/* Tags */}
                 <div>
                   <Label>Tags</Label>
-                  <div className="mt-1 flex items-center">
-                    <Button variant="outline" size="sm" className="mr-2">
-                      <Plus className="h-4 w-4 mr-1" />
-                      <span>Add Tags</span>
-                    </Button>
+                  <div className="mt-1">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {selectedTags.length > 0 ? (
+                        selectedTags.map(tag => (
+                          <Badge 
+                            key={tag} 
+                            variant="secondary" 
+                            className="py-1 flex items-center gap-1"
+                          >
+                            <Tag className="h-3 w-3 mr-1" />
+                            {tag}
+                            <button 
+                              className="ml-1 text-gray-500 hover:text-gray-900"
+                              onClick={() => handleTagToggle(tag)}
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-500">No tags selected. Select from the preset tags below.</p>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3">
+                      {availableTags.map(tag => {
+                        const isSelected = selectedTags.includes(tag);
+                        return (
+                          <Button
+                            key={tag}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            size="sm"
+                            className={isSelected ? 'bg-blue-600' : ''}
+                            onClick={() => handleTagToggle(tag)}
+                          >
+                            {isSelected && <Check className="h-3 w-3 mr-1" />}
+                            {tag}
+                          </Button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
