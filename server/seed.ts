@@ -2,6 +2,7 @@ import { db } from './db';
 import { 
   users, teams, objectives, keyResults, meetings, resources
 } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 /**
  * Seeds the database with initial data
@@ -45,11 +46,11 @@ async function seedDatabase() {
     // Update teams with leader IDs
     await db.update(teams)
       .set({ leaderId: insertedUsers[0].id })
-      .where({ id: insertedTeams[0].id });
+      .where(eq(teams.id, insertedTeams[0].id));
 
     await db.update(teams)
       .set({ leaderId: insertedUsers[2].id })
-      .where({ id: insertedTeams[1].id });
+      .where(eq(teams.id, insertedTeams[1].id));
 
     console.log('Updated team leaders');
 
