@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, UserCog, ServerCrash, Shield } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -862,7 +862,7 @@ export default function Configure() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <UserCog className="h-5 w-5" />
+                <Users className="h-5 w-5" />
                 LDAP Configuration
               </CardTitle>
               <CardDescription>
@@ -944,7 +944,7 @@ export default function Configure() {
                 
                 <div className="flex items-center mt-4">
                   <Button variant="outline" className="flex items-center gap-2">
-                    <ServerCrash className="h-4 w-4" />
+                    <Server className="h-4 w-4" />
                     Test Connection
                   </Button>
                 </div>
