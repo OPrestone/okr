@@ -217,6 +217,96 @@ export default function CreateObjective() {
             </Select>
           </div>
         </div>
+        
+        {/* Contributors */}
+        <div>
+          <Label className="flex items-center">
+            <Users className="h-4 w-4 mr-2 text-blue-600" />
+            Contributors
+          </Label>
+          <div className="mt-1">
+            {selectedTeam ? (
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2 mt-2 min-h-[40px] p-2 border border-dashed border-gray-300 rounded-md">
+                  {selectedContributors.length > 0 ? (
+                    selectedContributors.map(userId => {
+                      const user = users.find(u => u.id === userId);
+                      if (!user) return null;
+                      const initials = user.fullName
+                        .split(' ')
+                        .map(name => name[0])
+                        .join('')
+                        .toUpperCase();
+                      
+                      return (
+                        <Badge 
+                          key={user.id} 
+                          variant="outline" 
+                          className="flex items-center gap-1 px-3 py-1 bg-blue-50"
+                        >
+                          <Avatar className="h-6 w-6">
+                            <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span>{user.fullName}</span>
+                          <button 
+                            className="ml-1 text-gray-500 hover:text-gray-900"
+                            onClick={() => handleContributorToggle(user.id)}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-gray-500 p-1">Select team members below to add contributors</p>
+                  )}
+                </div>
+                
+                <div className="mt-2 border rounded-md p-3 bg-gray-50">
+                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                    <Users className="h-4 w-4 mr-2 text-gray-600" />
+                    {teamMembers.length > 0 ? 'Team Members' : 'No team members found'}
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {teamMembers.map(user => {
+                      const initials = user.fullName
+                        .split(' ')
+                        .map(name => name[0])
+                        .join('')
+                        .toUpperCase();
+                      const isSelected = selectedContributors.includes(user.id);
+                      
+                      return (
+                        <div 
+                          key={user.id}
+                          className={`flex items-center p-2 rounded-md cursor-pointer ${
+                            isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-white'
+                          }`}
+                          onClick={() => handleContributorToggle(user.id)}
+                        >
+                          <Avatar className="h-8 w-8 mr-2">
+                            <AvatarFallback className="bg-blue-100 text-blue-700">
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="flex-1">{user.fullName}</span>
+                          {isSelected && <Check className="h-4 w-4 text-blue-600" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-md mt-2 flex items-center">
+                <ChevronDown className="h-4 w-4 mr-2" />
+                Please select a team first to see available contributors.
+              </p>
+            )}
+          </div>
+        </div>
 
         {/* Lead and Timeframe */}
         <div className="grid grid-cols-2 gap-4">
@@ -285,88 +375,6 @@ export default function CreateObjective() {
             </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-6 pt-2">
-                {/* Contributors */}
-                <div>
-                  <Label>Contributors</Label>
-                  <div className="mt-1">
-                    {selectedTeam ? (
-                      <div className="space-y-3">
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {selectedContributors.length > 0 ? (
-                            selectedContributors.map(userId => {
-                              const user = users.find(u => u.id === userId);
-                              if (!user) return null;
-                              const initials = user.fullName
-                                .split(' ')
-                                .map(name => name[0])
-                                .join('')
-                                .toUpperCase();
-                              
-                              return (
-                                <Badge 
-                                  key={user.id} 
-                                  variant="outline" 
-                                  className="flex items-center gap-1 px-3 py-1"
-                                >
-                                  <Avatar className="h-6 w-6">
-                                    <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
-                                      {initials}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <span>{user.fullName}</span>
-                                  <button 
-                                    className="ml-1 text-gray-500 hover:text-gray-900"
-                                    onClick={() => handleContributorToggle(user.id)}
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </Badge>
-                              );
-                            })
-                          ) : (
-                            <p className="text-sm text-gray-500">No contributors selected. Select team members below.</p>
-                          )}
-                        </div>
-                        
-                        <div className="mt-2 border rounded-md p-3">
-                          <h4 className="text-sm font-medium mb-2">{teamMembers.length > 0 ? 'Team Members' : 'No team members found'}</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            {teamMembers.map(user => {
-                              const initials = user.fullName
-                                .split(' ')
-                                .map(name => name[0])
-                                .join('')
-                                .toUpperCase();
-                              const isSelected = selectedContributors.includes(user.id);
-                              
-                              return (
-                                <div 
-                                  key={user.id}
-                                  className={`flex items-center p-2 rounded-md cursor-pointer ${
-                                    isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
-                                  }`}
-                                  onClick={() => handleContributorToggle(user.id)}
-                                >
-                                  <Avatar className="h-8 w-8 mr-2">
-                                    <AvatarFallback className="bg-blue-100 text-blue-700">
-                                      {initials}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <span className="flex-1">{user.fullName}</span>
-                                  {isSelected && <Check className="h-4 w-4 text-blue-600" />}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-yellow-600 bg-yellow-50 p-3 rounded-md mt-2">
-                        Please select a team first to see available contributors.
-                      </p>
-                    )}
-                  </div>
-                </div>
 
                 {/* Description */}
                 <div>
