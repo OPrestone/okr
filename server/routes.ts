@@ -27,6 +27,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     res.json(user);
   });
+  
+  app.post('/api/users', async (req, res) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      const user = await storage.createUser(userData);
+      
+      // If sendInvite flag is true in the request, we would send an invitation email here
+      // This would require SendGrid API key or similar for implementation
+      if (req.body.sendInvite) {
+        console.log("Would send invitation email to:", userData.email);
+        // For actual implementation, we'd use SendGrid or similar service
+      }
+      
+      res.status(201).json(user);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
+      }
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
 
   // Teams endpoints
   app.get('/api/teams', async (req, res) => {
