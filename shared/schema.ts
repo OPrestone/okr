@@ -141,3 +141,25 @@ export const insertFinancialDataSchema = createInsertSchema(financialData).omit(
 
 export type FinancialData = typeof financialData.$inferSelect;
 export type InsertFinancialData = z.infer<typeof insertFinancialDataSchema>;
+
+// Cycle schema
+export const cycles = pgTable("cycles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  status: text("status").default("upcoming"), // upcoming, active, completed
+  type: text("type").notNull(), // quarterly, annual, custom
+  createdById: integer("created_by_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  isDefault: boolean("is_default").default(false),
+});
+
+export const insertCycleSchema = createInsertSchema(cycles).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Cycle = typeof cycles.$inferSelect;
+export type InsertCycle = z.infer<typeof insertCycleSchema>;

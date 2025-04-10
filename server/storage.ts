@@ -1,7 +1,7 @@
 import { 
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
-  FinancialData, InsertFinancialData
+  FinancialData, InsertFinancialData, Cycle, InsertCycle
 } from "@shared/schema";
 
 // Storage interface for all CRUD operations
@@ -54,6 +54,14 @@ export interface IStorage {
   getFinancialDataByObjective(objectiveId: number): Promise<FinancialData[]>;
   createFinancialData(financialData: InsertFinancialData): Promise<FinancialData>;
   updateFinancialData(id: number, financialData: Partial<InsertFinancialData>): Promise<FinancialData | undefined>;
+  
+  // Cycle operations
+  getCycle(id: number): Promise<Cycle | undefined>;
+  getAllCycles(): Promise<Cycle[]>;
+  getActiveCycles(): Promise<Cycle[]>;
+  createCycle(cycle: InsertCycle): Promise<Cycle>;
+  updateCycle(id: number, cycle: Partial<InsertCycle>): Promise<Cycle | undefined>;
+  deleteCycle(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -64,6 +72,7 @@ export class MemStorage implements IStorage {
   private meetings: Map<number, Meeting>;
   private resources: Map<number, Resource>;
   private financialData: Map<number, FinancialData>;
+  private cycles: Map<number, Cycle>;
   
   private userCurrentId: number;
   private teamCurrentId: number;
@@ -72,6 +81,7 @@ export class MemStorage implements IStorage {
   private meetingCurrentId: number;
   private resourceCurrentId: number;
   private financialDataCurrentId: number;
+  private cycleCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -81,6 +91,7 @@ export class MemStorage implements IStorage {
     this.meetings = new Map();
     this.resources = new Map();
     this.financialData = new Map();
+    this.cycles = new Map();
     
     this.userCurrentId = 1;
     this.teamCurrentId = 1;
@@ -89,6 +100,7 @@ export class MemStorage implements IStorage {
     this.meetingCurrentId = 1;
     this.resourceCurrentId = 1;
     this.financialDataCurrentId = 1;
+    this.cycleCurrentId = 1;
     
     this.seedData();
   }
