@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema } from "@shared/schema";
+import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -385,6 +385,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(dashboardData);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch dashboard data" });
+    }
+  });
+
+  // Cycles endpoints
+  app.get('/api/cycles', async (req, res) => {
+    const cycles = await storage.getAllCycles();
+    res.json(cycles);
+  });
+
+  app.get('/api/cycles/active', async (req, res) => {
+    const cycles = await storage.getActiveCycles();
+    res.json(cycles);
+  });
+
+  app.get('/api/cycles/:id', async (req, res) => {
+    const cycleId = parseInt(req.params.id);
+    if (isNaN(cycleId)) {
+      return res.status(400).json({ message: "Invalid cycle ID" });
+    }
+    
+    const cycle = await storage.getCycle(cycleId);
+    if (!cycle) {
+      return res.status(404).json({ message: "Cycle not found" });
+    }
+    
+    res.json(cycle);
+  });
+
+  app.post('/api/cycles', async (req, res) => {
+    try {
+      const cycleData = insertCycleSchema.parse(req.body);
+      const cycle = await storage.createCycle(cycleData);
+      res.status(201).json(cycle);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid cycle data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create cycle" });
+    }
+  });
+
+  app.patch('/api/cycles/:id', async (req, res) => {
+    const cycleId = parseInt(req.params.id);
+    if (isNaN(cycleId)) {
+      return res.status(400).json({ message: "Invalid cycle ID" });
+    }
+    
+    try {
+      const updateData = req.body;
+      const updatedCycle = await storage.updateCycle(cycleId, updateData);
+      
+      if (!updatedCycle) {
+        return res.status(404).json({ message: "Cycle not found" });
+      }
+      
+      res.json(updatedCycle);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update cycle" });
+    }
+  });
+
+  app.delete('/api/cycles/:id', async (req, res) => {
+    const cycleId = parseInt(req.params.id);
+    if (isNaN(cycleId)) {
+      return res.status(400).json({ message: "Invalid cycle ID" });
+    }
+    
+    try {
+      const result = await storage.deleteCycle(cycleId);
+      
+      if (!result) {
+        return res.status(404).json({ message: "Cycle not found" });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete cycle" });
     }
   });
 

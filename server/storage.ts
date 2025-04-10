@@ -404,6 +404,42 @@ export class MemStorage implements IStorage {
     this.financialData.set(id, updatedFinancialData);
     return updatedFinancialData;
   }
+
+  // Cycle implementations
+  async getCycle(id: number): Promise<Cycle | undefined> {
+    return this.cycles.get(id);
+  }
+
+  async getAllCycles(): Promise<Cycle[]> {
+    return Array.from(this.cycles.values());
+  }
+
+  async getActiveCycles(): Promise<Cycle[]> {
+    return Array.from(this.cycles.values()).filter(
+      cycle => cycle.status === "active"
+    );
+  }
+
+  async createCycle(insertCycle: InsertCycle): Promise<Cycle> {
+    const id = this.cycleCurrentId++;
+    const cycle: Cycle = { ...insertCycle, id, createdAt: new Date() };
+    this.cycles.set(id, cycle);
+    return cycle;
+  }
+
+  async updateCycle(id: number, cycle: Partial<InsertCycle>): Promise<Cycle | undefined> {
+    const existingCycle = this.cycles.get(id);
+    if (!existingCycle) return undefined;
+    
+    const updatedCycle = { ...existingCycle, ...cycle };
+    this.cycles.set(id, updatedCycle);
+    return updatedCycle;
+  }
+
+  async deleteCycle(id: number): Promise<boolean> {
+    if (!this.cycles.has(id)) return false;
+    return this.cycles.delete(id);
+  }
 }
 
 import { DatabaseStorage } from './database-storage';
