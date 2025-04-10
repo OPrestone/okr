@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -118,3 +118,26 @@ export type InsertMeeting = z.infer<typeof insertMeetingSchema>;
 
 export type Resource = typeof resources.$inferSelect;
 export type InsertResource = z.infer<typeof insertResourceSchema>;
+
+// Financial Data schema
+export const financialData = pgTable("financial_data", {
+  id: serial("id").primaryKey(),
+  date: date("date").notNull(),
+  revenue: real("revenue"),
+  cost: real("cost"),
+  ebitda: real("ebitda"),
+  profitAfterTaxMargin: real("profit_after_tax_margin"),
+  cumulativeAudience: integer("cumulative_audience"),
+  notes: text("notes"),
+  objectiveId: integer("objective_id"),
+  uploadedById: integer("uploaded_by_id"),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
+export const insertFinancialDataSchema = createInsertSchema(financialData).omit({
+  id: true,
+  uploadedAt: true,
+});
+
+export type FinancialData = typeof financialData.$inferSelect;
+export type InsertFinancialData = z.infer<typeof insertFinancialDataSchema>;

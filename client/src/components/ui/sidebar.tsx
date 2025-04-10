@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
-import { BarChart3, BookOpen, Flag, Home, LogOut, Rocket, Settings, Users, UserCog, UsersRound, PieChart, Compass } from "lucide-react";
+import { BarChart3, BookOpen, Flag, Home, LogOut, Rocket, Settings, Upload, Users, UserCog, UsersRound, PieChart, Compass, DollarSign } from "lucide-react";
 import { Separator } from "./separator";
 
 interface SidebarItem {
@@ -75,6 +75,11 @@ export function Sidebar({ className }: SidebarProps) {
       icon: <BookOpen className="h-5 w-5" />,
       label: "Resources",
       href: "/resources",
+    },
+    {
+      icon: <DollarSign className="h-5 w-5" />,
+      label: "Import Financial Data",
+      href: "/import-financial",
     },
     {
       icon: <Settings className="h-5 w-5" />,
