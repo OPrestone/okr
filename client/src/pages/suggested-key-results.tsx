@@ -153,6 +153,11 @@ export default function SuggestedKeyResults() {
     // For demo purposes, just redirect to the AI suggestion flow
     setLocation("/create-okr-ai");
   };
+  
+  const handleAddManually = () => {
+    // Redirect to the manual key result creation form
+    setLocation("/create-key-result");
+  };
 
   const handleSaveAll = () => {
     // In a real app, we would save all key results to the database
@@ -318,6 +323,15 @@ export default function SuggestedKeyResults() {
         >
           <RefreshCw className="h-4 w-4" />
           Generate more
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={handleAddManually}
+        >
+          <Plus className="h-4 w-4" />
+          Add Manually
         </Button>
         
         <Button 
