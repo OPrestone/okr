@@ -380,12 +380,16 @@ export default function MyOKRs() {
               <div className="space-y-2">
                 {todos.filter(todo => todo.type === 'key-result').map(todo => (
                   <div key={todo.id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Circle className="h-4 w-4 text-green-500 mr-2" fill="#22C55E" />
-                      <span className="text-sm">{todo.title}</span>
+                    <div className="flex">
+                      <div className="mt-0.5">
+                        <Circle className="h-4 w-4 text-green-500 mr-2" fill="#22C55E" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm">{todo.title}</span>
+                        <span className="text-xs text-gray-500">{todo.dueDate}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-xs text-gray-500 mr-3">{todo.dueDate}</span>
+                    <div>
                       <Button size="sm" variant="outline" className="h-7 text-xs">
                         Update
                       </Button>
@@ -399,12 +403,16 @@ export default function MyOKRs() {
               <div className="space-y-2">
                 {todos.filter(todo => todo.type === 'check-in').map(todo => (
                   <div key={todo.id} className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <Circle className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm">{todo.title}</span>
+                    <div className="flex">
+                      <div className="mt-0.5">
+                        <Circle className="h-4 w-4 text-gray-400 mr-2" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm">{todo.title}</span>
+                        <span className="text-xs text-gray-500">{todo.dueDate}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <span className="text-xs text-gray-500 mr-3">{todo.dueDate}</span>
+                    <div>
                       <Button size="sm" variant="outline" className="h-7 text-xs">
                         Fill out
                       </Button>
