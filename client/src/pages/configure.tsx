@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Repeat, Calendar } from "lucide-react";
 
 export default function Configure() {
   return (
@@ -26,7 +26,7 @@ export default function Configure() {
       </div>
 
       <Tabs defaultValue="general" className="mb-8">
-        <TabsList className="grid w-full md:w-auto grid-cols-5 md:grid-flow-col md:auto-cols-max gap-2">
+        <TabsList className="grid w-full md:w-auto grid-cols-6 md:grid-flow-col md:auto-cols-max gap-2">
           <TabsTrigger value="general" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
             <span>General</span>
@@ -42,6 +42,10 @@ export default function Configure() {
           <TabsTrigger value="objectives" className="flex items-center gap-2">
             <Flag className="h-4 w-4" />
             <span>Objectives</span>
+          </TabsTrigger>
+          <TabsTrigger value="cadences" className="flex items-center gap-2">
+            <Repeat className="h-4 w-4" />
+            <span>Cadences</span>
           </TabsTrigger>
           <TabsTrigger value="cycles" className="flex items-center gap-2">
             <CalendarRange className="h-4 w-4" />
