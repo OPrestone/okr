@@ -15,7 +15,485 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Repeat, Calendar } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/hooks/use-toast";
+
+// Form schema for creating and updating cycles
+const cycleFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  type: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
+  status: z.string().default("planning"),
+  description: z.string().optional(),
+  isDefault: z.boolean().default(false)
+});
+
+type CycleFormValues = z.infer<typeof cycleFormSchema>;
+
+// CycleCreateDialog component for creating new cycles
+function CycleCreateDialog() {
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+  
+  const form = useForm<CycleFormValues>({
+    resolver: zodResolver(cycleFormSchema),
+    defaultValues: {
+      name: "",
+      type: "quarterly",
+      status: "planning",
+      description: "",
+      isDefault: false
+    }
+  });
+
+  const createCycleMutation = useMutation({
+    mutationFn: async (data: CycleFormValues) => {
+      return await apiRequest('/api/cycles', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cycle created",
+        description: "Your new OKR cycle has been created successfully."
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cycles'] });
+      setOpen(false);
+      form.reset();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to create cycle. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Error creating cycle:", error);
+    }
+  });
+
+  function onSubmit(data: CycleFormValues) {
+    createCycleMutation.mutate(data);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Add Cycle
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Create New OKR Cycle</DialogTitle>
+          <DialogDescription>
+            Set up a new time period for tracking objectives and key results
+          </DialogDescription>
+        </DialogHeader>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cycle Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Q1 2025" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Give this cycle a recognizable name, e.g. "Q1 2025" or "H2 2025"
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cycle Type</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a cycle type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="yearly">Yearly</SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    The type of cycle determines the expected duration
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Start Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date(new Date().setHours(0, 0, 0, 0))
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="endDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>End Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => {
+                            const startDate = form.getValues("startDate");
+                            return startDate && date < startDate;
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="planning">Planning</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Current status of this OKR cycle
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe the focus and goals for this cycle"
+                      className="h-24"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="isDefault"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Set as Default Cycle
+                    </FormLabel>
+                    <FormDescription>
+                      New objectives will be assigned to this cycle by default
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpen(false)} type="button">
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={createCycleMutation.isPending}
+              >
+                {createCycleMutation.isPending && (
+                  <span className="animate-spin mr-2">⟳</span>
+                )}
+                Create Cycle
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// CyclesList component for displaying and managing cycles
+function CyclesList() {
+  const queryClient = useQueryClient();
+  
+  const cyclesQuery = useQuery({
+    queryKey: ['/api/cycles'],
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+  
+  const deleteCycleMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest(`/api/cycles/${id}`, {
+        method: 'DELETE'
+      });
+      return id;
+    },
+    onSuccess: (id) => {
+      toast({
+        title: "Cycle deleted",
+        description: "The cycle has been removed successfully."
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cycles'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete cycle. Please try again.",
+        variant: "destructive"
+      });
+      console.error("Error deleting cycle:", error);
+    }
+  });
+
+  function handleDelete(id: number) {
+    if (confirm("Are you sure you want to delete this cycle? This action cannot be undone.")) {
+      deleteCycleMutation.mutate(id);
+    }
+  }
+  
+  function getStatusBadgeColor(status: string) {
+    switch (status) {
+      case 'planning':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'closed':
+        return 'bg-neutral-100 text-neutral-800 border-neutral-200';
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
+  }
+
+  if (cyclesQuery.isLoading) {
+    return (
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="flex items-center justify-between p-4 border rounded-md">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+            <Skeleton className="h-4 w-24" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (cyclesQuery.isError) {
+    return (
+      <div className="p-4 border border-red-200 rounded-md bg-red-50 text-red-800">
+        Error loading cycles. Please try refreshing the page.
+      </div>
+    );
+  }
+
+  const cycles = cyclesQuery.data || [];
+
+  if (cycles.length === 0) {
+    return (
+      <div className="p-6 text-center border rounded-md bg-neutral-50">
+        <Calendar className="h-12 w-12 mx-auto text-neutral-300 mb-4" />
+        <h3 className="font-medium text-lg">No OKR Cycles</h3>
+        <p className="text-neutral-500 mb-4">
+          Start by creating your first OKR cycle to organize your objectives
+        </p>
+        <CycleCreateDialog />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {cycles.map((cycle: any) => (
+        <div key={cycle.id} className="p-4 border rounded-md hover:border-neutral-300 transition-colors">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium text-lg">{cycle.name}</h3>
+                {cycle.isDefault && (
+                  <Badge variant="outline" className="ml-2 text-xs">Default</Badge>
+                )}
+                <Badge className={`text-xs ${getStatusBadgeColor(cycle.status)}`}>
+                  {cycle.status.charAt(0).toUpperCase() + cycle.status.slice(1)}
+                </Badge>
+              </div>
+              <div className="text-sm text-neutral-500 flex items-center gap-1 mt-1">
+                <span>{format(new Date(cycle.startDate), "MMM d, yyyy")}</span>
+                <span>—</span>
+                <span>{format(new Date(cycle.endDate), "MMM d, yyyy")}</span>
+                <span className="mx-2">•</span>
+                <span className="capitalize">{cycle.type}</span>
+              </div>
+              {cycle.description && (
+                <p className="text-sm text-neutral-600 mt-2">{cycle.description}</p>
+              )}
+            </div>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="flex items-center gap-2">
+                  <Pencil className="h-4 w-4" />
+                  Edit Cycle
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-red-600 flex items-center gap-2"
+                  onClick={() => handleDelete(cycle.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Cycle
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+import { useState } from "react";
 
 export default function Configure() {
   return (
@@ -1049,16 +1527,20 @@ export default function Configure() {
         {/* Cycles Settings */}
         <TabsContent value="cycles" className="pt-4">
           <Card>
-            <CardHeader>
-              <CardTitle>OKR Cycles</CardTitle>
-              <CardDescription>
-                Configure time periods for OKR cycles
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  OKR Cycles
+                </CardTitle>
+                <CardDescription>
+                  Configure time periods for OKR cycles
+                </CardDescription>
+              </div>
+              <CycleCreateDialog />
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600 mb-6">
-                OKR cycle configuration would be displayed here
-              </p>
+              <CyclesList />
             </CardContent>
           </Card>
         </TabsContent>
