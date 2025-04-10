@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -21,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import { ObjectiveDetailView } from "@/components/objectives/objective-detail-view";
 
 // Status badge component
 function StatusBadge({ progress }: { progress: number }) {
@@ -49,9 +51,21 @@ function StatusBadge({ progress }: { progress: number }) {
 }
 
 export default function CompanyObjectives() {
+  const [selectedObjectiveId, setSelectedObjectiveId] = useState<number | null>(null);
+  const [detailViewOpen, setDetailViewOpen] = useState(false);
+  
   const { data: objectives = [], isLoading, error } = useQuery<any[]>({
     queryKey: ['/api/objectives/company'],
   });
+  
+  const handleViewObjective = (objectiveId: number) => {
+    setSelectedObjectiveId(objectiveId);
+    setDetailViewOpen(true);
+  };
+  
+  const handleCloseDetailView = () => {
+    setDetailViewOpen(false);
+  };
 
   return (
     <div>
@@ -157,7 +171,13 @@ export default function CompanyObjectives() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="sm">View</Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleViewObjective(objective.id)}
+                          >
+                            View
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
