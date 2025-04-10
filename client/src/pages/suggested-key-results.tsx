@@ -157,7 +157,7 @@ export default function SuggestedKeyResults() {
   const handleSaveAll = () => {
     // In a real app, we would save all key results to the database
     // For now, just show a success message and redirect
-    alert("Key Results saved successfully!");
+    alert("Key Results submitted for CEO approval successfully!");
     setLocation("/my-okrs");
   };
 
@@ -325,7 +325,7 @@ export default function SuggestedKeyResults() {
           onClick={handleSaveAll}
         >
           <Check className="h-4 w-4" />
-          Save all key results
+          Save and Submit for CEO Approval
         </Button>
       </div>
     </div>
