@@ -265,11 +265,11 @@ export default function CreateObjective() {
                 </div>
                 
                 <div className="mt-2 border rounded-md p-3 bg-gray-50">
-                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                  <h4 className="text-sm font-medium mb-3 flex items-center">
                     <Users className="h-4 w-4 mr-2 text-gray-600" />
                     {teamMembers.length > 0 ? 'Team Members' : 'No team members found'}
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="space-y-1">
                     {teamMembers.map(user => {
                       const initials = user.fullName
                         .split(' ')
@@ -292,7 +292,11 @@ export default function CreateObjective() {
                             </AvatarFallback>
                           </Avatar>
                           <span className="flex-1">{user.fullName}</span>
-                          {isSelected && <Check className="h-4 w-4 text-blue-600" />}
+                          {isSelected ? (
+                            <Check className="h-4 w-4 text-blue-600" />
+                          ) : (
+                            <div className="h-5 w-5 rounded-full border border-gray-300"></div>
+                          )}
                         </div>
                       );
                     })}
