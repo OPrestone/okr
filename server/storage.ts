@@ -80,6 +80,7 @@ export class MemStorage implements IStorage {
     this.keyResults = new Map();
     this.meetings = new Map();
     this.resources = new Map();
+    this.financialData = new Map();
     
     this.userCurrentId = 1;
     this.teamCurrentId = 1;
@@ -87,6 +88,7 @@ export class MemStorage implements IStorage {
     this.keyResultCurrentId = 1;
     this.meetingCurrentId = 1;
     this.resourceCurrentId = 1;
+    this.financialDataCurrentId = 1;
     
     this.seedData();
   }
@@ -349,6 +351,46 @@ export class MemStorage implements IStorage {
     const updatedResource = { ...existingResource, ...resource };
     this.resources.set(id, updatedResource);
     return updatedResource;
+  }
+
+  // Financial Data implementations
+  async getFinancialData(id: number): Promise<FinancialData | undefined> {
+    return this.financialData.get(id);
+  }
+
+  async getAllFinancialData(): Promise<FinancialData[]> {
+    return Array.from(this.financialData.values());
+  }
+
+  async getFinancialDataByDate(startDate: Date, endDate: Date): Promise<FinancialData[]> {
+    return Array.from(this.financialData.values()).filter(
+      financialData => {
+        const dataDate = new Date(financialData.date);
+        return dataDate >= startDate && dataDate <= endDate;
+      }
+    );
+  }
+
+  async getFinancialDataByObjective(objectiveId: number): Promise<FinancialData[]> {
+    return Array.from(this.financialData.values()).filter(
+      financialData => financialData.objectiveId === objectiveId
+    );
+  }
+
+  async createFinancialData(insertFinancialData: InsertFinancialData): Promise<FinancialData> {
+    const id = this.financialDataCurrentId++;
+    const financialData: FinancialData = { ...insertFinancialData, id, uploadedAt: new Date() };
+    this.financialData.set(id, financialData);
+    return financialData;
+  }
+
+  async updateFinancialData(id: number, financialData: Partial<InsertFinancialData>): Promise<FinancialData | undefined> {
+    const existingFinancialData = this.financialData.get(id);
+    if (!existingFinancialData) return undefined;
+    
+    const updatedFinancialData = { ...existingFinancialData, ...financialData };
+    this.financialData.set(id, updatedFinancialData);
+    return updatedFinancialData;
   }
 }
 

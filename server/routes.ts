@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema } from "@shared/schema";
+import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -246,6 +246,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid resource data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create resource" });
+    }
+  });
+
+  // Financial Data endpoints
+  app.get('/api/financial-data', async (req, res) => {
+    const financialData = await storage.getAllFinancialData();
+    res.json(financialData);
+  });
+
+  app.get('/api/financial-data/:id', async (req, res) => {
+    const dataId = parseInt(req.params.id);
+    if (isNaN(dataId)) {
+      return res.status(400).json({ message: "Invalid financial data ID" });
+    }
+    
+    const data = await storage.getFinancialData(dataId);
+    if (!data) {
+      return res.status(404).json({ message: "Financial data not found" });
+    }
+    
+    res.json(data);
+  });
+
+  app.get('/api/financial-data/objective/:objectiveId', async (req, res) => {
+    const objectiveId = parseInt(req.params.objectiveId);
+    if (isNaN(objectiveId)) {
+      return res.status(400).json({ message: "Invalid objective ID" });
+    }
+    
+    const data = await storage.getFinancialDataByObjective(objectiveId);
+    res.json(data);
+  });
+
+  app.get('/api/financial-data/date-range', async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: "Start date and end date are required" });
+      }
+      
+      const start = new Date(startDate as string);
+      const end = new Date(endDate as string);
+      
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ message: "Invalid date format" });
+      }
+      
+      const data = await storage.getFinancialDataByDate(start, end);
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch financial data by date range" });
+    }
+  });
+
+  app.post('/api/financial-data', async (req, res) => {
+    try {
+      const financialData = insertFinancialDataSchema.parse(req.body);
+      const data = await storage.createFinancialData(financialData);
+      res.status(201).json(data);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid financial data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create financial data" });
+    }
+  });
+
+  app.patch('/api/financial-data/:id', async (req, res) => {
+    const dataId = parseInt(req.params.id);
+    if (isNaN(dataId)) {
+      return res.status(400).json({ message: "Invalid financial data ID" });
+    }
+    
+    try {
+      const updateData = req.body;
+      const updatedData = await storage.updateFinancialData(dataId, updateData);
+      
+      if (!updatedData) {
+        return res.status(404).json({ message: "Financial data not found" });
+      }
+      
+      res.json(updatedData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update financial data" });
     }
   });
 
