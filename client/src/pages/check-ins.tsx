@@ -292,8 +292,9 @@ function ProgressIndicator({ previous, current }: { previous: number; current: n
 }
 
 // Main Check-in form component
-function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => void }) {
-  const [progress, setProgress] = useState(keyResult.progress || 0);
+function CheckInForm({ keyResult, onClose }: { keyResult?: any; onClose: () => void }) {
+  // Set default progress to 0 if no key result is provided
+  const [progress, setProgress] = useState(keyResult ? keyResult.progress || 0 : 0);
   const [confidence, setConfidence] = useState("On Track");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkInType, setCheckInType] = useState("OKR Check-in");
@@ -350,7 +351,7 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
     
     // Create payload with selected objectives and key results
     const payload = {
-      keyResultId: keyResult.id,
+      keyResultId: keyResult?.id || null,
       progress,
       confidenceLevel: confidence,
       template: checkInTemplate,
@@ -719,12 +720,10 @@ export default function CheckIns() {
                   Share your progress, goals, and challenges.
                 </DialogDescription>
               </DialogHeader>
-              {selectedKeyResult && (
-                <CheckInForm 
-                  keyResult={selectedKeyResult} 
-                  onClose={() => setOpenModal(false)} 
-                />
-              )}
+              <CheckInForm 
+                keyResult={selectedKeyResult} 
+                onClose={() => setOpenModal(false)} 
+              />
             </DialogContent>
           </Dialog>
         </div>
