@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, RefreshCw, X, Plus, Check } from "lucide-react";
+import { CheckCircle, RefreshCw, X, Plus, Check, Target } from "lucide-react";
 
 interface SuggestedOKR {
   id: string;
@@ -101,6 +101,10 @@ export default function SuggestedOKRs() {
 
   const handleAddManually = () => {
     setLocation("/create-objective");
+  };
+
+  const handleCreateKeyResults = () => {
+    setLocation("/suggested-key-results");
   };
 
   return (
@@ -213,6 +217,14 @@ export default function SuggestedOKRs() {
         >
           <Plus className="h-4 w-4" />
           Add manually
+        </Button>
+        
+        <Button 
+          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white"
+          onClick={handleCreateKeyResults}
+        >
+          <Target className="h-4 w-4" />
+          Create Key Results
         </Button>
       </div>
     </div>
