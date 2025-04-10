@@ -25,6 +25,7 @@ import CreateTeam from "./pages/create-team";
 import CreateUser from "./pages/create-user";
 import SuggestedKeyResults from "./pages/suggested-key-results";
 import ImportFinancial from "./pages/import-financial";
+import CheckIns from "./pages/check-ins";
 
 function Router() {
   return (
@@ -39,6 +40,7 @@ function Router() {
           <Route path="/teams" component={Teams} />
           <Route path="/users" component={Users} />
           <Route path="/one-on-one" component={OneOnOne} />
+          <Route path="/check-ins" component={CheckIns} />
           <Route path="/strategy-map" component={StrategyMap} />
           <Route path="/reporting" component={Reporting} />
           <Route path="/resources" component={Resources} />
