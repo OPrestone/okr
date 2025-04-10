@@ -42,7 +42,7 @@ export default function CreateTeam() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
-  const { data: users, isLoading: isLoadingUsers } = useQuery({
+  const { data: users = [], isLoading: isLoadingUsers } = useQuery<any[]>({
     queryKey: ['/api/users'],
   });
 
@@ -61,13 +61,7 @@ export default function CreateTeam() {
   // Create team mutation
   const createTeamMutation = useMutation({
     mutationFn: async (data: TeamFormValues) => {
-      const response = await apiRequest('/api/teams', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/teams', data);
       return response;
     },
     onSuccess: () => {

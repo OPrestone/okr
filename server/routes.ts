@@ -62,19 +62,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/teams', async (req, res) => {
-    try {
-      const teamData = insertTeamSchema.parse(req.body);
-      const team = await storage.createTeam(teamData);
-      res.status(201).json(team);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid team data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to create team" });
-    }
-  });
-
   // Objectives endpoints
   app.get('/api/objectives', async (req, res) => {
     const objectives = await storage.getAllObjectives();
