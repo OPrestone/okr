@@ -10,10 +10,17 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { CheckCircle, Clock, AlertTriangle, Plus, Filter } from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { CheckCircle, Clock, AlertTriangle, Plus, Filter, PlusCircle, Sparkles, FileEdit } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "wouter";
 
 // Status badge component
 function StatusBadge({ progress }: { progress: number }) {
@@ -42,7 +49,7 @@ function StatusBadge({ progress }: { progress: number }) {
 }
 
 export default function CompanyObjectives() {
-  const { data: objectives, isLoading, error } = useQuery({
+  const { data: objectives = [], isLoading, error } = useQuery<any[]>({
     queryKey: ['/api/objectives/company'],
   });
 
@@ -58,10 +65,32 @@ export default function CompanyObjectives() {
             <Filter className="h-4 w-4" />
             Filter
           </Button>
-          <Button className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            Add Objective
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="flex items-center gap-1">
+                <Plus className="h-4 w-4" />
+                Add Objective
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-objective">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <span>Create OKRs Manually</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-okr-ai">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  <span>Create OKRs with AI</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <FileEdit className="mr-2 h-4 w-4" />
+                <span>Create Draft OKRs</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
