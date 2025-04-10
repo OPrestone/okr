@@ -59,86 +59,65 @@ export default function Configure() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Company Logo Upload */}
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <Label className="text-base font-medium mb-4 block">Company Logo</Label>
-                <div className="flex flex-col md:flex-row gap-6 items-start">
-                  <div className="flex-shrink-0 w-32 h-32 bg-white rounded-lg border flex items-center justify-center overflow-hidden">
-                    <div className="text-center">
-                      <Building className="h-12 w-12 mx-auto text-gray-300" />
-                      <span className="text-xs text-gray-500 mt-2 block">No logo uploaded</span>
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-600 mb-2">Upload your company logo to use throughout the application.</p>
-                      <p className="text-xs text-gray-500">Recommended size: 400x400px. Maximum file size: 2MB.</p>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      <Button 
-                        variant="outline" 
-                        className="w-full md:w-auto"
-                        onClick={() => document.getElementById('logo-upload')?.click()}
-                      >
-                        Upload Logo
-                      </Button>
-                      <Input 
-                        type="file" 
-                        id="logo-upload" 
-                        className="hidden" 
-                        accept="image/png, image/jpeg, image/svg+xml" 
-                        onChange={(e) => {
-                          // In a real app, this would upload the file and update the logo
-                          console.log('File selected:', e.target.files?.[0]?.name);
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="company-name">Company Name</Label>
-                  <Input id="company-name" defaultValue="Acme Corporation" />
+                  <Label htmlFor="company-name" className="flex items-center">
+                    Company Name <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Input 
+                    id="company-name" 
+                    defaultValue="Acme Corporation" 
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="admin-email">Admin Email</Label>
-                  <Input id="admin-email" defaultValue="admin@acmecorp.com" type="email" />
+                  <Label htmlFor="admin-email" className="flex items-center">
+                    Admin Email <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Input 
+                    id="admin-email" 
+                    defaultValue="admin@acmecorp.com" 
+                    type="email" 
+                    required 
+                  />
                 </div>
               </div>
               
               {/* Company Address */}
               <div className="space-y-4">
                 <Label className="text-base font-medium">Company Address</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="street-address">Street Address</Label>
-                    <Input id="street-address" placeholder="123 Main Street" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="address-line2">Address Line 2</Label>
-                    <Input id="address-line2" placeholder="Suite 100" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="San Francisco" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state">State/Province</Label>
-                    <Input id="state" placeholder="CA" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="postal-code">Postal Code</Label>
-                    <Input id="postal-code" placeholder="94103" />
-                  </div>
-                </div>
+                
+                {/* Street Address */}
                 <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  <Select defaultValue="us">
+                  <Label htmlFor="street-address" className="flex items-center">
+                    Street Address <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Input 
+                    id="street-address" 
+                    placeholder="123 Main Street" 
+                    required
+                  />
+                </div>
+                
+                {/* Address Line 2 - Optional */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="address-line2">Address Line 2</Label>
+                    <span className="text-sm text-gray-500">Optional</span>
+                  </div>
+                  <Input 
+                    id="address-line2" 
+                    placeholder="Suite 100" 
+                  />
+                </div>
+                
+                {/* Country */}
+                <div className="space-y-2">
+                  <Label htmlFor="country" className="flex items-center">
+                    Country <span className="text-red-500 ml-1">*</span>
+                  </Label>
+                  <Select defaultValue="us" required>
                     <SelectTrigger id="country">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
@@ -154,6 +133,44 @@ export default function Configure() {
                       <SelectItem value="br">Brazil</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* State/Province */}
+                  <div className="space-y-2">
+                    <Label htmlFor="state" className="flex items-center">
+                      State/Province <span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <Input 
+                      id="state" 
+                      placeholder="CA" 
+                      required
+                    />
+                  </div>
+                  
+                  {/* City */}
+                  <div className="space-y-2">
+                    <Label htmlFor="city" className="flex items-center">
+                      City <span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <Input 
+                      id="city" 
+                      placeholder="San Francisco" 
+                      required
+                    />
+                  </div>
+                  
+                  {/* Postal Code */}
+                  <div className="space-y-2">
+                    <Label htmlFor="postal-code" className="flex items-center">
+                      Postal Code <span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <Input 
+                      id="postal-code" 
+                      placeholder="94103" 
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -209,7 +226,35 @@ export default function Configure() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0">
+              <div className="flex flex-col md:flex-row gap-4 items-center border rounded-lg p-3 bg-gray-50 w-full md:w-auto">
+                <div className="flex-shrink-0 w-16 h-16 bg-white rounded-lg border flex items-center justify-center overflow-hidden">
+                  <div className="text-center">
+                    <Building className="h-8 w-8 text-gray-300" />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <Label htmlFor="logo-upload" className="text-sm font-medium">Company Logo</Label>
+                  <p className="text-xs text-gray-500">Max size: 2MB</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full md:w-auto text-sm h-8 mt-1"
+                    size="sm"
+                    onClick={() => document.getElementById('logo-upload')?.click()}
+                  >
+                    Upload Logo
+                  </Button>
+                  <Input 
+                    type="file" 
+                    id="logo-upload" 
+                    className="hidden" 
+                    accept="image/png, image/jpeg, image/svg+xml" 
+                    onChange={(e) => {
+                      console.log('File selected:', e.target.files?.[0]?.name);
+                    }}
+                  />
+                </div>
+              </div>
               <Button className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
                 Save Changes
