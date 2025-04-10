@@ -20,8 +20,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div 
         className={cn(
           "flex-1 overflow-auto h-screen transition-all duration-300",
-          isSidebarOpen ? "md:ml-64" : "md:ml-0"
+          isSidebarOpen ? "md:ml-[30px]" : "md:ml-0"
         )}
+        style={{
+          marginLeft: isSidebarOpen ? "calc(256px - 30px)" : "0px"
+        }}
       >
         {/* Header */}
         <Header />
