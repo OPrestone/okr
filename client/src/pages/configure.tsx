@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, UserCog, ServerCrash, Shield } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -854,6 +854,112 @@ export default function Configure() {
               <Button className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
                 Save Security Settings
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          {/* LDAP Configuration */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCog className="h-5 w-5" />
+                LDAP Configuration
+              </CardTitle>
+              <CardDescription>
+                Configure LDAP integration for user authentication and directory services
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="ldap-enabled" className="text-base">Enable LDAP Authentication</Label>
+                  <p className="text-sm text-neutral-500">Use your organization's directory for user authentication</p>
+                </div>
+                <Switch id="ldap-enabled" />
+              </div>
+              
+              <div className="space-y-4 border rounded-md p-4 bg-neutral-50">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ldap-host">LDAP Server Host</Label>
+                    <Input id="ldap-host" placeholder="ldap.example.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ldap-port">LDAP Server Port</Label>
+                    <Input id="ldap-port" placeholder="389" type="number" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ldap-base-dn">Base DN</Label>
+                  <Input id="ldap-base-dn" placeholder="dc=example,dc=com" />
+                  <p className="text-xs text-neutral-500">The distinguished name where directory searches will start</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="ldap-bind-dn">Bind DN</Label>
+                    <Input id="ldap-bind-dn" placeholder="cn=admin,dc=example,dc=com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ldap-bind-password">Bind Password</Label>
+                    <Input id="ldap-bind-password" type="password" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ldap-user-search-filter">User Search Filter</Label>
+                  <Input id="ldap-user-search-filter" placeholder="(uid=%s)" />
+                  <p className="text-xs text-neutral-500">Filter to locate user entries, %s will be replaced with the username</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ldap-group-search-base">Group Search Base</Label>
+                  <Input id="ldap-group-search-base" placeholder="ou=groups,dc=example,dc=com" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ldap-mapping" className="text-base">Attribute Mapping</Label>
+                  <p className="text-sm text-neutral-500 mb-2">Map LDAP attributes to user properties</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Username:</span>
+                      <Input placeholder="uid" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Full Name:</span>
+                      <Input placeholder="cn" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Email:</span>
+                      <Input placeholder="mail" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Department:</span>
+                      <Input placeholder="departmentNumber" className="h-8" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center mt-4">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <ServerCrash className="h-4 w-4" />
+                    Test Connection
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <div className="text-sm text-neutral-500">
+                <span className="flex items-center gap-1">
+                  <Shield className="h-4 w-4" />
+                  Connection details are encrypted
+                </span>
+              </div>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save LDAP Configuration
               </Button>
             </CardFooter>
           </Card>
