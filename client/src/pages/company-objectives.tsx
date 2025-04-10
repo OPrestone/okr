@@ -141,26 +141,345 @@ export default function CompanyObjectives() {
         
         <TabsContent value="current" className="pt-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>Current Quarter Objectives</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600">
-                Filtered view of objectives for the current quarter would be displayed here.
-              </p>
+              {isLoading ? (
+                // Loading state
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex flex-col gap-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-2 w-full" />
+                    </div>
+                  ))}
+                </div>
+              ) : error ? (
+                // Error state
+                <div className="text-red-500">Error loading objectives</div>
+              ) : (
+                // Current quarter objectives table
+                <>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="text-sm text-muted-foreground">
+                      <span className="font-semibold">Current Quarter:</span> Q2 2025 (Apr - Jun)
+                    </div>
+                    <Button variant="outline" size="sm">
+                      Change Quarter
+                    </Button>
+                  </div>
+                  
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[300px]">Objective</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Progress</TableHead>
+                        <TableHead>Timeline</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {objectives && 
+                        objectives
+                          .filter((objective: any) => {
+                            // Filter for current quarter objectives
+                            // Current quarter is Q2 2025 (April - June 2025)
+                            const startDate = new Date(objective.startDate);
+                            const endDate = new Date(objective.endDate);
+                            
+                            // We're checking if the objective overlaps with Q2 2025
+                            const quarterStart = new Date('2025-04-01');
+                            const quarterEnd = new Date('2025-06-30');
+                            
+                            // Objective overlaps with current quarter if:
+                            // - starts before quarter ends AND
+                            // - ends after quarter starts
+                            return startDate <= quarterEnd && endDate >= quarterStart;
+                          })
+                          .map((objective: any) => (
+                            <TableRow key={objective.id}>
+                              <TableCell className="font-medium">
+                                <div>
+                                  <p>{objective.title}</p>
+                                  <p className="text-sm text-neutral-500">{objective.description}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <StatusBadge progress={objective.progress} />
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center space-x-2">
+                                  <Progress value={objective.progress} className="w-[80px]" />
+                                  <span className="text-sm font-medium">{objective.progress}%</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm">
+                                  <p>{formatDate(objective.startDate)} - {formatDate(objective.endDate)}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="sm">View</Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      }
+                      {objectives && 
+                        objectives.filter((objective: any) => {
+                          const startDate = new Date(objective.startDate);
+                          const endDate = new Date(objective.endDate);
+                          const quarterStart = new Date('2025-04-01');
+                          const quarterEnd = new Date('2025-06-30');
+                          return startDate <= quarterEnd && endDate >= quarterStart;
+                        }).length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
+                              No objectives found for the current quarter
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+                    </TableBody>
+                  </Table>
+                  
+                  <div className="mt-6 flex flex-col space-y-4">
+                    <div className="bg-blue-50 rounded-md p-4">
+                      <h3 className="text-md font-semibold text-blue-700 mb-2">Quarter Overview</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium">Objectives</p>
+                          <p className="text-2xl font-bold">
+                            {objectives ? 
+                              objectives.filter((objective: any) => {
+                                const startDate = new Date(objective.startDate);
+                                const endDate = new Date(objective.endDate);
+                                const quarterStart = new Date('2025-04-01');
+                                const quarterEnd = new Date('2025-06-30');
+                                return startDate <= quarterEnd && endDate >= quarterStart;
+                              }).length 
+                              : 0
+                            }
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium">On Track</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {objectives ? 
+                              objectives.filter((objective: any) => {
+                                const startDate = new Date(objective.startDate);
+                                const endDate = new Date(objective.endDate);
+                                const quarterStart = new Date('2025-04-01');
+                                const quarterEnd = new Date('2025-06-30');
+                                return startDate <= quarterEnd && endDate >= quarterStart && objective.progress >= 70;
+                              }).length 
+                              : 0
+                            }
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium">Average Progress</p>
+                          <p className="text-2xl font-bold">
+                            {objectives ? 
+                              (() => {
+                                const filtered = objectives.filter((objective: any) => {
+                                  const startDate = new Date(objective.startDate);
+                                  const endDate = new Date(objective.endDate);
+                                  const quarterStart = new Date('2025-04-01');
+                                  const quarterEnd = new Date('2025-06-30');
+                                  return startDate <= quarterEnd && endDate >= quarterStart;
+                                });
+                                
+                                if (filtered.length === 0) return '0%';
+                                
+                                const sum = filtered.reduce((acc: number, obj: any) => acc + obj.progress, 0);
+                                return `${Math.round(sum / filtered.length)}%`;
+                              })()
+                              : '0%'
+                            }
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="completed" className="pt-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>Completed Objectives</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600">
-                History of completed objectives would be displayed here.
-              </p>
+              {isLoading ? (
+                // Loading state
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex flex-col gap-2">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-2 w-full" />
+                    </div>
+                  ))}
+                </div>
+              ) : error ? (
+                // Error state
+                <div className="text-red-500">Error loading objectives</div>
+              ) : (
+                // Completed objectives table
+                <>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="text-sm text-muted-foreground">
+                      Displaying all completed objectives
+                    </div>
+                    <Button variant="outline" size="sm">
+                      Export Results
+                    </Button>
+                  </div>
+                  
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[300px]">Objective</TableHead>
+                        <TableHead>Completion Date</TableHead>
+                        <TableHead>Duration</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {objectives && 
+                        objectives
+                          .filter((objective: any) => objective.progress === 100)
+                          .map((objective: any) => (
+                            <TableRow key={objective.id}>
+                              <TableCell className="font-medium">
+                                <div>
+                                  <p>{objective.title}</p>
+                                  <p className="text-sm text-neutral-500">{objective.description}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center text-sm">
+                                  <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                                  {formatDate(objective.completedDate || objective.endDate)}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm">
+                                  {(() => {
+                                    // Calculate duration in days
+                                    const startDate = new Date(objective.startDate);
+                                    const endDate = new Date(objective.completedDate || objective.endDate);
+                                    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    
+                                    // Format as weeks + days or just days
+                                    if (diffDays >= 7) {
+                                      const weeks = Math.floor(diffDays / 7);
+                                      const days = diffDays % 7;
+                                      return `${weeks} week${weeks !== 1 ? 's' : ''}${days > 0 ? `, ${days} day${days !== 1 ? 's' : ''}` : ''}`;
+                                    } else {
+                                      return `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+                                    }
+                                  })()}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="sm">View Report</Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      }
+                      {objectives && 
+                        objectives.filter((objective: any) => objective.progress === 100).length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                              No completed objectives found
+                            </TableCell>
+                          </TableRow>
+                        )
+                      }
+                    </TableBody>
+                  </Table>
+                  
+                  {objectives && objectives.filter((objective: any) => objective.progress === 100).length > 0 && (
+                    <div className="mt-6 flex flex-col space-y-4">
+                      <div className="bg-green-50 rounded-md p-4">
+                        <h3 className="text-md font-semibold text-green-700 mb-2">Achievement Summary</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-700 font-medium">Completed Objectives</p>
+                            <p className="text-2xl font-bold">
+                              {objectives ? 
+                                objectives.filter((objective: any) => objective.progress === 100).length 
+                                : 0
+                              }
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-700 font-medium">Average Completion Time</p>
+                            <p className="text-2xl font-bold">
+                              {objectives ? 
+                                (() => {
+                                  const completed = objectives.filter((objective: any) => objective.progress === 100);
+                                  
+                                  if (completed.length === 0) return 'N/A';
+                                  
+                                  const totalDays = completed.reduce((acc: number, obj: any) => {
+                                    const startDate = new Date(obj.startDate);
+                                    const endDate = new Date(obj.completedDate || obj.endDate);
+                                    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    return acc + diffDays;
+                                  }, 0);
+                                  
+                                  const avgDays = Math.round(totalDays / completed.length);
+                                  
+                                  if (avgDays >= 7) {
+                                    const weeks = Math.floor(avgDays / 7);
+                                    const days = avgDays % 7;
+                                    return `${weeks}w ${days}d`;
+                                  } else {
+                                    return `${avgDays} days`;
+                                  }
+                                })()
+                                : 'N/A'
+                              }
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-700 font-medium">Most Recent Completion</p>
+                            <p className="text-lg font-bold">
+                              {objectives ? 
+                                (() => {
+                                  const completed = objectives.filter((objective: any) => objective.progress === 100);
+                                  
+                                  if (completed.length === 0) return 'None';
+                                  
+                                  // Sort by completion date (descending)
+                                  const sorted = [...completed].sort((a, b) => {
+                                    const dateA = new Date(a.completedDate || a.endDate);
+                                    const dateB = new Date(b.completedDate || b.endDate);
+                                    return dateB.getTime() - dateA.getTime();
+                                  });
+                                  
+                                  return formatDate(sorted[0].completedDate || sorted[0].endDate);
+                                })()
+                                : 'None'
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
