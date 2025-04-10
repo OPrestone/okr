@@ -13,7 +13,8 @@ import {
   TrendingUp, 
   Edit, 
   Save,
-  ArrowLeft
+  ArrowLeft,
+  Trash2
 } from "lucide-react";
 import {
   Card,
@@ -232,33 +233,48 @@ export default function SuggestedKeyResults() {
             
             <div className="absolute top-5 right-6 flex space-x-2">
               {kr.isEditing ? (
-                <Button 
-                  onClick={() => handleSaveEditing(kr.id)} 
-                  variant="ghost" 
-                  size="sm"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  <Save className="h-4 w-4" />
-                </Button>
+                <>
+                  <Button 
+                    onClick={() => toggleEditing(kr.id)} 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-700"
+                    title="Cancel editing"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    onClick={() => handleSaveEditing(kr.id)} 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Save changes"
+                  >
+                    <Save className="h-4 w-4" />
+                  </Button>
+                </>
               ) : (
-                <Button 
-                  onClick={() => toggleEditing(kr.id)} 
-                  variant="ghost" 
-                  size="sm"
-                  className="text-neutral-500 hover:text-neutral-700"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <>
+                  <Button 
+                    onClick={() => toggleEditing(kr.id)} 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-neutral-500 hover:text-neutral-700"
+                    title="Edit this key result"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    onClick={() => handleDeleteKR(kr.id)} 
+                    variant="ghost" 
+                    size="sm"
+                    className="text-neutral-500 hover:text-red-500"
+                    title="Remove this key result"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </>
               )}
-              
-              <Button 
-                onClick={() => handleDeleteKR(kr.id)} 
-                variant="ghost" 
-                size="sm"
-                className="text-neutral-500 hover:text-red-500"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
 
             <CardContent className="pt-0">

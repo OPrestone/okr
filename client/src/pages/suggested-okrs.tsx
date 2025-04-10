@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, RefreshCw, X, Plus, Check, Target } from "lucide-react";
+import { CheckCircle, RefreshCw, X, Plus, Check, Target, Edit, Trash2 } from "lucide-react";
 
 interface SuggestedOKR {
   id: string;
@@ -173,12 +173,14 @@ export default function SuggestedOKRs() {
                     <button 
                       onClick={() => handleCancelEditing(okr.id)}
                       className="text-gray-500 hover:text-gray-700"
+                      title="Cancel editing"
                     >
                       <X className="h-5 w-5" />
                     </button>
                     <button 
                       onClick={() => handleSaveEditing(okr.id)}
                       className="text-blue-500 hover:text-blue-700"
+                      title="Save changes"
                     >
                       <Check className="h-5 w-5" />
                     </button>
@@ -188,9 +190,16 @@ export default function SuggestedOKRs() {
                     <button 
                       onClick={() => toggleEditing(okr.id)}
                       className="text-gray-500 hover:text-gray-700"
+                      title="Edit this objective"
                     >
-                      {/* Pencil icon would go here, but using X for simplicity */}
-                      <X className="h-5 w-5" />
+                      <Edit className="h-5 w-5" />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteOKR(okr.id)}
+                      className="text-gray-500 hover:text-red-500"
+                      title="Remove this objective"
+                    >
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </>
                 )}
