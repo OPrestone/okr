@@ -45,6 +45,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 // Form schema for creating and updating cycles
 const cycleFormSchema = z.object({
@@ -77,10 +79,19 @@ function CycleCreateDialog() {
 
   const createCycleMutation = useMutation({
     mutationFn: async (data: CycleFormValues) => {
-      return await apiRequest('/api/cycles', {
+      const response = await fetch('/api/cycles', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create cycle');
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -359,9 +370,14 @@ function CyclesList() {
   
   const deleteCycleMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest(`/api/cycles/${id}`, {
+      const response = await fetch(`/api/cycles/${id}`, {
         method: 'DELETE'
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete cycle');
+      }
+      
       return id;
     },
     onSuccess: (id) => {
@@ -492,8 +508,6 @@ function CyclesList() {
     </div>
   );
 }
-
-import { useState } from "react";
 
 export default function Configure() {
   return (
