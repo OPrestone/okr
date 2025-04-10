@@ -405,19 +405,288 @@ export default function Configure() {
         </TabsContent>
         
         {/* Objectives Settings */}
-        <TabsContent value="objectives" className="pt-4">
+        <TabsContent value="objectives" className="space-y-6 pt-4">
+          {/* OKR Default Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Objective Settings</CardTitle>
+              <CardTitle>OKR Default Settings</CardTitle>
               <CardDescription>
-                Configure OKR settings and defaults
+                Configure default settings for new OKRs
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-neutral-600 mb-6">
-                Objective configuration settings would be displayed here
-              </p>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="default-cycle">Default OKR Cycle</Label>
+                  <Select defaultValue="quarterly">
+                    <SelectTrigger id="default-cycle">
+                      <SelectValue placeholder="Select cycle period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="biannual">Bi-annual</SelectItem>
+                      <SelectItem value="annual">Annual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="default-visibility">Default Visibility</Label>
+                  <Select defaultValue="team">
+                    <SelectTrigger id="default-visibility">
+                      <SelectValue placeholder="Select visibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="private">Private</SelectItem>
+                      <SelectItem value="team">Team Only</SelectItem>
+                      <SelectItem value="department">Department</SelectItem>
+                      <SelectItem value="company">Company-wide</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="default-key-results">Default Key Results Per Objective</Label>
+                  <Select defaultValue="3">
+                    <SelectTrigger id="default-key-results">
+                      <SelectValue placeholder="Select number" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1</SelectItem>
+                      <SelectItem value="2">2</SelectItem>
+                      <SelectItem value="3">3</SelectItem>
+                      <SelectItem value="4">4</SelectItem>
+                      <SelectItem value="5">5</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="auto-reminders">Automatic Check-in Reminders</Label>
+                  <Select defaultValue="weekly">
+                    <SelectTrigger id="auto-reminders">
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="daily">Daily</SelectItem>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="progress-calculation">Progress Calculation Method</Label>
+                  <Select defaultValue="average">
+                    <SelectTrigger id="progress-calculation">
+                      <SelectValue placeholder="Select method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="average">Average of Key Results</SelectItem>
+                      <SelectItem value="weighted">Weighted Average</SelectItem>
+                      <SelectItem value="manual">Manual Entry</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">This determines how overall objective progress is calculated from key results</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between pt-2">
+                <div>
+                  <Label htmlFor="require-approval" className="text-base">Require Approval for OKRs</Label>
+                  <p className="text-sm text-muted-foreground">New OKRs must be approved by managers</p>
+                </div>
+                <Switch id="require-approval" defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="allow-comments" className="text-base">Allow Comments on OKRs</Label>
+                  <p className="text-sm text-muted-foreground">Team members can comment on objectives and key results</p>
+                </div>
+                <Switch id="allow-comments" defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="alignable-objectives" className="text-base">Enable Objective Alignment</Label>
+                  <p className="text-sm text-muted-foreground">Allow objectives to be aligned with other objectives</p>
+                </div>
+                <Switch id="alignable-objectives" defaultChecked />
+              </div>
             </CardContent>
+            <CardFooter>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save Default Settings
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          {/* Key Result Types */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Result Types</CardTitle>
+              <CardDescription>
+                Configure the types of key results available
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Available Key Result Types</Label>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Enabled</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Numeric</TableCell>
+                      <TableCell>Progress from X to Y (e.g., increase revenue from $1M to $1.5M)</TableCell>
+                      <TableCell><Switch defaultChecked /></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Percentage</TableCell>
+                      <TableCell>Progress tracked as a percentage (e.g., increase satisfaction from 70% to 90%)</TableCell>
+                      <TableCell><Switch defaultChecked /></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Binary</TableCell>
+                      <TableCell>Completion status only (e.g., launch new website)</TableCell>
+                      <TableCell><Switch defaultChecked /></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Milestone</TableCell>
+                      <TableCell>Multiple steps with dates (e.g., complete project phases)</TableCell>
+                      <TableCell><Switch defaultChecked /></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="custom-kr-type">Add Custom Key Result Type</Label>
+                <div className="flex gap-2">
+                  <Input id="custom-kr-type" placeholder="Enter name of custom type" />
+                  <Button variant="outline">Add Type</Button>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save Key Result Types
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          {/* Approval Workflow */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Workflow</CardTitle>
+              <CardDescription>
+                Configure the OKR review and approval process
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="enable-approval" className="text-base">Enable OKR Approval Workflow</Label>
+                  <p className="text-sm text-muted-foreground">Require formal approval for OKRs</p>
+                </div>
+                <Switch id="enable-approval" defaultChecked />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="approver-role">Default Approver Role</Label>
+                <Select defaultValue="manager">
+                  <SelectTrigger id="approver-role">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manager">Direct Manager</SelectItem>
+                    <SelectItem value="team-lead">Team Lead</SelectItem>
+                    <SelectItem value="dept-head">Department Head</SelectItem>
+                    <SelectItem value="ceo">CEO/Executive</SelectItem>
+                    <SelectItem value="custom">Custom Approver</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="approval-stages">Approval Stages</Label>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Stage</TableHead>
+                      <TableHead>Approvers</TableHead>
+                      <TableHead>Required</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Team Review</TableCell>
+                      <TableCell>Team Members</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700">Optional</Badge>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Manager Approval</TableCell>
+                      <TableCell>Direct Manager</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-green-50 text-green-700">Required</Badge>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-medium">Executive Review</TableCell>
+                      <TableCell>Department Head</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-green-50 text-green-700">Required</Badge>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="auto-reminders-approval" className="text-base">Automatic Approval Reminders</Label>
+                  <p className="text-sm text-muted-foreground">Send reminders for pending approvals</p>
+                </div>
+                <Switch id="auto-reminders-approval" defaultChecked />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="reminder-frequency">Reminder Frequency</Label>
+                <Select defaultValue="3days">
+                  <SelectTrigger id="reminder-frequency">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="2days">Every 2 Days</SelectItem>
+                    <SelectItem value="3days">Every 3 Days</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save Approval Settings
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
         
