@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,27 +22,26 @@ import { getInitials } from "@/lib/utils";
 export default function Users() {
   const [searchQuery, setSearchQuery] = useState("");
   
-  const { data: users, isLoading, error } = useQuery({
+  const { data: users = [], isLoading, error } = useQuery<any[]>({
     queryKey: ['/api/users'],
   });
   
-  const { data: teams } = useQuery({
+  const { data: teams = [] } = useQuery<any[]>({
     queryKey: ['/api/teams'],
   });
   
   // Get team name by ID
   const getTeamName = (teamId: number) => {
-    if (!teams) return "Loading...";
     const team = teams.find((team: any) => team.id === teamId);
     return team ? team.name : "Unassigned";
   };
   
   // Filter users based on search query
-  const filteredUsers = users ? users.filter((user: any) => 
-    user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchQuery.toLowerCase())
-  ) : [];
+  const filteredUsers = users.filter((user: any) => 
+    user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div>
@@ -50,9 +50,11 @@ export default function Users() {
           <h1 className="text-2xl font-bold text-neutral-900 mb-2">Users</h1>
           <p className="text-neutral-600">Manage user accounts and team assignments</p>
         </div>
-        <Button className="flex items-center gap-1">
-          <UserPlus className="h-4 w-4" />
-          Add User
+        <Button className="flex items-center gap-1" asChild>
+          <Link href="/create-user">
+            <UserPlus className="h-4 w-4" />
+            Add User
+          </Link>
         </Button>
       </div>
 
