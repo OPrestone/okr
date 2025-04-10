@@ -901,6 +901,151 @@ export default function Configure() {
           </Card>
         </TabsContent>
         
+        {/* Cadences Settings */}
+        <TabsContent value="cadences" className="space-y-6 pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Repeat className="h-5 w-5" />
+                OKR Cadences
+              </CardTitle>
+              <CardDescription>
+                Configure the frequency and timing patterns for OKR check-ins and updates
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Check-in Cadence */}
+              <div>
+                <h3 className="text-lg font-medium mb-4">Check-in Cadence</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="default-checkin-frequency">Default Check-in Frequency</Label>
+                      <Select defaultValue="weekly">
+                        <SelectTrigger id="default-checkin-frequency">
+                          <SelectValue placeholder="Select frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="preferred-checkin-day">Preferred Check-in Day</Label>
+                      <Select defaultValue="monday">
+                        <SelectTrigger id="preferred-checkin-day">
+                          <SelectValue placeholder="Select day" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="monday">Monday</SelectItem>
+                          <SelectItem value="tuesday">Tuesday</SelectItem>
+                          <SelectItem value="wednesday">Wednesday</SelectItem>
+                          <SelectItem value="thursday">Thursday</SelectItem>
+                          <SelectItem value="friday">Friday</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="auto-reminders">Automatic Reminders</Label>
+                      <Select defaultValue="1-day">
+                        <SelectTrigger id="auto-reminders">
+                          <SelectValue placeholder="Select reminder timing" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="same-day">Same day (morning)</SelectItem>
+                          <SelectItem value="1-day">1 day before</SelectItem>
+                          <SelectItem value="2-days">2 days before</SelectItem>
+                          <SelectItem value="3-days">3 days before</SelectItem>
+                          <SelectItem value="none">No reminders</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between space-x-2">
+                      <div>
+                        <Label htmlFor="auto-escalation" className="text-base">Automatic Escalation</Label>
+                        <p className="text-sm text-gray-500">Notify managers about missed check-ins</p>
+                      </div>
+                      <Switch id="auto-escalation" defaultChecked />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Divider */}
+              <div className="border-t my-6"></div>
+              
+              {/* Review Cadence */}
+              <div>
+                <h3 className="text-lg font-medium mb-4">Review Cadence</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="team-review-cadence">Team Review Frequency</Label>
+                      <Select defaultValue="biweekly">
+                        <SelectTrigger id="team-review-cadence">
+                          <SelectValue placeholder="Select frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                          <SelectItem value="quarterly">Quarterly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="company-review-cadence">Company-wide Review Frequency</Label>
+                      <Select defaultValue="monthly">
+                        <SelectTrigger id="company-review-cadence">
+                          <SelectValue placeholder="Select frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                          <SelectItem value="quarterly">Quarterly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between space-x-2">
+                      <div>
+                        <Label htmlFor="auto-schedule-reviews" className="text-base">Auto-schedule Reviews</Label>
+                        <p className="text-sm text-gray-500">Automatically create calendar events</p>
+                      </div>
+                      <Switch id="auto-schedule-reviews" defaultChecked />
+                    </div>
+                    
+                    <div className="flex items-center justify-between space-x-2">
+                      <div>
+                        <Label htmlFor="include-stakeholders" className="text-base">Include Stakeholders</Label>
+                        <p className="text-sm text-gray-500">Automatically include relevant stakeholders</p>
+                      </div>
+                      <Switch id="include-stakeholders" defaultChecked />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save Cadence Settings
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        
         {/* Cycles Settings */}
         <TabsContent value="cycles" className="pt-4">
           <Card>
