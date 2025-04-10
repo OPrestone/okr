@@ -25,7 +25,7 @@ const formSchema = insertFinancialDataSchema.extend({
   date: z.date({
     required_error: "Please select a date for this financial data.",
   }),
-  objectiveId: z.string().optional().transform((val) => (val ? parseInt(val) : null)),
+  objectiveId: z.string().optional().transform((val) => (val && val !== "none" ? parseInt(val) : null)),
   revenue: z.string().optional().transform((val) => (val ? parseFloat(val) : null)),
   cost: z.string().optional().transform((val) => (val ? parseFloat(val) : null)),
   ebitda: z.string().optional().transform((val) => (val ? parseFloat(val) : null)),
@@ -37,7 +37,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function ImportFinancial() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
+  const [_, navigate] = useLocation();
   const { toast } = useToast();
 
   // Get objectives for mapping
@@ -72,7 +72,7 @@ export default function ImportFinancial() {
       toast({
         title: "Financial data imported",
         description: "Your financial data has been successfully imported.",
-        variant: "success",
+        variant: "default",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/financial-data'] });
       form.reset();
@@ -190,7 +190,7 @@ export default function ImportFinancial() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="">None</SelectItem>
+                              <SelectItem value="none">None</SelectItem>
                               {objectives.map((objective: any) => (
                                 <SelectItem key={objective.id} value={objective.id.toString()}>
                                   {objective.title}
@@ -367,7 +367,7 @@ export default function ImportFinancial() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <ArrowUpTrayIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <div className="mt-4">
                   <label htmlFor="file-upload" className="cursor-pointer">
                     <span className="text-primary font-medium">Click to upload</span>
@@ -389,7 +389,7 @@ export default function ImportFinancial() {
 
               <div>
                 <Button variant="outline" className="w-full flex items-center justify-center">
-                  <LinkIcon className="mr-2 h-4 w-4" />
+                  <Link2 className="mr-2 h-4 w-4" />
                   Connect to Data Source
                 </Button>
                 <p className="text-xs text-gray-500 mt-2 text-center">
