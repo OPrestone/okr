@@ -1,6 +1,7 @@
 import { 
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
-  KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource
+  KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
+  FinancialData, InsertFinancialData
 } from "@shared/schema";
 
 // Storage interface for all CRUD operations
@@ -45,6 +46,14 @@ export interface IStorage {
   getAllResources(): Promise<Resource[]>;
   createResource(resource: InsertResource): Promise<Resource>;
   updateResource(id: number, resource: Partial<InsertResource>): Promise<Resource | undefined>;
+  
+  // Financial Data operations
+  getFinancialData(id: number): Promise<FinancialData | undefined>;
+  getAllFinancialData(): Promise<FinancialData[]>;
+  getFinancialDataByDate(startDate: Date, endDate: Date): Promise<FinancialData[]>;
+  getFinancialDataByObjective(objectiveId: number): Promise<FinancialData[]>;
+  createFinancialData(financialData: InsertFinancialData): Promise<FinancialData>;
+  updateFinancialData(id: number, financialData: Partial<InsertFinancialData>): Promise<FinancialData | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -54,6 +63,7 @@ export class MemStorage implements IStorage {
   private keyResults: Map<number, KeyResult>;
   private meetings: Map<number, Meeting>;
   private resources: Map<number, Resource>;
+  private financialData: Map<number, FinancialData>;
   
   private userCurrentId: number;
   private teamCurrentId: number;
@@ -61,6 +71,7 @@ export class MemStorage implements IStorage {
   private keyResultCurrentId: number;
   private meetingCurrentId: number;
   private resourceCurrentId: number;
+  private financialDataCurrentId: number;
 
   constructor() {
     this.users = new Map();
