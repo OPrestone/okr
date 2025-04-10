@@ -819,11 +819,11 @@ export default function CheckIns() {
                 </CardHeader>
                 <CardContent className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={trendData}>
+                    <ReLineChart data={trendData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="date" />
                       <YAxis domain={[0, 100]} />
-                      <Tooltip />
+                      <RechartsTooltip />
                       <Line
                         type="monotone"
                         dataKey="value"
@@ -832,7 +832,7 @@ export default function CheckIns() {
                         dot={{ r: 4 }}
                         activeDot={{ r: 6 }}
                       />
-                    </LineChart>
+                    </ReLineChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
@@ -862,7 +862,7 @@ export default function CheckIns() {
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis dataKey="week" />
                       <YAxis />
-                      <Tooltip />
+                      <RechartsTooltip />
                       <Legend />
                       <Area
                         type="monotone"

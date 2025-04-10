@@ -121,39 +121,42 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Navigation Menu */}
       <nav className="flex-1 px-2 py-4 overflow-y-auto">
         <div className="mb-6">
-          <Link href="/quick-start">
-            <a className={cn(
+          <Link 
+            href="/quick-start"
+            className={cn(
               "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
               location === "/quick-start" 
                 ? "bg-primary-50 text-primary-700" 
                 : "text-neutral-700 hover:bg-neutral-100"
-            )}>
-              <Rocket className={cn(
-                "mr-3 text-lg",
-                location === "/quick-start" ? "text-primary-500" : "text-neutral-500"
-              )} />
-              <span>Quick Get Started Guide</span>
-            </a>
+            )}
+          >
+            <Rocket className={cn(
+              "mr-3 text-lg",
+              location === "/quick-start" ? "text-primary-500" : "text-neutral-500"
+            )} />
+            <span>Quick Get Started Guide</span>
           </Link>
         </div>
 
         <div className="space-y-1">
           {menuItems.slice(1).map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a className={cn(
+            <Link 
+              key={item.href} 
+              href={item.href}
+              className={cn(
                 "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
                 location === item.href 
                   ? "bg-primary-50 text-primary-700" 
                   : "text-neutral-700 hover:bg-neutral-100"
+              )}
+            >
+              <div className={cn(
+                "mr-3 text-lg",
+                location === item.href ? "text-primary-500" : "text-neutral-500"
               )}>
-                <div className={cn(
-                  "mr-3 text-lg",
-                  location === item.href ? "text-primary-500" : "text-neutral-500"
-                )}>
-                  {item.icon}
-                </div>
-                <span>{item.label}</span>
-              </a>
+                {item.icon}
+              </div>
+              <span>{item.label}</span>
             </Link>
           ))}
         </div>
