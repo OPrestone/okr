@@ -24,6 +24,7 @@ import Mission from "./pages/mission";
 import CreateTeam from "./pages/create-team";
 import CreateUser from "./pages/create-user";
 import SuggestedKeyResults from "./pages/suggested-key-results";
+import ImportFinancial from "./pages/import-financial";
 
 function Router() {
   return (
@@ -49,6 +50,7 @@ function Router() {
           <Route path="/create-team" component={CreateTeam} />
           <Route path="/create-user" component={CreateUser} />
           <Route path="/suggested-key-results" component={SuggestedKeyResults} />
+          <Route path="/import-financial" component={ImportFinancial} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
