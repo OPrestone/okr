@@ -396,7 +396,7 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
               Check-in Type
             </label>
             <div className="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-md inline-block">
-              OKR Check-in
+              Progress Update
             </div>
           </div>
           
