@@ -295,6 +295,7 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
   const [confidence, setConfidence] = useState("On Track");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkInType, setCheckInType] = useState("OKR Check-in");
+  const [checkInTemplate, setCheckInTemplate] = useState("Weekly");
   const [focusLastWeek, setFocusLastWeek] = useState("");
   const [goalsThisWeek, setGoalsThisWeek] = useState("");
   const [challenges, setChallenges] = useState("");
@@ -348,7 +349,7 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
           <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 10-3 3-3-3"/></svg>
           </div>
-          <h2 className="text-xl font-bold">Weekly OKR Check-In</h2>
+          <h2 className="text-xl font-bold">Check-in</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,13 +389,35 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
           </div>
         </div>
         
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium flex items-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><path d="m4 6 8-4 8 4"/><path d="m18 10 4 2"/><path d="m4 10 4 2"/><path d="M14 12v4"/><path d="M10 12v4"/><path d="M4 22v-8"/><path d="M20 22v-8"/><path d="M12 22v-4"/><path d="m12 12-4 2 4 2 4-2-4-2Z"/></svg>
-            Check-in Type
-          </label>
-          <div className="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-md inline-block">
-            OKR Check-in
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><path d="m4 6 8-4 8 4"/><path d="m18 10 4 2"/><path d="m4 10 4 2"/><path d="M14 12v4"/><path d="M10 12v4"/><path d="M4 22v-8"/><path d="M20 22v-8"/><path d="M12 22v-4"/><path d="m12 12-4 2 4 2 4-2-4-2Z"/></svg>
+              Check-in Type
+            </label>
+            <div className="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-md inline-block">
+              OKR Check-in
+            </div>
+          </div>
+          
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <CalendarClock className="h-4 w-4 text-gray-500" />
+              Check-in Template
+            </label>
+            <Select
+              value={checkInTemplate}
+              onValueChange={setCheckInTemplate}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select template" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Weekly">Weekly</SelectItem>
+                <SelectItem value="Daily">Daily</SelectItem>
+                <SelectItem value="Monthly">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -559,9 +582,9 @@ export default function CheckIns() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Weekly OKR Check-In</DialogTitle>
+                <DialogTitle>Check-in</DialogTitle>
                 <DialogDescription>
-                  Share your progress, goals, and challenges for the week.
+                  Share your progress, goals, and challenges.
                 </DialogDescription>
               </DialogHeader>
               {selectedKeyResult && (
