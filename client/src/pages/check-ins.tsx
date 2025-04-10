@@ -293,8 +293,25 @@ function ProgressIndicator({ previous, current }: { previous: number; current: n
 function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => void }) {
   const [progress, setProgress] = useState(keyResult.progress || 0);
   const [confidence, setConfidence] = useState("On Track");
-  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkInType, setCheckInType] = useState("OKR Check-in");
+  const [focusLastWeek, setFocusLastWeek] = useState("");
+  const [goalsThisWeek, setGoalsThisWeek] = useState("");
+  const [challenges, setChallenges] = useState("");
+  const [needsForOKRs, setNeedsForOKRs] = useState("");
+  
+  // States for the team and user data
+  const [selectedTeam, setSelectedTeam] = useState<string>("");
+  
+  // Query to fetch teams data
+  const { data: teams } = useQuery({
+    queryKey: ['/api/teams'],
+  });
+  
+  // Query to fetch users data
+  const { data: users } = useQuery({
+    queryKey: ['/api/users'],
+  });
   
   const { toast } = useToast();
   
@@ -307,66 +324,193 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
       setIsSubmitting(false);
       toast({
         title: "Check-in submitted",
-        description: "Your progress update has been recorded.",
+        description: "Your weekly OKR check-in has been recorded.",
       });
       onClose();
     }, 1000);
   };
   
+  // Function to get the current user
+  const getCurrentUser = () => {
+    if (users && Array.isArray(users) && users.length > 0) {
+      // For simplicity, we'll use the first user as the current user
+      return users[0];
+    }
+    return { username: "alex.morgan", fullName: "Alex Morgan" };
+  };
+  
+  const currentUser = getCurrentUser();
+  
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <h3 className="text-sm font-medium text-gray-500">Objective</h3>
-        <p className="text-base font-medium">{keyResult.objective.title}</p>
-      </div>
-      
-      <div>
-        <h3 className="text-sm font-medium text-gray-500">Key Result</h3>
-        <p className="text-base font-medium">{keyResult.title}</p>
-      </div>
-      
-      <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-2">Current Progress ({progress}%)</h3>
-        <Slider
-          value={[progress]}
-          onValueChange={(value) => setProgress(value[0])}
-          max={100}
-          step={1}
-          className="mb-2"
-        />
-        <div className="flex justify-between text-xs text-gray-500">
-          <span>0%</span>
-          <span>50%</span>
-          <span>100%</span>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2 mb-1">
+          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 10-3 3-3-3"/></svg>
+          </div>
+          <h2 className="text-xl font-bold">Weekly OKR Check-In</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <UserRound className="h-4 w-4 text-gray-500" />
+              Creator
+            </label>
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-gray-50">
+              <span>{currentUser.fullName}</span>
+            </div>
+          </div>
+          
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <Users className="h-4 w-4 text-gray-500" />
+              Team
+            </label>
+            <Select
+              value={selectedTeam}
+              onValueChange={setSelectedTeam}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a team" />
+              </SelectTrigger>
+              <SelectContent>
+                {teams && Array.isArray(teams) ? teams.map((team: any) => (
+                  <SelectItem key={team.id} value={team.id.toString()}>
+                    {team.name}
+                  </SelectItem>
+                )) : null}
+                <SelectItem value="VLS">VLS</SelectItem>
+                <SelectItem value="ICT Team">ICT Team</SelectItem>
+                <SelectItem value="Operations">Operations</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><path d="m4 6 8-4 8 4"/><path d="m18 10 4 2"/><path d="m4 10 4 2"/><path d="M14 12v4"/><path d="M10 12v4"/><path d="M4 22v-8"/><path d="M20 22v-8"/><path d="M12 22v-4"/><path d="m12 12-4 2 4 2 4-2-4-2Z"/></svg>
+            Check-in Type
+          </label>
+          <div className="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-md inline-block">
+            OKR Check-in
+          </div>
         </div>
       </div>
       
-      <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-1">Confidence Level</h3>
-        <Select
-          value={confidence}
-          onValueChange={setConfidence}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select confidence level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="On Track">On Track</SelectItem>
-            <SelectItem value="At Risk">At Risk</SelectItem>
-            <SelectItem value="Off Track">Off Track</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="pt-4 border-t border-gray-200 space-y-6">
+        <div className="space-y-3">
+          <h3 className="font-medium flex items-center gap-1.5">
+            <span className="text-gray-700">1. What was your focus last week?</span>
+            <span className="text-lg">👀</span>
+          </h3>
+          <Textarea
+            placeholder="Share what you focused on last week..."
+            value={focusLastWeek}
+            onChange={(e) => setFocusLastWeek(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+        
+        <div className="space-y-3">
+          <h3 className="font-medium flex items-center gap-1.5">
+            <span className="text-gray-700">2. What are your goals this week?</span>
+            <span className="text-lg">🚀</span>
+          </h3>
+          <Textarea
+            placeholder="Outline your goals for this week..."
+            value={goalsThisWeek}
+            onChange={(e) => setGoalsThisWeek(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+        
+        <div className="space-y-3">
+          <h3 className="font-medium flex items-center gap-1.5">
+            <span className="text-gray-700">3. Which challenges are you facing?</span>
+            <span className="text-lg">⚠️</span>
+          </h3>
+          <Textarea
+            placeholder="Describe any challenges or blockers..."
+            value={challenges}
+            onChange={(e) => setChallenges(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+        
+        <div className="space-y-3">
+          <h3 className="font-medium flex items-center gap-1.5">
+            <span className="text-gray-700">4. What do you need to achieve your OKRs?</span>
+            <span className="text-lg">🤝</span>
+          </h3>
+          <Textarea
+            placeholder="What support or resources do you need?"
+            value={needsForOKRs}
+            onChange={(e) => setNeedsForOKRs(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+        
+        <div className="space-y-3 pt-4">
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              <span>New goal updates</span>
+            </Button>
+            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              <span>Link past goal updates</span>
+            </Button>
+            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Add goals from your last check-in</span>
+            </Button>
+            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Add goals with me as "Owner"</span>
+            </Button>
+          </div>
+        </div>
       </div>
       
-      <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-1">Comments & Context</h3>
-        <Textarea
-          placeholder="Share updates, blockers, or context about your progress..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows={4}
-          className="resize-none"
-        />
+      <div className="space-y-3 pt-2">
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Update Progress ({progress}%)</h3>
+          <Slider
+            value={[progress]}
+            onValueChange={(value) => setProgress(value[0])}
+            max={100}
+            step={1}
+            className="mb-2"
+          />
+          <div className="flex justify-between text-xs text-gray-500">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 mb-1">Confidence Level</h3>
+          <Select
+            value={confidence}
+            onValueChange={setConfidence}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select confidence level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="On Track">On Track</SelectItem>
+              <SelectItem value="At Risk">At Risk</SelectItem>
+              <SelectItem value="Off Track">Off Track</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <DialogFooter>
@@ -413,11 +557,11 @@ export default function CheckIns() {
                 <span>Create Check-in</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[525px]">
+            <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create New Check-in</DialogTitle>
+                <DialogTitle>Weekly OKR Check-In</DialogTitle>
                 <DialogDescription>
-                  Update progress on a key result and provide context on your work.
+                  Share your progress, goals, and challenges for the week.
                 </DialogDescription>
               </DialogHeader>
               {selectedKeyResult && (
