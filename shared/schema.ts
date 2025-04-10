@@ -11,6 +11,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   role: text("role").notNull(),
   teamId: integer("team_id"),
+  managerId: integer("manager_id"),
+  language: text("language").default("en"),
   avatarUrl: text("avatar_url"),
 });
 

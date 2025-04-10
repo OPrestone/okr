@@ -22,6 +22,7 @@ import CreateOkrAi from "./pages/create-okr-ai";
 import SuggestedOKRs from "./pages/suggested-okrs";
 import Mission from "./pages/mission";
 import CreateTeam from "./pages/create-team";
+import CreateUser from "./pages/create-user";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
           <Route path="/create-okr-ai" component={CreateOkrAi} />
           <Route path="/suggested-okrs" component={SuggestedOKRs} />
           <Route path="/create-team" component={CreateTeam} />
+          <Route path="/create-user" component={CreateUser} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
