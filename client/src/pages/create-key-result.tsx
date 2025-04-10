@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   Select, 
   SelectContent, 
@@ -21,7 +22,9 @@ import {
   Info,
   LayoutGrid,
   LineChart,
+  SendToBack,
   Target,
+  ThumbsUp,
   X
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -38,6 +41,12 @@ export default function CreateKeyResult() {
 
   const handleSave = () => {
     // Here you would normally save the data
+    setLocation("/");
+  };
+  
+  const handleSubmitToCEO = () => {
+    // Save the data and submit for CEO approval
+    alert("OKRs submitted for CEO approval");
     setLocation("/");
   };
 
@@ -361,7 +370,25 @@ export default function CreateKeyResult() {
           </Accordion>
 
           {/* Bottom buttons */}
-          <div className="flex justify-end pt-4 border-t">
+          <div className="flex justify-between pt-4 border-t">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 flex items-center gap-2" 
+                    onClick={handleSubmitToCEO}
+                  >
+                    <SendToBack className="h-4 w-4" />
+                    <span>Save and Submit OKRs for CEO Approval</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Submit this OKR for final CEO review and approval</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
             <div className="flex space-x-2">
               <Button variant="outline" onClick={handleCancel}>
                 Cancel
