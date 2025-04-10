@@ -271,7 +271,13 @@ export default function CompanyObjectives() {
                                 </div>
                               </TableCell>
                               <TableCell className="text-right">
-                                <Button variant="ghost" size="sm">View</Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleViewObjective(objective.id)}
+                                >
+                                  View
+                                </Button>
                               </TableCell>
                             </TableRow>
                           ))
@@ -439,7 +445,13 @@ export default function CompanyObjectives() {
                                 </div>
                               </TableCell>
                               <TableCell className="text-right">
-                                <Button variant="ghost" size="sm">View Report</Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleViewObjective(objective.id)}
+                                >
+                                  View Report
+                                </Button>
                               </TableCell>
                             </TableRow>
                           ))
@@ -533,6 +545,15 @@ export default function CompanyObjectives() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Objective Detail View */}
+      {selectedObjectiveId && (
+        <ObjectiveDetailView 
+          objectiveId={selectedObjectiveId}
+          isOpen={detailViewOpen}
+          onClose={handleCloseDetailView}
+        />
+      )}
     </div>
   );
 }
