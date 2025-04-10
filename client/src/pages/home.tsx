@@ -5,6 +5,7 @@ import { TeamPerformance } from "@/components/dashboard/team-performance";
 import { UpcomingMeetings } from "@/components/dashboard/upcoming-meetings";
 import { StrategyMap } from "@/components/dashboard/strategy-map";
 import { ResourcesSection } from "@/components/dashboard/resources-section";
+import { AdditionalResources } from "@/components/resources/additional-resources";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu, 
@@ -70,6 +71,9 @@ export default function Home() {
 
       {/* Resources Section */}
       <ResourcesSection />
+
+      {/* Additional Resources Section */}
+      <AdditionalResources />
     </div>
   );
 }
