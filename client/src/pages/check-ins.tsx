@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,8 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { BarChart, LineChart, Calendar, CalendarDays, Clock, ListChecks, ArrowUpRight, CalendarClock, BarChart4, LineChart as LineChartIcon, ChevronRight, MessageSquare, ThumbsUp, AlertCircle, CheckCircle, UserRound, Users } from "lucide-react";
+import { BarChart, LineChart, Calendar, CalendarDays, Clock, ListChecks, ArrowUpRight, CalendarClock, BarChart4, LineChart as LineChartIcon, ChevronRight, MessageSquare, ThumbsUp, AlertCircle, CheckCircle, UserRound, Users, Check } from "lucide-react";
 import { cn, getInitials } from "@/lib/utils";
 import { 
   LineChart as ReLineChart, 
@@ -304,6 +306,10 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
   // States for the team and user data
   const [selectedTeam, setSelectedTeam] = useState<string>("");
   
+  // State for tracking selected objectives and key results
+  const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
+  const [selectedKeyResults, setSelectedKeyResults] = useState<string[]>([]);
+  
   // Query to fetch teams data
   const { data: teams } = useQuery({
     queryKey: ['/api/teams'],
@@ -314,18 +320,60 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
     queryKey: ['/api/users'],
   });
   
+  // Function to handle objective checkbox changes
+  const handleObjectiveChange = (objectiveId: string) => {
+    setSelectedObjectives(prevSelected => {
+      if (prevSelected.includes(objectiveId)) {
+        return prevSelected.filter(id => id !== objectiveId);
+      } else {
+        return [...prevSelected, objectiveId];
+      }
+    });
+  };
+  
+  // Function to handle key result checkbox changes
+  const handleKeyResultChange = (keyResultId: string) => {
+    setSelectedKeyResults(prevSelected => {
+      if (prevSelected.includes(keyResultId)) {
+        return prevSelected.filter(id => id !== keyResultId);
+      } else {
+        return [...prevSelected, keyResultId];
+      }
+    });
+  };
+  
   const { toast } = useToast();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    // Create payload with selected objectives and key results
+    const payload = {
+      keyResultId: keyResult.id,
+      progress,
+      confidenceLevel: confidence,
+      template: checkInTemplate,
+      focusLastWeek,
+      goalsThisWeek,
+      challenges,
+      needsForOKRs,
+      selectedObjectives,
+      selectedKeyResults,
+      teamId: selectedTeam || null
+    };
+    
+    // Log the payload for debugging (This would be replaced with an API call in production)
+    console.log("Check-in submission payload:", payload);
+    
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       toast({
         title: "Check-in submitted",
-        description: "Your weekly OKR check-in has been recorded.",
+        description: "Your weekly OKR check-in has been recorded with " + 
+          selectedObjectives.length + " objectives and " + 
+          selectedKeyResults.length + " key results.",
       });
       onClose();
     }, 1000);
@@ -479,25 +527,109 @@ function CheckInForm({ keyResult, onClose }: { keyResult: any; onClose: () => vo
           />
         </div>
         
-        <div className="space-y-3 pt-4">
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-gray-700">Select Objectives & Key Results</h3>
+            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm" 
+              onClick={() => window.location.href = "/objectives"}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-              <span>New goal updates</span>
-            </Button>
-            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-              <span>Link past goal updates</span>
-            </Button>
-            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span>Add goals from your last check-in</span>
-            </Button>
-            <Button type="button" variant="outline" className="flex items-center gap-1.5" size="sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              <span>Add goals with me as "Owner"</span>
+              <span>New Objective Updates</span>
             </Button>
           </div>
+          
+          <Card>
+            <CardContent className="p-4">
+              <div className="space-y-4">
+                {/* Assigned Objectives */}
+                <div>
+                  <h4 className="text-sm font-medium mb-3">Your Assigned Objectives</h4>
+                  <div className="space-y-2">
+                    {/* This would normally be fetched from API, using mock data for now */}
+                    <div className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md">
+                      <Checkbox 
+                        id="obj-1" 
+                        className="mt-1" 
+                        checked={selectedObjectives.includes("obj-1")}
+                        onCheckedChange={() => handleObjectiveChange("obj-1")}
+                      />
+                      <div className="space-y-1">
+                        <label htmlFor="obj-1" className="text-sm font-medium cursor-pointer">
+                          Improve customer satisfaction and loyalty
+                        </label>
+                        <p className="text-xs text-muted-foreground">75% complete • Due on Oct 15, 2023</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md">
+                      <Checkbox 
+                        id="obj-2" 
+                        className="mt-1" 
+                        checked={selectedObjectives.includes("obj-2")}
+                        onCheckedChange={() => handleObjectiveChange("obj-2")}
+                      />
+                      <div className="space-y-1">
+                        <label htmlFor="obj-2" className="text-sm font-medium cursor-pointer">
+                          Enhance digital marketing performance
+                        </label>
+                        <p className="text-xs text-muted-foreground">45% complete • Due on Nov 10, 2023</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Assigned Key Results */}
+                <div>
+                  <h4 className="text-sm font-medium mb-3">Your Assigned Key Results</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md">
+                      <Checkbox 
+                        id="kr-1" 
+                        className="mt-1" 
+                        checked={selectedKeyResults.includes("kr-1")}
+                        onCheckedChange={() => handleKeyResultChange("kr-1")}
+                      />
+                      <div className="space-y-1">
+                        <label htmlFor="kr-1" className="text-sm font-medium cursor-pointer">
+                          Increase customer retention rate from 75% to 85%
+                        </label>
+                        <p className="text-xs text-muted-foreground">Under "Improve customer satisfaction and loyalty"</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md">
+                      <Checkbox 
+                        id="kr-2" 
+                        className="mt-1" 
+                        checked={selectedKeyResults.includes("kr-2")}
+                        onCheckedChange={() => handleKeyResultChange("kr-2")}
+                      />
+                      <div className="space-y-1">
+                        <label htmlFor="kr-2" className="text-sm font-medium cursor-pointer">
+                          Reduce customer acquisition cost by 20%
+                        </label>
+                        <p className="text-xs text-muted-foreground">Under "Enhance digital marketing performance"</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded-md">
+                      <Checkbox 
+                        id="kr-3" 
+                        className="mt-1" 
+                        checked={selectedKeyResults.includes("kr-3")}
+                        onCheckedChange={() => handleKeyResultChange("kr-3")}
+                      />
+                      <div className="space-y-1">
+                        <label htmlFor="kr-3" className="text-sm font-medium cursor-pointer">
+                          Increase website conversion rate from 2% to 3.5%
+                        </label>
+                        <p className="text-xs text-muted-foreground">Under "Enhance digital marketing performance"</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
       
