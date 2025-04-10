@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { Search, Menu, Bell, HelpCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { QuickStartGuide } from "@/components/quick-start-guide";
 
 interface BreadcrumbItem {
   label: string;
@@ -106,10 +107,10 @@ export function Header() {
             <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary-500"></span>
           </button>
 
-          {/* Help */}
-          <button className="p-1 rounded-full text-neutral-500 hover:text-neutral-700 ml-2">
-            <HelpCircle className="h-6 w-6" />
-          </button>
+          {/* Quick Start Guide */}
+          <div className="ml-2">
+            <QuickStartGuide />
+          </div>
         </div>
       </div>
     </header>
