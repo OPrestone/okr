@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield, Download, Eye } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield, Download, Eye, LayoutDashboard } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -1496,6 +1496,45 @@ export default function Configure() {
                   />
                 </div>
               </div>
+              
+              {/* System Logo */}
+              <div className="flex flex-col md:flex-row gap-4 items-center border rounded-lg p-3 bg-gray-50 w-full md:w-auto mt-4">
+                <div className="flex-shrink-0 w-16 h-16 bg-white rounded-lg border flex items-center justify-center overflow-hidden">
+                  <div className="text-center">
+                    <LayoutDashboard className="h-8 w-8 text-gray-300" />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <Label htmlFor="system-logo-upload" className="text-sm font-medium">System Logo</Label>
+                  <p className="text-xs text-gray-500">Max size: 2MB. This logo appears in the dashboard.</p>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full md:w-auto text-sm h-8 mt-1"
+                      size="sm"
+                      onClick={() => document.getElementById('system-logo-upload')?.click()}
+                      disabled={isUploadingSystemLogo}
+                    >
+                      {isUploadingSystemLogo ? (
+                        <>
+                          <span className="animate-spin mr-2">⟳</span>
+                          Uploading...
+                        </>
+                      ) : (
+                        "Upload Logo"
+                      )}
+                    </Button>
+                  </div>
+                  <Input 
+                    type="file" 
+                    id="system-logo-upload" 
+                    className="hidden" 
+                    accept="image/png, image/jpeg, image/svg+xml" 
+                    onChange={handleSystemLogoUpload}
+                  />
+                </div>
+              </div>
+              
               <Button 
                 className="flex items-center gap-2"
                 onClick={handleSaveGeneralSettings}
