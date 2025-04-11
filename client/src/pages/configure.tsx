@@ -534,10 +534,7 @@ export default function Configure() {
   const [isCadenceSettingsSaving, setIsCadenceSettingsSaving] = useState(false);
   const [isCycleSaving, setIsCycleSaving] = useState(false);
   
-  // Integration states
-  const [isSlackConnecting, setIsSlackConnecting] = useState(false);
-  const [isGoogleCalendarConnecting, setIsGoogleCalendarConnecting] = useState(false);
-  const [isJiraConnecting, setIsJiraConnecting] = useState(false);
+
   
   // Handler for saving general settings
   const handleSaveGeneralSettings = () => {
@@ -800,62 +797,59 @@ export default function Configure() {
   
   // Cadence Settings
   const handleSaveCadenceSettings = () => {
-    setIsCadenceSaving(true);
+    setIsCadenceSettingsSaving(true);
     setTimeout(() => {
       toast({
         title: "Cadence settings saved",
         description: "Your check-in and review cadence settings have been updated.",
       });
-      setIsCadenceSaving(false);
+      setIsCadenceSettingsSaving(false);
     }, 1000);
   };
   
   // Integration Handlers
   const handleSlackConnect = () => {
-    setIsSlackConnecting(true);
     toast({
       title: "Connecting to Slack",
       description: "Setting up Slack integration...",
     });
     
+    // Simulate API call
     setTimeout(() => {
       toast({
         title: "Slack connected",
         description: "Successfully connected to Slack workspace.",
       });
-      setIsSlackConnecting(false);
     }, 2000);
   };
   
   const handleGoogleCalendarConnect = () => {
-    setIsGoogleCalendarConnecting(true);
     toast({
       title: "Connecting to Google Calendar",
       description: "Setting up Google Calendar integration...",
     });
     
+    // Simulate API call
     setTimeout(() => {
       toast({
         title: "Google Calendar connected",
         description: "Successfully connected to Google Calendar.",
       });
-      setIsGoogleCalendarConnecting(false);
     }, 2000);
   };
   
   const handleJiraConnect = () => {
-    setIsJiraConnecting(true);
     toast({
       title: "Connecting to Jira",
       description: "Setting up Jira integration...",
     });
     
+    // Simulate API call
     setTimeout(() => {
       toast({
         title: "Jira connected",
         description: "Successfully connected to Jira.",
       });
-      setIsJiraConnecting(false);
     }, 2000);
   };
   
