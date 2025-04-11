@@ -1,10 +1,10 @@
 import { 
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
-  FinancialData, InsertFinancialData, Cycle, InsertCycle,
+  FinancialData, InsertFinancialData, Cycle, InsertCycle, SystemSetting,
   users, teams, objectives, keyResults, meetings, resources, financialData, cycles,
   checkIns, comments, userCycles, teamCycles, notifications, meetingAgendaItems,
-  companySettings
+  companySettings, systemSettings
 } from "@shared/schema";
 import { db } from './db';
 import { eq, and, gt, gte, lte, between, sql, desc, asc, isNull, not, or } from 'drizzle-orm';
