@@ -27,7 +27,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getAllUsers(): Promise<User[]> {
-    return db.select().from(users).where(eq(users.isActive, true));
+    return db.select().from(users);
   }
   
   async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
@@ -49,7 +49,7 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getAllTeams(): Promise<Team[]> {
-    return db.select().from(teams).where(eq(teams.isActive, true));
+    return db.select().from(teams);
   }
   
   async createTeam(insertTeam: InsertTeam): Promise<Team> {
@@ -480,10 +480,10 @@ export class DatabaseStorage implements IStorage {
     
     // Create cycle relationships with users and teams
     if (cycle.id) {
-      // Create user_cycles for all active users
-      const activeUsers = await db.select().from(users).where(eq(users.isActive, true));
-      if (activeUsers.length > 0) {
-        const userCycleValues = activeUsers.map(user => ({
+      // Create user_cycles for all users
+      const allUsers = await db.select().from(users);
+      if (allUsers.length > 0) {
+        const userCycleValues = allUsers.map(user => ({
           userId: user.id,
           cycleId: cycle.id,
         }));
@@ -491,10 +491,10 @@ export class DatabaseStorage implements IStorage {
         await db.insert(userCycles).values(userCycleValues);
       }
       
-      // Create team_cycles for all active teams
-      const activeTeams = await db.select().from(teams).where(eq(teams.isActive, true));
-      if (activeTeams.length > 0) {
-        const teamCycleValues = activeTeams.map(team => ({
+      // Create team_cycles for all teams
+      const allTeams = await db.select().from(teams);
+      if (allTeams.length > 0) {
+        const teamCycleValues = allTeams.map(team => ({
           teamId: team.id,
           cycleId: cycle.id,
         }));
