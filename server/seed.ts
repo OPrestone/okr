@@ -1,6 +1,6 @@
 import { db } from './db';
 import { 
-  users, teams, objectives, keyResults, meetings, resources
+  users, teams, objectives, keyResults, meetings, resources, financialData, cycles
 } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
@@ -16,6 +16,8 @@ async function seedDatabase() {
     await db.delete(objectives);
     await db.delete(meetings);
     await db.delete(resources);
+    await db.delete(financialData);
+    await db.delete(cycles);
     await db.delete(users);
     await db.delete(teams);
 
@@ -229,6 +231,107 @@ async function seedDatabase() {
 
     const insertedResources = await db.insert(resources).values(resourcesData).returning();
     console.log(`Inserted ${insertedResources.length} resources`);
+
+    // Financial Data
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    const financialDataEntries = [
+      {
+        date: new Date(currentYear, currentMonth - 3, 15), // 3 months ago
+        revenue: 720000.00,
+        cost: 450000.00,
+        ebitda: 270000.00,
+        profitAfterTaxMargin: 0.28,
+        cumulativeAudience: 125000,
+        notes: "Q1 financial performance data",
+        objectiveId: insertedObjectives[3].id, // Link to revenue objective
+        uploadedById: insertedUsers[0].id
+      },
+      {
+        date: new Date(currentYear, currentMonth - 2, 15), // 2 months ago
+        revenue: 780000.00,
+        cost: 470000.00,
+        ebitda: 310000.00,
+        profitAfterTaxMargin: 0.31,
+        cumulativeAudience: 140000,
+        notes: "Strong performance in new markets",
+        objectiveId: insertedObjectives[3].id,
+        uploadedById: insertedUsers[0].id
+      },
+      {
+        date: new Date(currentYear, currentMonth - 1, 15), // 1 month ago
+        revenue: 820000.00,
+        cost: 490000.00,
+        ebitda: 330000.00,
+        profitAfterTaxMargin: 0.30,
+        cumulativeAudience: 155000,
+        notes: "Increasing customer acquisition",
+        objectiveId: insertedObjectives[3].id,
+        uploadedById: insertedUsers[0].id
+      },
+      {
+        date: new Date(currentYear, currentMonth, 15), // Current month
+        revenue: 850000.00,
+        cost: 510000.00,
+        ebitda: 340000.00,
+        profitAfterTaxMargin: 0.29,
+        cumulativeAudience: 168000,
+        notes: "Product launch impact on revenue",
+        objectiveId: insertedObjectives[3].id,
+        uploadedById: insertedUsers[0].id
+      }
+    ];
+    
+    const insertedFinancialData = await db.insert(financialData).values(financialDataEntries).returning();
+    console.log(`Inserted ${insertedFinancialData.length} financial data entries`);
+    
+    // Cycles
+    const cyclesData = [
+      {
+        name: "Q1 2025",
+        description: "First quarter objectives and key results",
+        startDate: new Date(2025, 0, 1), // Jan 1, 2025
+        endDate: new Date(2025, 2, 31), // Mar 31, 2025
+        status: "completed",
+        type: "quarterly",
+        createdById: insertedUsers[0].id,
+        isDefault: false
+      },
+      {
+        name: "Q2 2025",
+        description: "Second quarter objectives and key results",
+        startDate: new Date(2025, 3, 1), // Apr 1, 2025
+        endDate: new Date(2025, 5, 30), // Jun 30, 2025
+        status: "active",
+        type: "quarterly",
+        createdById: insertedUsers[0].id,
+        isDefault: true
+      },
+      {
+        name: "Q3 2025",
+        description: "Third quarter objectives and key results",
+        startDate: new Date(2025, 6, 1), // Jul 1, 2025
+        endDate: new Date(2025, 8, 30), // Sep 30, 2025
+        status: "upcoming",
+        type: "quarterly",
+        createdById: insertedUsers[0].id,
+        isDefault: false
+      },
+      {
+        name: "Annual Plan 2025",
+        description: "Company-wide annual objectives",
+        startDate: new Date(2025, 0, 1), // Jan 1, 2025
+        endDate: new Date(2025, 11, 31), // Dec 31, 2025
+        status: "active",
+        type: "annual",
+        createdById: insertedUsers[0].id,
+        isDefault: false
+      }
+    ];
+    
+    const insertedCycles = await db.insert(cycles).values(cyclesData).returning();
+    console.log(`Inserted ${insertedCycles.length} cycles`);
 
     console.log('Database seeding completed successfully!');
   } catch (error) {
