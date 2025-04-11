@@ -38,15 +38,10 @@ export default function Reporting() {
   // Preview report data mutation
   const previewMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/reports/preview', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      return apiRequest('POST', '/api/reports/preview', data);
     },
-    onSuccess: (data) => {
+    onSuccess: async (response) => {
+      const data = await response.json();
       if (data.success && data.preview) {
         setPreviewData(data.preview);
       } else {
@@ -69,13 +64,7 @@ export default function Reporting() {
   // Excel export mutation
   const excelMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/reports/excel', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      return apiRequest('POST', '/api/reports/excel', data);
     },
     onSuccess: (data) => {
       if (data.success && data.reportUrl) {
@@ -101,13 +90,7 @@ export default function Reporting() {
   // PowerPoint export mutation
   const pptMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/reports/powerpoint', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      return apiRequest('POST', '/api/reports/powerpoint', data);
     },
     onSuccess: (data) => {
       if (data.success && data.reportUrl) {
