@@ -734,11 +734,50 @@ export default function Configure() {
   };
   
   // Teams Settings
-  const handleCreateTeam = () => {
-    toast({
-      title: "Create new team",
-      description: "Opening team creation form...",
-    });
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [teamFormOpen, setTeamFormOpen] = useState(false);
+  
+  const teamFormSchema = z.object({
+    name: z.string().min(2, "Team name must be at least 2 characters"),
+    description: z.string().optional(),
+    leaderId: z.number().optional(),
+  });
+  
+  type TeamFormValues = z.infer<typeof teamFormSchema>;
+  
+  const teamForm = useForm<TeamFormValues>({
+    resolver: zodResolver(teamFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
+  
+  const handleCreateTeam = async (data: TeamFormValues) => {
+    setIsCreatingTeam(true);
+    
+    try {
+      // Replace with actual API call when backend is ready
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Team created",
+        description: `${data.name} team has been created successfully.`,
+      });
+      
+      // Close form and reset
+      setTeamFormOpen(false);
+      teamForm.reset();
+    } catch (error) {
+      toast({
+        title: "Error creating team",
+        description: "There was a problem creating the team. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Error creating team:", error);
+    } finally {
+      setIsCreatingTeam(false);
+    }
   };
   
   const handleSaveTeamSettings = () => {
@@ -1861,11 +1900,168 @@ export default function Configure() {
         
         {/* Users Settings */}
         <TabsContent value="users" className="space-y-6 pt-4">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
+              <p className="text-muted-foreground">
+                Configure user roles and manage team members
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Role
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogHeader>
+                    <DialogTitle>Add New Role</DialogTitle>
+                    <DialogDescription>
+                      Create a new user role with specific permissions.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="role-name">Role Name</Label>
+                      <Input
+                        id="role-name"
+                        placeholder="Enter role name"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role-description">Description (Optional)</Label>
+                      <Textarea
+                        id="role-description"
+                        placeholder="Brief description of this role"
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="space-y-4 mt-2">
+                      <h4 className="font-medium">Permissions</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="view-okrs">View OKRs</Label>
+                          <Switch id="view-okrs" defaultChecked />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="edit-okrs">Edit OKRs</Label>
+                          <Switch id="edit-okrs" defaultChecked />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="manage-users">Manage Users</Label>
+                          <Switch id="manage-users" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="manage-teams">Manage Teams</Label>
+                          <Switch id="manage-teams" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="admin-access">Admin Access</Label>
+                          <Switch id="admin-access" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline">Cancel</Button>
+                    <Button>Save Role</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    View Users
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[800px]">
+                  <DialogHeader>
+                    <DialogTitle>All Users</DialogTitle>
+                    <DialogDescription>
+                      View and manage users in your organization
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="max-h-[400px] overflow-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Role</TableHead>
+                          <TableHead>Team</TableHead>
+                          <TableHead>Last Active</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[
+                          { name: "Alex Morgan", role: "Admin", team: "Executive", lastActive: "Today" },
+                          { name: "Sarah Chen", role: "Manager", team: "Marketing", lastActive: "1 day ago" },
+                          { name: "John Davis", role: "Manager", team: "Product", lastActive: "2 hours ago" },
+                          { name: "Michael Brown", role: "Employee", team: "Sales", lastActive: "3 days ago" },
+                          { name: "Emma Wilson", role: "Employee", team: "Product", lastActive: "Just now" }
+                        ].map((user, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-8 w-8">
+                                  <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="font-medium">{user.name}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>{user.role}</TableCell>
+                            <TableCell>{user.team}</TableCell>
+                            <TableCell>{user.lastActive}</TableCell>
+                            <TableCell className="text-right">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem className="cursor-pointer">
+                                    Edit User
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="cursor-pointer">
+                                    Change Role
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="cursor-pointer">
+                                    Reset Password
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="cursor-pointer text-red-600">
+                                    Deactivate
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <DialogFooter className="mt-4">
+                    <Button variant="outline">Export Users</Button>
+                    <Button>Invite New User</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+          
           <Card>
             <CardHeader>
-              <CardTitle>User Permissions</CardTitle>
+              <CardTitle>User Roles and Permissions</CardTitle>
               <CardDescription>
-                Configure user roles and permissions
+                Configure user roles and their access levels
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -2125,13 +2321,101 @@ export default function Configure() {
                 Manage your organization's teams and their members
               </p>
             </div>
-            <Button 
-              className="flex items-center gap-2"
-              onClick={handleCreateTeam}
-            >
-              <Plus className="h-4 w-4" />
-              Create Team
-            </Button>
+            <Dialog open={teamFormOpen} onOpenChange={setTeamFormOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2" onClick={() => setTeamFormOpen(true)}>
+                  <Plus className="h-4 w-4" />
+                  Create Team
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Team</DialogTitle>
+                  <DialogDescription>
+                    Add a new team to your organization.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <Form {...teamForm}>
+                  <form onSubmit={teamForm.handleSubmit(handleCreateTeam)} className="space-y-4">
+                    <FormField
+                      control={teamForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Team Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter team name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={teamForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Brief description of the team's purpose and responsibilities" 
+                              className="min-h-[100px]" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={teamForm.control}
+                      name="leaderId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Team Lead</FormLabel>
+                          <Select 
+                            onValueChange={(value) => field.onChange(parseInt(value))}
+                            defaultValue={field.value ? String(field.value) : undefined}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select team lead" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="1">Alex Morgan</SelectItem>
+                              <SelectItem value="2">Sarah Chen</SelectItem>
+                              <SelectItem value="3">John Davis</SelectItem>
+                              <SelectItem value="4">Michael Brown</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <DialogFooter className="pt-4">
+                      <Button variant="outline" type="button" onClick={() => setTeamFormOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" disabled={isCreatingTeam}>
+                        {isCreatingTeam ? (
+                          <>
+                            <span className="animate-spin mr-2">⟳</span>
+                            Creating...
+                          </>
+                        ) : (
+                          'Create Team'
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
           </div>
           
           <Card>
