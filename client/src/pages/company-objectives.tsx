@@ -75,7 +75,13 @@ export default function CompanyObjectives() {
           <p className="text-neutral-600">Track and manage organization-wide objectives</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-1">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-1"
+            onClick={() => {
+              alert("Filter functionality activated");
+            }}
+          >
             <Filter className="h-4 w-4" />
             Filter
           </Button>
@@ -99,9 +105,11 @@ export default function CompanyObjectives() {
                   <span>Create OKRs with AI</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <FileEdit className="mr-2 h-4 w-4" />
-                <span>Create Draft OKRs</span>
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-draft-okr">
+                  <FileEdit className="mr-2 h-4 w-4" />
+                  <span>Create Draft OKRs</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
