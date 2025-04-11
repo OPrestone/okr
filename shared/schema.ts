@@ -123,6 +123,9 @@ export const insertCycleSchema = createInsertSchema(cycles).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  startDate: z.string().transform((str) => new Date(str)),
+  endDate: z.string().transform((str) => new Date(str)),
 });
 
 // User-Cycle relationship
@@ -253,6 +256,9 @@ export const insertObjectiveSchema = createInsertSchema(objectives).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  startDate: z.string().transform((str) => new Date(str)),
+  endDate: z.string().transform((str) => new Date(str)),
 });
 
 // Key Result schema
@@ -441,6 +447,9 @@ export const insertMeetingSchema = createInsertSchema(meetings).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  startTime: z.string().transform((str) => new Date(str)),
+  endTime: z.string().transform((str) => new Date(str)),
 });
 
 // Meeting Agenda Items schema
