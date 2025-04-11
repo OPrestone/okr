@@ -526,8 +526,16 @@ export default function Configure() {
   const [isEmailTemplateSaving, setIsEmailTemplateSaving] = useState(false);
   const [isTeamSaving, setIsTeamSaving] = useState(false);
   const [isObjectiveSaving, setIsObjectiveSaving] = useState(false);
-  const [isCadenceSaving, setIsCadenceSaving] = useState(false);
+  const [isDefaultSettingsSaving, setIsDefaultSettingsSaving] = useState(false);
+  const [isKeyResultTypesSaving, setIsKeyResultTypesSaving] = useState(false);
+  const [isApprovalSettingsSaving, setIsApprovalSettingsSaving] = useState(false);
+  const [isCadenceSettingsSaving, setIsCadenceSettingsSaving] = useState(false);
   const [isCycleSaving, setIsCycleSaving] = useState(false);
+  
+  // Integration states
+  const [isSlackConnecting, setIsSlackConnecting] = useState(false);
+  const [isGoogleCalendarConnecting, setIsGoogleCalendarConnecting] = useState(false);
+  const [isJiraConnecting, setIsJiraConnecting] = useState(false);
   
   // Handler for saving general settings
   const handleSaveGeneralSettings = () => {
@@ -752,6 +760,42 @@ export default function Configure() {
     }, 1000);
   };
   
+  // Default Settings
+  const handleSaveDefaultSettings = () => {
+    setIsDefaultSettingsSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Default settings saved",
+        description: "Your OKR default settings have been updated.",
+      });
+      setIsDefaultSettingsSaving(false);
+    }, 1000);
+  };
+  
+  // Key Result Types
+  const handleSaveKeyResultTypes = () => {
+    setIsKeyResultTypesSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Key result types saved",
+        description: "Your key result type settings have been updated.",
+      });
+      setIsKeyResultTypesSaving(false);
+    }, 1000);
+  };
+  
+  // Approval Settings
+  const handleSaveApprovalSettings = () => {
+    setIsApprovalSettingsSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Approval settings saved",
+        description: "Your OKR approval workflow settings have been updated.",
+      });
+      setIsApprovalSettingsSaving(false);
+    }, 1000);
+  };
+  
   // Cadence Settings
   const handleSaveCadenceSettings = () => {
     setIsCadenceSaving(true);
@@ -762,6 +806,55 @@ export default function Configure() {
       });
       setIsCadenceSaving(false);
     }, 1000);
+  };
+  
+  // Integration Handlers
+  const handleSlackConnect = () => {
+    setIsSlackConnecting(true);
+    toast({
+      title: "Connecting to Slack",
+      description: "Setting up Slack integration...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Slack connected",
+        description: "Successfully connected to Slack workspace.",
+      });
+      setIsSlackConnecting(false);
+    }, 2000);
+  };
+  
+  const handleGoogleCalendarConnect = () => {
+    setIsGoogleCalendarConnecting(true);
+    toast({
+      title: "Connecting to Google Calendar",
+      description: "Setting up Google Calendar integration...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Google Calendar connected",
+        description: "Successfully connected to Google Calendar.",
+      });
+      setIsGoogleCalendarConnecting(false);
+    }, 2000);
+  };
+  
+  const handleJiraConnect = () => {
+    setIsJiraConnecting(true);
+    toast({
+      title: "Connecting to Jira",
+      description: "Setting up Jira integration...",
+    });
+    
+    setTimeout(() => {
+      toast({
+        title: "Jira connected",
+        description: "Successfully connected to Jira.",
+      });
+      setIsJiraConnecting(false);
+    }, 2000);
   };
   
   // Cycle Settings
