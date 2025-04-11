@@ -5,6 +5,33 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Generate a Google Meet link for a meeting
+ * @param meetingTitle - The title of the meeting (will be used in the URL)
+ * @returns A Google Meet URL
+ */
+export function generateGoogleMeetLink(meetingTitle: string): string {
+  // Create a sanitized version of the meeting title for the URL
+  const sanitizedTitle = meetingTitle
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')  // Replace non-alphanumeric chars with dashes
+    .replace(/^-|-$/g, '')        // Remove leading/trailing dashes
+    .substring(0, 30);            // Limit length
+    
+  // Generate a random code to make the meeting ID unique (3 parts of 3 characters each)
+  const randomCode = Math.random().toString(36).substring(2, 11);
+  const formattedCode = [
+    randomCode.substring(0, 3),
+    randomCode.substring(3, 6),
+    randomCode.substring(6, 9)
+  ].join('-');
+  
+  // Combine the title and random code to create the meeting ID
+  const meetingId = sanitizedTitle ? `${sanitizedTitle}-${formattedCode}` : formattedCode;
+  
+  return `https://meet.google.com/${meetingId}`;
+}
+
 export function formatDate(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
   return d.toLocaleDateString("en-US", {
