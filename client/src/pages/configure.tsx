@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield, Download, Eye } from "lucide-react";
 import {
   Dialog,
@@ -1347,20 +1349,711 @@ export default function Configure() {
         </TabsContent>
         
         {/* Teams Settings */}
-        <TabsContent value="teams" className="pt-4">
+        <TabsContent value="teams" className="pt-4 space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Teams</h2>
+              <p className="text-muted-foreground">
+                Manage your organization's teams and their members
+              </p>
+            </div>
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Create Team
+            </Button>
+          </div>
+          
           <Card>
             <CardHeader>
-              <CardTitle>Team Configuration</CardTitle>
+              <CardTitle>All Teams</CardTitle>
               <CardDescription>
-                Manage team structure and settings
+                View and manage all teams in your organization
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600 mb-6">
-                Team configuration settings would be displayed here
-              </p>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Team Name</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Members</TableHead>
+                    <TableHead>Team Lead</TableHead>
+                    <TableHead>Performance</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">Marketing Team</TableCell>
+                    <TableCell>Oversees marketing strategy and execution</TableCell>
+                    <TableCell>8 members</TableCell>
+                    <TableCell>Alex Morgan</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded">
+                          92%
+                        </div>
+                        <Progress value={92} className="h-2 w-12" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 px-2">
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Users className="h-5 w-5" /> Marketing Team
+                            </DialogTitle>
+                            <DialogDescription>
+                              Team details and member management
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <Tabs defaultValue="members">
+                            <TabsList className="mb-4">
+                              <TabsTrigger value="overview">Overview</TabsTrigger>
+                              <TabsTrigger value="members">Members</TabsTrigger>
+                              <TabsTrigger value="objectives">Objectives</TabsTrigger>
+                            </TabsList>
+                            
+                            <TabsContent value="overview" className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Name</Label>
+                                  <div className="font-medium">Marketing Team</div>
+                                </div>
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Lead</Label>
+                                  <div className="font-medium">Alex Morgan</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-sm text-muted-foreground">Description</Label>
+                                <div className="text-sm">
+                                  Oversees marketing strategy and execution for all company products and services. Responsible for branding, content marketing, social media presence, and customer acquisition campaigns.
+                                </div>
+                              </div>
+                              
+                              <div className="border rounded-md p-4">
+                                <Label className="text-sm text-muted-foreground mb-2 block">Performance</Label>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="text-xl font-semibold">92%</div>
+                                  <Badge variant="outline" className="bg-green-50 text-green-700">Above Target</Badge>
+                                </div>
+                                <Progress value={92} className="h-2 mb-2" />
+                                <p className="text-xs text-muted-foreground">Based on OKR completion rate in current cycle</p>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="members" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Members (8)</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Member
+                                </Button>
+                              </div>
+                              
+                              <div className="border rounded-md">
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Name</TableHead>
+                                      <TableHead>Role</TableHead>
+                                      <TableHead>Email</TableHead>
+                                      <TableHead>OKRs</TableHead>
+                                      <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    <TableRow className="bg-amber-50">
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/alex-morgan.jpg" alt="Alex Morgan" />
+                                            <AvatarFallback>AM</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">Alex Morgan</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-800">Team Lead</Badge>
+                                      </TableCell>
+                                      <TableCell>alex.morgan@company.com</TableCell>
+                                      <TableCell>3 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                    
+                                    <TableRow>
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/john-smith.jpg" alt="John Smith" />
+                                            <AvatarFallback>JS</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">John Smith</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline">Member</Badge>
+                                      </TableCell>
+                                      <TableCell>john.smith@company.com</TableCell>
+                                      <TableCell>2 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                    
+                                    <TableRow>
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/sarah-chen.jpg" alt="Sarah Chen" />
+                                            <AvatarFallback>SC</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">Sarah Chen</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline">Member</Badge>
+                                      </TableCell>
+                                      <TableCell>sarah.chen@company.com</TableCell>
+                                      <TableCell>1 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="objectives" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Objectives</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Objective
+                                </Button>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                <div className="border rounded-md p-4 hover:border-neutral-300 transition-colors">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-medium">Increase social media engagement by 40%</h4>
+                                      <p className="text-sm text-muted-foreground">Q2 2025</p>
+                                    </div>
+                                    <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                                      In Progress
+                                    </Badge>
+                                  </div>
+                                  <Progress value={65} className="h-2 my-4" />
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium">65% complete</span>
+                                    <Button variant="outline" size="sm">
+                                      View Details
+                                    </Button>
+                                  </div>
+                                </div>
+                                
+                                <div className="border rounded-md p-4 hover:border-neutral-300 transition-colors">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-medium">Launch 2 new marketing campaigns for Q2</h4>
+                                      <p className="text-sm text-muted-foreground">Q2 2025</p>
+                                    </div>
+                                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                                      Completed
+                                    </Badge>
+                                  </div>
+                                  <Progress value={100} className="h-2 my-4" />
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium">100% complete</span>
+                                    <Button variant="outline" size="sm">
+                                      View Details
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                          
+                          <DialogFooter>
+                            <Button variant="outline">
+                              Close
+                            </Button>
+                            <Button>
+                              Save Changes
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                  
+                  <TableRow>
+                    <TableCell className="font-medium">Product Team</TableCell>
+                    <TableCell>Manages product development and roadmap</TableCell>
+                    <TableCell>12 members</TableCell>
+                    <TableCell>Emily Johnson</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-amber-100 text-amber-800 text-xs font-medium px-2 py-0.5 rounded">
+                          78%
+                        </div>
+                        <Progress value={78} className="h-2 w-12" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 px-2">
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Users className="h-5 w-5" /> Product Team
+                            </DialogTitle>
+                            <DialogDescription>
+                              Team details and member management
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <Tabs defaultValue="members">
+                            <TabsList className="mb-4">
+                              <TabsTrigger value="overview">Overview</TabsTrigger>
+                              <TabsTrigger value="members">Members</TabsTrigger>
+                              <TabsTrigger value="objectives">Objectives</TabsTrigger>
+                            </TabsList>
+                            
+                            <TabsContent value="overview" className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Name</Label>
+                                  <div className="font-medium">Product Team</div>
+                                </div>
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Lead</Label>
+                                  <div className="font-medium">Emily Johnson</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-sm text-muted-foreground">Description</Label>
+                                <div className="text-sm">
+                                  Manages product development and roadmap planning. Responsible for feature prioritization, user research, and working with development to deliver high-quality products.
+                                </div>
+                              </div>
+                              
+                              <div className="border rounded-md p-4">
+                                <Label className="text-sm text-muted-foreground mb-2 block">Performance</Label>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="text-xl font-semibold">78%</div>
+                                  <Badge variant="outline" className="bg-amber-50 text-amber-700">On Target</Badge>
+                                </div>
+                                <Progress value={78} className="h-2 mb-2" />
+                                <p className="text-xs text-muted-foreground">Based on OKR completion rate in current cycle</p>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="members" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Members (12)</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Member
+                                </Button>
+                              </div>
+                              
+                              <div className="border rounded-md">
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Name</TableHead>
+                                      <TableHead>Role</TableHead>
+                                      <TableHead>Email</TableHead>
+                                      <TableHead>OKRs</TableHead>
+                                      <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    <TableRow className="bg-amber-50">
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/emily-johnson.jpg" alt="Emily Johnson" />
+                                            <AvatarFallback>EJ</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">Emily Johnson</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-800">Team Lead</Badge>
+                                      </TableCell>
+                                      <TableCell>emily.johnson@company.com</TableCell>
+                                      <TableCell>4 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                    
+                                    <TableRow>
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/michael-davis.jpg" alt="Michael Davis" />
+                                            <AvatarFallback>MD</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">Michael Davis</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline">Member</Badge>
+                                      </TableCell>
+                                      <TableCell>michael.davis@company.com</TableCell>
+                                      <TableCell>2 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="objectives" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Objectives</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Objective
+                                </Button>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                <div className="border rounded-md p-4 hover:border-neutral-300 transition-colors">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-medium">Launch new product dashboard by Q3</h4>
+                                      <p className="text-sm text-muted-foreground">Q2 2025</p>
+                                    </div>
+                                    <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                                      In Progress
+                                    </Badge>
+                                  </div>
+                                  <Progress value={45} className="h-2 my-4" />
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium">45% complete</span>
+                                    <Button variant="outline" size="sm">
+                                      View Details
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                          
+                          <DialogFooter>
+                            <Button variant="outline">
+                              Close
+                            </Button>
+                            <Button>
+                              Save Changes
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                  
+                  <TableRow>
+                    <TableCell className="font-medium">Sales Team</TableCell>
+                    <TableCell>Drives revenue through direct sales</TableCell>
+                    <TableCell>6 members</TableCell>
+                    <TableCell>Robert Chang</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
+                          62%
+                        </div>
+                        <Progress value={62} className="h-2 w-12" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 px-2">
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Users className="h-5 w-5" /> Sales Team
+                            </DialogTitle>
+                            <DialogDescription>
+                              Team details and member management
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <Tabs defaultValue="members">
+                            <TabsList className="mb-4">
+                              <TabsTrigger value="overview">Overview</TabsTrigger>
+                              <TabsTrigger value="members">Members</TabsTrigger>
+                              <TabsTrigger value="objectives">Objectives</TabsTrigger>
+                            </TabsList>
+                            
+                            <TabsContent value="overview" className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Name</Label>
+                                  <div className="font-medium">Sales Team</div>
+                                </div>
+                                <div>
+                                  <Label className="text-sm text-muted-foreground">Team Lead</Label>
+                                  <div className="font-medium">Robert Chang</div>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label className="text-sm text-muted-foreground">Description</Label>
+                                <div className="text-sm">
+                                  Drives revenue through direct sales and account management. Responsible for customer acquisition, relationship management, and meeting quarterly revenue targets.
+                                </div>
+                              </div>
+                              
+                              <div className="border rounded-md p-4">
+                                <Label className="text-sm text-muted-foreground mb-2 block">Performance</Label>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="text-xl font-semibold">62%</div>
+                                  <Badge variant="outline" className="bg-red-50 text-red-700">Below Target</Badge>
+                                </div>
+                                <Progress value={62} className="h-2 mb-2" />
+                                <p className="text-xs text-muted-foreground">Based on OKR completion rate in current cycle</p>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="members" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Members (6)</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Member
+                                </Button>
+                              </div>
+                              
+                              <div className="border rounded-md">
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow>
+                                      <TableHead>Name</TableHead>
+                                      <TableHead>Role</TableHead>
+                                      <TableHead>Email</TableHead>
+                                      <TableHead>OKRs</TableHead>
+                                      <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    <TableRow className="bg-amber-50">
+                                      <TableCell>
+                                        <div className="flex items-center gap-2">
+                                          <Avatar className="h-8 w-8">
+                                            <AvatarImage src="/avatars/robert-chang.jpg" alt="Robert Chang" />
+                                            <AvatarFallback>RC</AvatarFallback>
+                                          </Avatar>
+                                          <div className="font-medium">Robert Chang</div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-800">Team Lead</Badge>
+                                      </TableCell>
+                                      <TableCell>robert.chang@company.com</TableCell>
+                                      <TableCell>2 active</TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                              <span className="sr-only">Open menu</span>
+                                              <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              View Profile
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer">
+                                              Change Role
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="cursor-pointer text-red-600">
+                                              Remove from Team
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            </TabsContent>
+                            
+                            <TabsContent value="objectives" className="space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-medium">Team Objectives</h3>
+                                <Button size="sm" className="flex items-center gap-2">
+                                  <Plus className="h-4 w-4" />
+                                  Add Objective
+                                </Button>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                <div className="border rounded-md p-4 hover:border-neutral-300 transition-colors">
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <h4 className="font-medium">Increase sales revenue by 30% in Q2</h4>
+                                      <p className="text-sm text-muted-foreground">Q2 2025</p>
+                                    </div>
+                                    <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                                      In Progress
+                                    </Badge>
+                                  </div>
+                                  <Progress value={62} className="h-2 my-4" />
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium">62% complete</span>
+                                    <Button variant="outline" size="sm">
+                                      View Details
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </TabsContent>
+                          </Tabs>
+                          
+                          <DialogFooter>
+                            <Button variant="outline">
+                              Close
+                            </Button>
+                            <Button>
+                              Save Changes
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
+          
+          <div className="flex items-center justify-between">
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Download className="h-4 w-4" />
+              Export Teams
+            </Button>
+            <div className="text-sm text-muted-foreground">
+              3 teams • 26 members
+            </div>
+          </div>
         </TabsContent>
         
         {/* Objectives Settings */}
