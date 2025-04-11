@@ -10,22 +10,17 @@ export const users = pgTable("users", {
   password: varchar("password", { length: 255 }).notNull(),
   fullName: varchar("full_name", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).notNull().unique(),
-  role: varchar("role", { length: 50 }).notNull(),
+  role: varchar("role", { length: 50 }).notNull().default("user"),
   teamId: integer("team_id"),
-  managerId: integer("manager_id").references(() => users.id),
+  position: text("position"),
+  bio: text("bio"),
   language: varchar("language", { length: 10 }).default("en"),
   avatarUrl: text("avatar_url"),
-  jobTitle: varchar("job_title", { length: 100 }),
-  department: varchar("department", { length: 100 }),
-  isActive: boolean("is_active").default(true),
-  lastLogin: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => {
   return {
     teamIdIdx: index("users_team_id_idx").on(table.teamId),
-    managerIdIdx: index("users_manager_id_idx").on(table.managerId),
-    emailIdx: index("users_email_idx").on(table.email),
   };
 });
 
@@ -34,13 +29,6 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   team: one(teams, {
     fields: [users.teamId],
     references: [teams.id],
-  }),
-  manager: one(users, {
-    fields: [users.managerId],
-    references: [users.id],
-  }),
-  directReports: many(users, {
-    relationName: "manager",
   }),
   objectives: many(objectives, {
     relationName: "owner",
@@ -71,13 +59,7 @@ export const teams = pgTable("teams", {
   name: varchar("name", { length: 100 }).notNull(),
   leaderId: integer("leader_id").references(() => users.id),
   description: text("description"),
-  memberCount: integer("member_count").default(0),
-  performance: real("performance").default(0),
   parentTeamId: integer("parent_team_id").references(() => teams.id),
-  department: varchar("department", { length: 100 }),
-  mission: text("mission"),
-  vision: text("vision"),
-  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => {
