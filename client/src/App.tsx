@@ -31,6 +31,7 @@ import SuggestedKeyResults from "./pages/suggested-key-results";
 import ImportFinancial from "./pages/import-financial";
 import CheckIns from "./pages/check-ins";
 import Search from "./pages/search";
+import TestLogo from "./pages/test-logo";
 
 function Router() {
   return (
@@ -62,6 +63,7 @@ function Router() {
           <Route path="/suggested-key-results" component={SuggestedKeyResults} />
           <Route path="/import-financial" component={ImportFinancial} />
           <Route path="/search" component={Search} />
+          <Route path="/test-logo" component={TestLogo} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
