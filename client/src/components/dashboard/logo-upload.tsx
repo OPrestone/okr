@@ -19,7 +19,7 @@ export function LogoUpload() {
 
   // Fetch the current company settings (including logo)
   const { data: companySettings, isLoading } = useQuery({
-    queryKey: ['/api/company/settings'],
+    queryKey: ['/api/company-settings'],
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -68,7 +68,8 @@ export function LogoUpload() {
       const formData = new FormData();
       formData.append('logo', uploadedImage);
       
-      await apiRequest('/api/company/logo', {
+      // Use fetch directly for file uploads instead of apiRequest
+      await fetch('/api/company-logo', {
         method: 'POST',
         body: formData,
         // Don't set Content-Type header as it will be set automatically with boundary
@@ -87,7 +88,7 @@ export function LogoUpload() {
       setIsDialogOpen(false);
       
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/company/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/company-settings'] });
       
     } catch (error) {
       console.error('Error uploading logo:', error);
