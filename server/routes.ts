@@ -248,6 +248,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create resource" });
     }
   });
+  
+  // Check-Ins endpoints
+  app.get('/api/check-ins/key-result/:keyResultId', async (req, res) => {
+    try {
+      const keyResultId = parseInt(req.params.keyResultId);
+      if (isNaN(keyResultId)) {
+        return res.status(400).json({ message: "Invalid key result ID" });
+      }
+      
+      const checkIns = await storage.getCheckInsByKeyResult(keyResultId);
+      res.json(checkIns);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch check-ins" });
+    }
+  });
+
+  app.post('/api/check-ins', async (req, res) => {
+    try {
+      const checkInData = insertCheckInSchema.parse(req.body);
+      const checkIn = await storage.createCheckIn(checkInData);
+      
+      // Update the key result with the new value
+      if (checkInData.keyResultId) {
+        const keyResult = await storage.getKeyResult(checkInData.keyResultId);
+        if (keyResult) {
+          await storage.updateKeyResult(keyResult.id, {
+            currentValue: checkInData.newValue,
+            lastUpdated: new Date()
+          });
+        }
+      }
+      
+      res.status(201).json(checkIn);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid check-in data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create check-in" });
+    }
+  });
 
   // Financial Data endpoints
   app.get('/api/financial-data', async (req, res) => {
