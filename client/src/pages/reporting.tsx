@@ -211,14 +211,14 @@ export default function Reporting() {
                   <Filter className="h-5 w-5 text-gray-500" />
                 </div>
                 <Select 
-                  defaultValue="" 
-                  onValueChange={(value) => setTeamId(value || null)}
+                  defaultValue="all" 
+                  onValueChange={(value) => setTeamId(value === "all" ? null : value)}
                 >
                   <SelectTrigger className="border-0 w-full">
                     <SelectValue placeholder="All Teams" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Teams</SelectItem>
+                    <SelectItem value="all">All Teams</SelectItem>
                     {teams && teams.map((team: Team) => (
                       <SelectItem key={team.id} value={team.id.toString()}>
                         {team.name}

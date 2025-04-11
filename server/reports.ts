@@ -1,5 +1,6 @@
 import exceljs from 'exceljs';
 const { Workbook } = exceljs;
+type Column = exceljs.Column;
 import PptxGenJS from 'pptxgenjs';
 import { storage } from './storage';
 import { Objective, KeyResult, Team, User } from '@shared/schema';
@@ -134,15 +135,19 @@ export async function generateExcelReport(filters: ReportFilters): Promise<strin
     }
     
     // Auto fit columns
-    keyResultsSheet.columns.forEach((column: Column) => {
-      column.width = 20;
-    });
+    if (keyResultsSheet.columns) {
+      keyResultsSheet.columns.forEach((column) => {
+        if (column) column.width = 20;
+      });
+    }
   }
   
   // Auto fit columns
-  worksheet.columns.forEach((column: Column) => {
-    column.width = 20;
-  });
+  if (worksheet.columns) {
+    worksheet.columns.forEach((column) => {
+      if (column) column.width = 20;
+    });
+  }
   
   // Add team performance if this is a summary report
   if (reportType === 'summary' || reportType === 'detailed') {
@@ -188,9 +193,11 @@ export async function generateExcelReport(filters: ReportFilters): Promise<strin
     }
     
     // Auto fit columns
-    teamsSheet.columns.forEach((column: Column) => {
-      column.width = 20;
-    });
+    if (teamsSheet.columns) {
+      teamsSheet.columns.forEach((column) => {
+        if (column) column.width = 20;
+      });
+    }
   }
   
   // Generate a unique filename
@@ -289,12 +296,9 @@ export async function generatePowerPointReport(filters: ReportFilters): Promise<
   );
   
   // Create table rows for objectives
-  const tableRows = [
-    [
-      { text: 'Title', options: { bold: true, fill: 'E0E0E0' } },
-      { text: 'Progress', options: { bold: true, fill: 'E0E0E0' } },
-      { text: 'Status', options: { bold: true, fill: 'E0E0E0' } }
-    ]
+  // Create more basic table data structure compatible with pptxgenjs
+  const tableData = [
+    ['Title', 'Progress', 'Status']
   ];
   
   // Only include top objectives based on report type
@@ -303,14 +307,22 @@ export async function generatePowerPointReport(filters: ReportFilters): Promise<
   
   for (let i = 0; i < Math.min(sortedObjectives.length, limitObjectives); i++) {
     const objective = sortedObjectives[i];
-    tableRows.push([
-      { text: objective.title },
-      { text: `${objective.progress || 0}%` },
-      { text: objective.status || 'Not Started' }
+    tableData.push([
+      objective.title,
+      `${objective.progress || 0}%`,
+      objective.status || 'Not Started'
     ]);
   }
   
-  objectivesSlide.addTable(tableRows, { x: 0.5, y: 1.2, w: 9.0, colW: [5, 2, 2] });
+  objectivesSlide.addTable(tableData, { 
+    x: 0.5, 
+    y: 1.2, 
+    w: 9.0, 
+    colW: [5, 2, 2],
+    rowH: 0.6,
+    border: { type: 'solid', pt: 1, color: 'cccccc' },
+    theadStyle: { bold: true, fontSize: 14, fill: 'E0E0E0' } 
+  });
   
   // Add key achievements slide if this is a detailed or highlights report
   if (reportType === 'detailed' || reportType === 'highlights') {
