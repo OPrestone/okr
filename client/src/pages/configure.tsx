@@ -1735,7 +1735,10 @@ export default function Configure() {
                 Manage your organization's teams and their members
               </p>
             </div>
-            <Button className="flex items-center gap-2">
+            <Button 
+              className="flex items-center gap-2"
+              onClick={handleCreateTeam}
+            >
               <Plus className="h-4 w-4" />
               Create Team
             </Button>
@@ -2551,9 +2554,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Default Settings
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveDefaultSettings}
+                disabled={isDefaultSettingsSaving}
+              >
+                {isDefaultSettingsSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Default Settings
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -2611,9 +2627,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Key Result Types
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveKeyResultTypes}
+                disabled={isKeyResultTypesSaving}
+              >
+                {isKeyResultTypesSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Key Result Types
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -2712,9 +2741,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Approval Settings
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveApprovalSettings}
+                disabled={isApprovalSettingsSaving}
+              >
+                {isApprovalSettingsSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Approval Settings
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -2857,9 +2899,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Cadence Settings
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveCadenceSettings}
+                disabled={isCadenceSettingsSaving}
+              >
+                {isCadenceSettingsSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Cadence Settings
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
