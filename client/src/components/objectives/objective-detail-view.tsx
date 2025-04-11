@@ -197,10 +197,7 @@ export function ObjectiveDetailView({ objectiveId, isOpen, onClose }: ObjectiveD
   // Update objective mutation
   const updateObjectiveMutation = useMutation({
     mutationFn: async (data: ObjectiveFormValues) => {
-      return apiRequest(`/api/objectives/${objectiveId}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data)
-      }) as Promise<any>;
+      return apiRequest('PATCH', `/api/objectives/${objectiveId}`, data) as Promise<any>;
     },
     onSuccess: () => {
       // Invalidate queries to refetch data

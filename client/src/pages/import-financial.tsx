@@ -63,10 +63,7 @@ export default function ImportFinancial() {
   // Create mutation for submitting form
   const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      return apiRequest('/api/financial-data', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/financial-data', data);
     },
     onSuccess: () => {
       toast({
