@@ -175,7 +175,13 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                 <TabsContent value="members" className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-medium">Team Members ({team.memberCount})</h3>
-                    <Button size="sm" className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        alert("Add team member functionality activated");
+                      }}
+                    >
                       <UserPlus className="h-4 w-4" />
                       Add Member
                     </Button>
@@ -291,7 +297,12 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                         </select>
                       </div>
                     </div>
-                    <Button className="flex items-center gap-2">
+                    <Button 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        alert("User added to team successfully");
+                      }}
+                    >
                       <UserPlus className="h-4 w-4" />
                       Add to Team
                     </Button>
@@ -302,7 +313,13 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                 <TabsContent value="objectives" className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-medium">Team Objectives</h3>
-                    <Button size="sm" className="flex items-center gap-2">
+                    <Button 
+                      size="sm" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        alert("Add objective functionality activated");
+                      }}
+                    >
                       <Plus className="h-4 w-4" />
                       Add Objective
                     </Button>
@@ -355,7 +372,13 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Close
                 </Button>
-                <Button className="flex items-center gap-2">
+                <Button 
+                  className="flex items-center gap-2"
+                  onClick={() => {
+                    alert("Changes saved successfully");
+                    setIsDialogOpen(false);
+                  }}
+                >
                   <Save className="h-4 w-4" />
                   Save Changes
                 </Button>

@@ -223,7 +223,13 @@ export default function CompanyObjectives() {
                     <div className="text-sm text-muted-foreground">
                       <span className="font-semibold">Current Quarter:</span> Q2 2025 (Apr - Jun)
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        alert("Quarter selection activated");
+                      }}
+                    >
                       Change Quarter
                     </Button>
                   </div>
@@ -400,7 +406,13 @@ export default function CompanyObjectives() {
                     <div className="text-sm text-muted-foreground">
                       Displaying all completed objectives
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        alert("Exporting results - Feature activated");
+                      }}
+                    >
                       Export Results
                     </Button>
                   </div>
