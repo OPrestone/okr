@@ -597,12 +597,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fileUrl = `/uploads/${req.file.filename}`;
       
       // Update system settings with the new logo URL
-      const updatedSettings = await storage.updateSystemSetting('systemLogoUrl', fileUrl, 'System logo URL', 'appearance');
+      const updatedSetting = await storage.updateSystemSetting(
+        'systemLogo', 
+        fileUrl, 
+        'System logo displayed in the dashboard header', 
+        'appearance'
+      );
       
       res.json({ 
         success: true, 
         logoUrl: fileUrl,
-        settings: updatedSettings
+        setting: updatedSetting
       });
     } catch (error) {
       console.error('Error uploading system logo:', error);
