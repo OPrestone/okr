@@ -20,6 +20,8 @@ import Configure from "./pages/configure";
 import CreateObjective from "./pages/create-objective";
 import CreateKeyResult from "./pages/create-key-result";
 import CreateOkrAi from "./pages/create-okr-ai";
+import CreateDraftOkr from "./pages/create-draft-okr";
+import Drafts from "./pages/drafts";
 import SuggestedOKRs from "./pages/suggested-okrs";
 import Mission from "./pages/mission";
 import CreateTeam from "./pages/create-team";
@@ -50,6 +52,8 @@ function Router() {
           <Route path="/create-objective" component={CreateObjective} />
           <Route path="/create-key-result" component={CreateKeyResult} />
           <Route path="/create-okr-ai" component={CreateOkrAi} />
+          <Route path="/create-draft-okr" component={CreateDraftOkr} />
+          <Route path="/drafts" component={Drafts} />
           <Route path="/suggested-okrs" component={SuggestedOKRs} />
           <Route path="/create-team" component={CreateTeam} />
           <Route path="/create-user" component={CreateUser} />

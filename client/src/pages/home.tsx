@@ -48,9 +48,11 @@ export default function Home() {
                   <span>Create OKRs with AI</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <FileEdit className="mr-2 h-4 w-4" />
-                <span>Create Draft OKRs</span>
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-draft-okr">
+                  <FileEdit className="mr-2 h-4 w-4" />
+                  <span>Create Draft OKRs</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
