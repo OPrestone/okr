@@ -3,12 +3,19 @@ import { useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { 
   Search, Menu, Bell, X, Loader2, User, BarChart, 
-  Target, Calendar, FileText, Users 
+  Target, Calendar, FileText, Users, AlertTriangle,
+  AlertCircle, CalendarClock
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { QuickStartGuide } from "@/components/quick-start-guide";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface BreadcrumbItem {
   label: string;
@@ -389,10 +396,12 @@ export function Header() {
           </div>
 
           {/* Notifications */}
-          <button className="p-1 rounded-full text-neutral-500 hover:text-neutral-700 relative">
-            <Bell className="h-6 w-6" />
-            <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary-500"></span>
-          </button>
+          <div className="relative">
+            <Button variant="ghost" size="icon" className="relative rounded-full">
+              <Bell className="h-5 w-5 text-neutral-500" />
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">5</span>
+            </Button>
+          </div>
 
           {/* Quick Start Guide */}
           <div className="ml-2">
