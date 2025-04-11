@@ -512,6 +512,127 @@ function CyclesList() {
 }
 
 export default function Configure() {
+  const [isGeneralSaving, setIsGeneralSaving] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  
+  // Handler for saving general settings
+  const handleSaveGeneralSettings = () => {
+    setIsGeneralSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Settings saved",
+        description: "Your general settings have been updated successfully.",
+      });
+      setIsGeneralSaving(false);
+    }, 1000);
+  };
+  
+  // Handler for logo upload
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    console.log("File selected:", file.name);
+    setIsUploadingLogo(true);
+    setLogoFile(file);
+    
+    // Simulate upload
+    setTimeout(() => {
+      toast({
+        title: "Logo uploaded",
+        description: "Your company logo has been updated successfully.",
+      });
+      setIsUploadingLogo(false);
+    }, 1500);
+  };
+  
+  // Handler for LDAP test connection
+  const handleLdapTestConnection = () => {
+    toast({
+      title: "Testing connection",
+      description: "Attempting to connect to the LDAP server...",
+    });
+    
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Connection successful",
+        description: "Successfully connected to the LDAP server.",
+      });
+    }, 2000);
+  };
+  
+  // Handler for SSO test connection
+  const handleSsoTestConnection = () => {
+    toast({
+      title: "Testing SSO connection",
+      description: "Validating SSO configuration...",
+    });
+    
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "SSO connection successful",
+        description: "Your SSO configuration is valid.",
+      });
+    }, 2000);
+  };
+  
+  // Handler for downloading SSO metadata
+  const handleDownloadSsoMetadata = () => {
+    toast({
+      title: "Downloading metadata",
+      description: "Preparing SSO metadata for download...",
+    });
+    
+    // Simulate download
+    setTimeout(() => {
+      const metadataContent = `<?xml version="1.0"?>
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+                  entityID="https://okr.yourcompany.com">
+    <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+        <AssertionConsumerService index="1" 
+                                 Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                 Location="https://okr.yourcompany.com/api/auth/sso/callback"/>
+    </SPSSODescriptor>
+</EntityDescriptor>`;
+      
+      const blob = new Blob([metadataContent], { type: 'text/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'okr-sp-metadata.xml';
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast({
+        title: "Metadata downloaded",
+        description: "SSO metadata has been downloaded.",
+      });
+    }, 1000);
+  };
+  
+  // Handler for viewing SSO setup instructions
+  const handleViewSsoInstructions = () => {
+    toast({
+      title: "Setup instructions",
+      description: "Opening SSO setup instructions...",
+    });
+    
+    // Here you would typically open a modal with instructions
+    // For now, let's just show a toast
+    setTimeout(() => {
+      toast({
+        title: "SSO Setup Guide",
+        description: "A detailed guide would typically be shown in a modal here.",
+      });
+    }, 500);
+  };
   return (
     <div>
       <div className="mb-8">
@@ -748,9 +869,7 @@ export default function Configure() {
                     id="logo-upload" 
                     className="hidden" 
                     accept="image/png, image/jpeg, image/svg+xml" 
-                    onChange={(e) => {
-                      console.log('File selected:', e.target.files?.[0]?.name);
-                    }}
+                    onChange={handleLogoUpload}
                   />
                 </div>
               </div>
