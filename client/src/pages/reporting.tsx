@@ -167,10 +167,10 @@ export default function Reporting() {
           <h1 className="text-2xl font-bold">OKR Report Export</h1>
           
           {/* Filters */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-white p-4 rounded-lg border shadow-sm mb-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Time Period Filter */}
-              <div className="flex items-center border rounded-md bg-white">
+              <div className="flex items-center border rounded-md">
                 <div className="px-3 py-2">
                   <Calendar className="h-5 w-5 text-gray-500" />
                 </div>
@@ -178,7 +178,7 @@ export default function Reporting() {
                   defaultValue="2025-q1" 
                   onValueChange={(value) => setTimePeriod(value)}
                 >
-                  <SelectTrigger className="border-0 w-full">
+                  <SelectTrigger className="border-0 w-full h-10">
                     <SelectValue placeholder="2025 Q1" />
                   </SelectTrigger>
                   <SelectContent>
@@ -191,15 +191,15 @@ export default function Reporting() {
               </div>
 
               {/* Team Filter */}
-              <div className="flex items-center border rounded-md bg-white">
+              <div className="flex items-center border rounded-md">
                 <div className="px-3 py-2">
-                  <Filter className="h-5 w-5 text-gray-500" />
+                  <Users className="h-5 w-5 text-gray-500" />
                 </div>
                 <Select 
                   defaultValue="all" 
                   onValueChange={(value) => setTeamId(value === "all" ? null : value)}
                 >
-                  <SelectTrigger className="border-0 w-full">
+                  <SelectTrigger className="border-0 w-full h-10">
                     <SelectValue placeholder="All Teams" />
                   </SelectTrigger>
                   <SelectContent>
@@ -214,12 +214,15 @@ export default function Reporting() {
               </div>
 
               {/* Report Type */}
-              <div className="flex items-center border rounded-md bg-white">
+              <div className="flex items-center border rounded-md">
+                <div className="px-3 py-2">
+                  <FileText className="h-5 w-5 text-gray-500" />
+                </div>
                 <Select 
                   defaultValue="detailed" 
                   onValueChange={(value) => setReportType(value)}
                 >
-                  <SelectTrigger className="border-0 w-full">
+                  <SelectTrigger className="border-0 w-full h-10">
                     <SelectValue placeholder="Detailed" />
                   </SelectTrigger>
                   <SelectContent>
@@ -235,22 +238,22 @@ export default function Reporting() {
           {/* Export Options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Excel Export Card */}
-            <Card className="border">
-              <CardContent className="p-5">
-                <div className="flex items-start mb-4">
-                  <div className="h-10 w-10 rounded-md bg-green-50 flex items-center justify-center mr-4 flex-shrink-0">
-                    <FileText className="h-6 w-6 text-green-600" />
+            <Card className="border shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="h-8 w-8 rounded-md bg-green-50 flex items-center justify-center mr-3 flex-shrink-0">
+                    <FileText className="h-5 w-5 text-green-600" />
                   </div>
-                  <h3 className="text-lg font-semibold mt-1">Excel Export</h3>
+                  <h3 className="text-lg font-semibold">Excel Export</h3>
                 </div>
                 
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 text-sm mb-4">
                   Export your OKR data to Excel format for detailed analysis and reporting.
                 </p>
 
                 <div className="space-y-1 mb-6">
-                  <h4 className="text-sm text-gray-500">Includes:</h4>
-                  <ul className="text-sm text-gray-700 space-y-2">
+                  <h4 className="text-xs text-gray-500 uppercase font-medium mb-2">Includes:</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
                     <li className="flex items-start">
                       <span className="mr-2 flex-shrink-0">•</span> 
                       <span>Objective and Key Results breakdown</span>
@@ -269,14 +272,14 @@ export default function Reporting() {
                     </li>
                     <li className="flex items-start">
                       <span className="mr-2 flex-shrink-0">•</span> 
-                      <span>Team performance breakdown</span>
+                      <span>Present Team Dashboard</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex justify-end">
                   <Button 
-                    className="bg-green-600 hover:bg-green-700 flex-1"
+                    className="bg-green-600 hover:bg-green-700 px-4"
                     onClick={handleExcelExport}
                     disabled={excelMutation.isPending}
                   >
@@ -287,30 +290,27 @@ export default function Reporting() {
                     )}
                     {excelMutation.isPending ? 'Generating...' : 'Export'}
                   </Button>
-                  <Button variant="outline" className="border-gray-300">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </CardContent>
             </Card>
 
             {/* PowerPoint Export Card */}
-            <Card className="border">
-              <CardContent className="p-5">
-                <div className="flex items-start mb-4">
-                  <div className="h-10 w-10 rounded-md bg-blue-50 flex items-center justify-center mr-4 flex-shrink-0">
-                    <Presentation className="h-6 w-6 text-blue-600" />
+            <Card className="border shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center mb-4">
+                  <div className="h-8 w-8 rounded-md bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
+                    <Presentation className="h-5 w-5 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold mt-1">PowerPoint Export</h3>
+                  <h3 className="text-lg font-semibold">PowerPoint Export</h3>
                 </div>
                 
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 text-sm mb-4">
                   Generate presentation-ready slides showcasing your OKR progress and achievements.
                 </p>
 
                 <div className="space-y-1 mb-6">
-                  <h4 className="text-sm text-gray-500">Includes:</h4>
-                  <ul className="text-sm text-gray-700 space-y-2">
+                  <h4 className="text-xs text-gray-500 uppercase font-medium mb-2">Includes:</h4>
+                  <ul className="text-sm text-gray-700 space-y-1">
                     <li className="flex items-start">
                       <span className="mr-2 flex-shrink-0">•</span> 
                       <span>Executive summary</span>
@@ -329,21 +329,21 @@ export default function Reporting() {
                     </li>
                     <li className="flex items-start">
                       <span className="mr-2 flex-shrink-0">•</span> 
-                      <span>Key OKR milestones</span>
+                      <span>Present Team Dashboard</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex justify-end space-x-2">
                   <Button 
                     variant="outline" 
-                    className="text-blue-600 border-blue-200 hover:bg-blue-50 flex-1"
+                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
                   >
                     <Play className="h-4 w-4 mr-2" />
                     Present
                   </Button>
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700 flex-1"
+                    className="bg-blue-600 hover:bg-blue-700"
                     onClick={handlePowerPointExport}
                     disabled={pptMutation.isPending}
                   >
@@ -354,22 +354,19 @@ export default function Reporting() {
                     )}
                     {pptMutation.isPending ? 'Generating...' : 'Export'}
                   </Button>
-                  <Button variant="outline" className="border-gray-300">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </CardContent>
             </Card>
           </div>
 
           {/* Preview Section */}
-          <div className="border rounded-lg">
+          <div className="border rounded-lg shadow-sm">
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="font-semibold">Preview</h3>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-sm"
+                className="text-sm border-gray-200"
                 onClick={() => setShowDetails(!showDetails)}
               >
                 {showDetails ? 'Hide Details' : 'Show Details'} 
@@ -391,92 +388,94 @@ export default function Reporting() {
               ) : (
                 <>
                   <div className="space-y-3 text-sm">
-                    <p className="text-gray-500">Selected filters:</p>
+                    <p className="text-gray-500 font-medium">Selected filters:</p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <p><span className="font-medium">Time Period:</span> {timePeriod.toUpperCase()}</p>
-                      <p><span className="font-medium">Department:</span> {getTeamName()}</p>
-                      <p><span className="font-medium">View Type:</span> {reportType.charAt(0).toUpperCase() + reportType.slice(1)}</p>
+                      <p><span className="font-medium text-gray-700">Time Period:</span> {timePeriod.toUpperCase()}</p>
+                      <p><span className="font-medium text-gray-700">Department:</span> {getTeamName()}</p>
+                      <p><span className="font-medium text-gray-700">View Type:</span> {reportType.charAt(0).toUpperCase() + reportType.slice(1)}</p>
                     </div>
                   </div>
                   
                   {previewData && showDetails && (
-                    <div className="mt-6 bg-white rounded-md border p-4">
-                      <h4 className="font-medium mb-3">Report Summary Preview</h4>
+                    <div className="mt-6 bg-white rounded-md border shadow-sm">
+                      <h4 className="font-medium p-3 border-b text-sm">Report Summary Preview</h4>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-blue-50 p-3 rounded-md">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3">
+                        <div className="bg-blue-50 p-3 rounded-md border border-blue-100">
                           <p className="text-xs text-blue-600 uppercase font-medium">Total Objectives</p>
                           <p className="text-2xl font-bold">{previewData.summary.totalObjectives}</p>
                         </div>
-                        <div className="bg-green-50 p-3 rounded-md">
+                        <div className="bg-green-50 p-3 rounded-md border border-green-100">
                           <p className="text-xs text-green-600 uppercase font-medium">Completed</p>
                           <p className="text-2xl font-bold">{previewData.summary.completedObjectives}</p>
                         </div>
-                        <div className="bg-amber-50 p-3 rounded-md">
+                        <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
                           <p className="text-xs text-amber-600 uppercase font-medium">At Risk</p>
                           <p className="text-2xl font-bold">{previewData.summary.atRiskObjectives}</p>
                         </div>
-                        <div className="bg-purple-50 p-3 rounded-md">
+                        <div className="bg-purple-50 p-3 rounded-md border border-purple-100">
                           <p className="text-xs text-purple-600 uppercase font-medium">Avg Progress</p>
                           <p className="text-2xl font-bold">{previewData.summary.avgProgress}%</p>
                         </div>
                       </div>
                       
-                      {previewData.previewData.objectives.length > 0 ? (
-                        <>
-                          <h5 className="font-medium text-sm mb-2">Objectives Preview (Top 3)</h5>
-                          <div className="overflow-x-auto mb-4">
-                            <table className="min-w-full text-sm">
-                              <thead className="bg-gray-50">
-                                <tr>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Title</th>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Progress</th>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Status</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-200">
-                                {previewData.previewData.objectives.map((obj: any) => (
-                                  <tr key={obj.id}>
-                                    <td className="px-3 py-2">{obj.title}</td>
-                                    <td className="px-3 py-2">{obj.progress}%</td>
-                                    <td className="px-3 py-2">{obj.status || 'Not Started'}</td>
+                      <div className="p-3 border-t">
+                        {previewData.previewData.objectives.length > 0 ? (
+                          <>
+                            <h5 className="font-medium text-sm mb-3 text-gray-700">Objectives Preview (Top 3)</h5>
+                            <div className="overflow-x-auto mb-4">
+                              <table className="min-w-full text-sm border">
+                                <thead className="bg-gray-50 border-b">
+                                  <tr>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Title</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Progress</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Status</th>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                  {previewData.previewData.objectives.map((obj: any) => (
+                                    <tr key={obj.id} className="hover:bg-gray-50">
+                                      <td className="px-4 py-3 text-gray-700">{obj.title}</td>
+                                      <td className="px-4 py-3 text-gray-700">{obj.progress}%</td>
+                                      <td className="px-4 py-3 text-gray-700">{obj.status || 'Not Started'}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="p-4 mb-4 bg-gray-50 text-center text-gray-500 rounded-md border border-gray-100">
+                            No objectives found for the selected filters.
                           </div>
-                        </>
-                      ) : (
-                        <div className="p-4 mb-4 bg-gray-50 text-center text-gray-500 rounded-md">
-                          No objectives found for the selected filters.
-                        </div>
-                      )}
-                      
-                      {previewData.previewData.keyResultsPreview.length > 0 && (
-                        <>
-                          <h5 className="font-medium text-sm mb-2">Key Results Preview</h5>
-                          <div className="overflow-x-auto">
-                            <table className="min-w-full text-sm">
-                              <thead className="bg-gray-50">
-                                <tr>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Title</th>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Progress</th>
-                                  <th className="px-3 py-2 text-left font-medium text-gray-500">Status</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-200">
-                                {previewData.previewData.keyResultsPreview.map((kr: any) => (
-                                  <tr key={kr.id}>
-                                    <td className="px-3 py-2">{kr.title}</td>
-                                    <td className="px-3 py-2">{kr.progress}%</td>
-                                    <td className="px-3 py-2">{kr.isCompleted ? 'Completed' : 'In Progress'}</td>
+                        )}
+                        
+                        {previewData.previewData.keyResultsPreview.length > 0 && (
+                          <>
+                            <h5 className="font-medium text-sm mb-3 text-gray-700">Key Results Preview</h5>
+                            <div className="overflow-x-auto">
+                              <table className="min-w-full text-sm border">
+                                <thead className="bg-gray-50 border-b">
+                                  <tr>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Title</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Progress</th>
+                                    <th className="px-4 py-2 text-left font-medium text-gray-600">Status</th>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </>
-                      )}
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                  {previewData.previewData.keyResultsPreview.map((kr: any) => (
+                                    <tr key={kr.id} className="hover:bg-gray-50">
+                                      <td className="px-4 py-3 text-gray-700">{kr.title}</td>
+                                      <td className="px-4 py-3 text-gray-700">{kr.progress}%</td>
+                                      <td className="px-4 py-3 text-gray-700">{kr.isCompleted ? 'Completed' : 'In Progress'}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   )}
                 </>
