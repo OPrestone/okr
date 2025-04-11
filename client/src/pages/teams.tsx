@@ -84,7 +84,15 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm">View</Button>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => {
+                  setIsDialogOpen(true);
+                }}
+              >
+                View
+              </Button>
             </DialogTrigger>
             <DialogContent className="max-w-3xl">
               <DialogHeader>
@@ -223,10 +231,20 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                                  <DropdownMenuItem 
+                                    className="cursor-pointer flex items-center gap-2"
+                                    onClick={() => {
+                                      alert("Editing team lead role");
+                                    }}
+                                  >
                                     <Pencil className="h-4 w-4" /> Edit Role
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="cursor-pointer flex items-center gap-2 text-red-600">
+                                  <DropdownMenuItem 
+                                    className="cursor-pointer flex items-center gap-2 text-red-600"
+                                    onClick={() => {
+                                      alert("Removing member from team");
+                                    }}
+                                  >
                                     <LogOut className="h-4 w-4" /> Remove from Team
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -259,14 +277,29 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                  <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                                  <DropdownMenuItem 
+                                    className="cursor-pointer flex items-center gap-2"
+                                    onClick={() => {
+                                      alert("Making team member the new team lead");
+                                    }}
+                                  >
                                     <Shield className="h-4 w-4" /> Make Team Lead
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+                                  <DropdownMenuItem 
+                                    className="cursor-pointer flex items-center gap-2"
+                                    onClick={() => {
+                                      alert("Editing team member role");
+                                    }}
+                                  >
                                     <Pencil className="h-4 w-4" /> Edit Role
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="cursor-pointer flex items-center gap-2 text-red-600">
+                                  <DropdownMenuItem 
+                                    className="cursor-pointer flex items-center gap-2 text-red-600"
+                                    onClick={() => {
+                                      alert("Removing team member");
+                                    }}
+                                  >
                                     <LogOut className="h-4 w-4" /> Remove from Team
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -340,7 +373,13 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                       <Progress value={65} className="h-2 my-4" />
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">65% complete</span>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            alert("Viewing social media engagement objective details");
+                          }}
+                        >
                           View Details
                         </Button>
                       </div>
@@ -359,7 +398,13 @@ function TeamCard({ team, users }: { team: any; users: any[] }) {
                       <Progress value={100} className="h-2 my-4" />
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">100% complete</span>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            alert("Viewing campaign launch objective details");
+                          }}
+                        >
                           View Details
                         </Button>
                       </div>
@@ -453,7 +498,13 @@ export default function Teams() {
           <p className="text-neutral-600">Manage and track team performance and objectives</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-1">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-1"
+            onClick={() => {
+              alert("Generating team performance report");
+            }}
+          >
             <BarChart className="h-4 w-4" />
             Performance Report
           </Button>
