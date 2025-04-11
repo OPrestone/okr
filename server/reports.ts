@@ -1,4 +1,5 @@
-import { Workbook, Column } from 'exceljs';
+import exceljs from 'exceljs';
+const { Workbook } = exceljs;
 import PptxGenJS from 'pptxgenjs';
 import { storage } from './storage';
 import { Objective, KeyResult, Team, User } from '@shared/schema';

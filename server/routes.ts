@@ -6,6 +6,11 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { 
+  handleExcelReportGeneration, 
+  handlePowerPointReportGeneration, 
+  handleReportPreview 
+} from "./reports";
 
 // Configure multer for file uploads
 const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -613,6 +618,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error uploading system logo:', error);
       res.status(500).json({ message: 'Failed to upload system logo' });
     }
+  });
+  
+  // Report generation endpoints
+  app.post('/api/reports/excel', async (req, res) => {
+    await handleExcelReportGeneration(req, res);
+  });
+  
+  app.post('/api/reports/powerpoint', async (req, res) => {
+    await handlePowerPointReportGeneration(req, res);
+  });
+  
+  app.post('/api/reports/preview', async (req, res) => {
+    await handleReportPreview(req, res);
   });
   
   // Serve uploaded files
