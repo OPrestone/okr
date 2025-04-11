@@ -414,6 +414,8 @@ export const meetings = pgTable("meetings", {
   recordingUrl: text("recording_url"),
   recurrence: varchar("recurrence", { length: 50 }), // weekly, biweekly, monthly, none
   objectiveId: integer("objective_id").references(() => objectives.id),
+  isVirtual: boolean("is_virtual").default(false),
+  meetingLink: text("meeting_link"), // URL for virtual meetings (Google Meet, Zoom, etc.)
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => {
