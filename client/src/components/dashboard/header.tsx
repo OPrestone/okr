@@ -42,7 +42,9 @@ export function Header() {
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
   
   // Load data for searching when needed
   const shouldFetch = searchValue.length >= 3;
@@ -173,11 +175,17 @@ export function Header() {
     return () => clearTimeout(timer);
   }, [searchValue]);
   
-  // Close search results when clicking outside
+  // Close search and notification dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Close search results if clicked outside search area
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowResults(false);
+      }
+      
+      // Close notifications if clicked outside notification area
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
       }
     };
     
@@ -395,12 +403,129 @@ export function Header() {
             )}
           </div>
 
-          {/* Notifications */}
+          {/* Notifications Dropdown */}
           <div className="relative">
-            <Button variant="ghost" size="icon" className="relative rounded-full">
-              <Bell className="h-5 w-5 text-neutral-500" />
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">5</span>
-            </Button>
+            <div className="relative inline-block" ref={notificationRef}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative rounded-full"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell className="h-5 w-5 text-neutral-500" />
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">5</span>
+              </Button>
+
+              {/* Dropdown Content */}
+              <div 
+                className={`${showNotifications ? 'block' : 'hidden'} absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg z-50 border border-gray-200`}
+              >
+                <div className="flex items-center justify-between p-3 border-b">
+                  <h3 className="font-medium">Notifications</h3>
+                  <Button variant="ghost" size="sm" className="text-xs h-7">
+                    Mark all as read
+                  </Button>
+                </div>
+                
+                <div className="max-h-80 overflow-y-auto">
+                  {/* High Priority */}
+                  <div className="p-3 border-b">
+                    <div className="flex items-center">
+                      <Badge className="bg-red-500 h-5 mr-2">High Priority</Badge>
+                      <span className="text-xs text-neutral-500">Today</span>
+                    </div>
+                    <ul className="mt-1 space-y-2">
+                      <li>
+                        <a href="#" className="block hover:bg-neutral-50 rounded p-2 transition-colors">
+                          <div className="flex">
+                            <AlertTriangle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-medium">OKR approval pending</p>
+                              <p className="text-xs text-neutral-500 mt-0.5">Sales Q2 Objectives need approval before Friday deadline</p>
+                              <p className="text-xs text-neutral-400 mt-1">2 hours ago</p>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  {/* Medium Priority */}
+                  <div className="p-3 border-b">
+                    <div className="flex items-center">
+                      <Badge className="bg-amber-500 h-5 mr-2">Medium Priority</Badge>
+                      <span className="text-xs text-neutral-500">Today</span>
+                    </div>
+                    <ul className="mt-1 space-y-2">
+                      <li>
+                        <a href="#" className="block hover:bg-neutral-50 rounded p-2 transition-colors">
+                          <div className="flex">
+                            <AlertCircle className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-medium">Key result update required</p>
+                              <p className="text-xs text-neutral-500 mt-0.5">Customer satisfaction survey key result needs an update</p>
+                              <p className="text-xs text-neutral-400 mt-1">4 hours ago</p>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" className="block hover:bg-neutral-50 rounded p-2 transition-colors">
+                          <div className="flex">
+                            <CalendarClock className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-medium">Weekly check-in reminder</p>
+                              <p className="text-xs text-neutral-500 mt-0.5">Your team's weekly check-in is tomorrow at 10am</p>
+                              <p className="text-xs text-neutral-400 mt-1">6 hours ago</p>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  {/* Low Priority */}
+                  <div className="p-3">
+                    <div className="flex items-center">
+                      <Badge variant="outline" className="h-5 mr-2">Informational</Badge>
+                      <span className="text-xs text-neutral-500">Yesterday</span>
+                    </div>
+                    <ul className="mt-1 space-y-2">
+                      <li>
+                        <a href="#" className="block hover:bg-neutral-50 rounded p-2 transition-colors">
+                          <div className="flex">
+                            <Users className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-medium">New team member added</p>
+                              <p className="text-xs text-neutral-500 mt-0.5">Sarah Johnson has joined the Marketing team</p>
+                              <p className="text-xs text-neutral-400 mt-1">Yesterday at 2:30 PM</p>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" className="block hover:bg-neutral-50 rounded p-2 transition-colors">
+                          <div className="flex">
+                            <FileText className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-sm font-medium">New resource available</p>
+                              <p className="text-xs text-neutral-500 mt-0.5">Check out the new OKR best practices guide</p>
+                              <p className="text-xs text-neutral-400 mt-1">Yesterday at 11:15 AM</p>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="border-t p-2">
+                  <a href="/notifications" className="block text-center text-sm text-primary p-2 hover:bg-neutral-50 rounded transition-colors">
+                    View all notifications
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Quick Start Guide */}
