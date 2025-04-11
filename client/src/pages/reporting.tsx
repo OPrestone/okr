@@ -66,7 +66,8 @@ export default function Reporting() {
     mutationFn: async (data: any) => {
       return apiRequest('POST', '/api/reports/excel', data);
     },
-    onSuccess: (data) => {
+    onSuccess: async (response) => {
+      const data = await response.json();
       if (data.success && data.reportUrl) {
         // Open the report in a new tab
         window.open(data.reportUrl, '_blank');
@@ -92,7 +93,8 @@ export default function Reporting() {
     mutationFn: async (data: any) => {
       return apiRequest('POST', '/api/reports/powerpoint', data);
     },
-    onSuccess: (data) => {
+    onSuccess: async (response) => {
+      const data = await response.json();
       if (data.success && data.reportUrl) {
         // Open the report in a new tab
         window.open(data.reportUrl, '_blank');
