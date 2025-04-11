@@ -516,6 +516,8 @@ export default function Configure() {
   const [isGeneralSaving, setIsGeneralSaving] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [isUploadingSystemLogo, setIsUploadingSystemLogo] = useState(false);
+  const [systemLogoFile, setSystemLogoFile] = useState<File | null>(null);
   
   // Section specific saving states
   const [isNotificationSaving, setIsNotificationSaving] = useState(false);
@@ -554,7 +556,7 @@ export default function Configure() {
     }, 1000);
   };
   
-  // Handler for logo upload
+  // Handler for company logo upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -571,6 +573,49 @@ export default function Configure() {
       });
       setIsUploadingLogo(false);
     }, 1500);
+  };
+  
+  // Handler for system logo upload
+  const handleSystemLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    console.log("System logo file selected:", file.name);
+    setIsUploadingSystemLogo(true);
+    setSystemLogoFile(file);
+    
+    // Create FormData
+    const formData = new FormData();
+    formData.append('logo', file);
+    
+    // Call API to upload system logo
+    fetch('/api/system-logo', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to upload system logo');
+      }
+      return response.json();
+    })
+    .then(data => {
+      toast({
+        title: "System logo uploaded",
+        description: "Your system logo has been updated successfully.",
+      });
+    })
+    .catch(error => {
+      console.error('Error uploading system logo:', error);
+      toast({
+        title: "Upload failed",
+        description: "There was a problem uploading the system logo.",
+        variant: "destructive",
+      });
+    })
+    .finally(() => {
+      setIsUploadingSystemLogo(false);
+    });
   };
   
   // Handler for LDAP test connection
