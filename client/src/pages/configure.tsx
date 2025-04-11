@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield } from "lucide-react";
+import { Save, User2, Building, Flag, CalendarRange, Settings, Bell, Lock, Mail, MoreHorizontal, Pencil, Trash, Trash2, Repeat, Calendar, Plus, Users, Server, Shield, Download, Eye } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -960,6 +960,156 @@ export default function Configure() {
               <Button className="flex items-center gap-2">
                 <Save className="h-4 w-4" />
                 Save LDAP Configuration
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          {/* Single Sign-On Configuration */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Single Sign-On (SSO)
+              </CardTitle>
+              <CardDescription>
+                Configure Single Sign-On integration to simplify authentication for your users
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="sso-enabled" className="text-base">Enable SSO Authentication</Label>
+                  <p className="text-sm text-neutral-500">Allow users to sign in using your organization's identity provider</p>
+                </div>
+                <Switch id="sso-enabled" />
+              </div>
+              
+              <div className="space-y-4 border rounded-md p-4 bg-neutral-50">
+                <div className="space-y-2">
+                  <Label htmlFor="sso-provider" className="text-base">Identity Provider</Label>
+                  <Select defaultValue="saml">
+                    <SelectTrigger id="sso-provider" className="w-full">
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="saml">SAML 2.0</SelectItem>
+                      <SelectItem value="oidc">OpenID Connect</SelectItem>
+                      <SelectItem value="oauth2">OAuth 2.0</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-neutral-500">Select the protocol used by your identity provider</p>
+                </div>
+                
+                <div className="grid grid-cols-1 space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="sso-metadata-url">Metadata URL</Label>
+                    <Input id="sso-metadata-url" placeholder="https://idp.example.com/metadata.xml" />
+                    <p className="text-xs text-neutral-500">URL to your identity provider's metadata document</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="sso-entity-id">Entity ID / Client ID</Label>
+                    <Input id="sso-entity-id" placeholder="https://okr.yourcompany.com" />
+                    <p className="text-xs text-neutral-500">The identifier for this application with your identity provider</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="sso-acs-url">Assertion Consumer Service URL (ACS URL)</Label>
+                    <Input id="sso-acs-url" placeholder="https://okr.yourcompany.com/api/auth/sso/callback" />
+                    <p className="text-xs text-neutral-500">The URL where your identity provider will send the authentication response</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-base">Attribute Mapping</Label>
+                  <p className="text-sm text-neutral-500 mb-2">Map identity provider attributes to user properties</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Email:</span>
+                      <Input placeholder="email" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Username:</span>
+                      <Input placeholder="name" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Full Name:</span>
+                      <Input placeholder="displayName" className="h-8" />
+                    </div>
+                    <div className="flex items-center space-x-2 border rounded p-2">
+                      <span className="text-sm font-medium w-24">Groups:</span>
+                      <Input placeholder="groups" className="h-8" />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="sso-certificate" className="text-base">Identity Provider Certificate</Label>
+                  <Textarea 
+                    id="sso-certificate" 
+                    placeholder="-----BEGIN CERTIFICATE-----&#10;MIIDpDCCAowCCQDsw9...&#10;-----END CERTIFICATE-----" 
+                    className="font-mono text-xs h-24"
+                  />
+                  <p className="text-xs text-neutral-500">Public certificate from your identity provider to verify responses</p>
+                </div>
+                
+                <div className="flex justify-between items-center gap-2 mt-4">
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                      <Server className="h-4 w-4" />
+                      Test Connection
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                      <Download className="h-4 w-4" />
+                      Download Metadata
+                    </Button>
+                  </div>
+                  <Button variant="outline" size="sm" className="flex items-center gap-1">
+                    <Eye className="h-4 w-4" />
+                    View Setup Instructions
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="sso-default-role" className="text-base">Default Role for New SSO Users</Label>
+                <Select defaultValue="member">
+                  <SelectTrigger id="sso-default-role">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Administrator</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="member">Team Member</SelectItem>
+                    <SelectItem value="viewer">Viewer</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-neutral-500">Role assigned to users when they first sign in via SSO</p>
+              </div>
+              
+              <div className="flex items-center space-x-3 rounded-md border p-4">
+                <Switch id="sso-just-in-time" defaultChecked />
+                <div className="space-y-1 leading-none">
+                  <Label htmlFor="sso-just-in-time" className="text-base">
+                    Just-in-time User Provisioning
+                  </Label>
+                  <p className="text-sm text-neutral-500">
+                    Automatically create user accounts when they first sign in through SSO
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <div className="text-sm text-neutral-500">
+                <span className="flex items-center gap-1">
+                  <Shield className="h-4 w-4" />
+                  SSO configuration is encrypted
+                </span>
+              </div>
+              <Button className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save SSO Configuration
               </Button>
             </CardFooter>
           </Card>
