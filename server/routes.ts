@@ -1,8 +1,43 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema, insertCheckInSchema } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Configure multer for file uploads
+const uploadsDir = path.join(process.cwd(), 'uploads');
+// Create the uploads directory if it doesn't exist
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage_config = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'logo-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ 
+  storage: storage_config,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: function(req, file, cb) {
+    // Accept images only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|svg)$/i)) {
+      return cb(null, false);
+    }
+    cb(null, true);
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes for OKR system
@@ -504,6 +539,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete cycle" });
     }
   });
+
+  // Company Settings endpoints
+  app.get('/api/company-settings', async (req, res) => {
+    try {
+      const settings = await storage.getCompanySettings();
+      res.json(settings);
+    } catch (error) {
+      console.error('Error fetching company settings:', error);
+      res.status(500).json({ message: 'Failed to fetch company settings' });
+    }
+  });
+
+  app.patch('/api/company-settings', async (req, res) => {
+    try {
+      const settings = req.body;
+      const updatedSettings = await storage.updateCompanySettings(settings);
+      res.json(updatedSettings);
+    } catch (error) {
+      console.error('Error updating company settings:', error);
+      res.status(500).json({ message: 'Failed to update company settings' });
+    }
+  });
+
+  // Logo upload endpoint
+  app.post('/api/company/logo', upload.single('logo'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      
+      // Create URL to the uploaded file
+      const fileUrl = `/uploads/${req.file.filename}`;
+      
+      // Update company settings with the new logo URL
+      const updatedSettings = await storage.updateCompanyLogo(fileUrl);
+      
+      res.json({ 
+        success: true, 
+        logoUrl: fileUrl,
+        settings: updatedSettings
+      });
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      res.status(500).json({ message: 'Failed to upload logo' });
+    }
+  });
+  
+  // Serve uploaded files
+  app.use('/uploads', (req, res, next) => {
+    // Set cache headers for uploaded images
+    res.set('Cache-Control', 'public, max-age=31536000'); // 1 year
+    next();
+  }, express.static(uploadsDir));
 
   const httpServer = createServer(app);
   return httpServer;
