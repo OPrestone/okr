@@ -173,13 +173,18 @@ export function GetStartedGuide() {
           </ol>
         </CardContent>
         
-        <CardFooter className="p-4 bg-neutral-50 border-t border-neutral-100 flex justify-between">
+        <CardFooter className="p-4 bg-neutral-50 border-t border-neutral-100 flex flex-wrap gap-4 justify-between">
           <a href="/resources" className="text-sm font-medium text-primary-600 hover:text-primary-800">
             View detailed guide
           </a>
-          <Button onClick={() => setDialogOpen(true)}>
-            Get started now
-          </Button>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={() => setLocation('/configure')}>
+              Configure Settings
+            </Button>
+            <Button onClick={() => setDialogOpen(true)}>
+              Get started now
+            </Button>
+          </div>
         </CardFooter>
       </Card>
 
