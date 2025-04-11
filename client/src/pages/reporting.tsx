@@ -367,7 +367,7 @@ export default function Reporting() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="text-sm border-gray-200"
+                className="text-sm border-[#DADCE0] text-[#4285F4] hover:bg-[#E8F0FE] hover:border-[#4285F4]/30"
                 onClick={() => setShowDetails(!showDetails)}
               >
                 {showDetails ? 'Hide Details' : 'Show Details'} 
