@@ -118,6 +118,8 @@ export default function OneOnOne() {
       userId1: currentUserId,
       userId2: selectedUserId,
       status: "scheduled",
+      isVirtual: isVirtual,
+      meetingLink: isVirtual ? generateGoogleMeetLink(meetingTitle) : null,
     };
     
     createMeetingMutation.mutate(meetingData);
