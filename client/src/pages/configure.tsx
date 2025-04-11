@@ -512,9 +512,22 @@ function CyclesList() {
 }
 
 export default function Configure() {
+  // General settings states
   const [isGeneralSaving, setIsGeneralSaving] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  
+  // Section specific saving states
+  const [isNotificationSaving, setIsNotificationSaving] = useState(false);
+  const [isSecuritySaving, setIsSecuritySaving] = useState(false);
+  const [isLdapSaving, setIsLdapSaving] = useState(false);
+  const [isSsoSaving, setIsSsoSaving] = useState(false);
+  const [isPermissionSaving, setIsPermissionSaving] = useState(false);
+  const [isEmailTemplateSaving, setIsEmailTemplateSaving] = useState(false);
+  const [isTeamSaving, setIsTeamSaving] = useState(false);
+  const [isObjectiveSaving, setIsObjectiveSaving] = useState(false);
+  const [isCadenceSaving, setIsCadenceSaving] = useState(false);
+  const [isCycleSaving, setIsCycleSaving] = useState(false);
   
   // Handler for saving general settings
   const handleSaveGeneralSettings = () => {
@@ -632,6 +645,142 @@ export default function Configure() {
         description: "A detailed guide would typically be shown in a modal here.",
       });
     }, 500);
+  };
+  
+  // Additional handlers for other action buttons
+  
+  // Notification Settings
+  const handleSaveNotificationSettings = () => {
+    setIsNotificationSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Notification preferences saved",
+        description: "Your notification preferences have been updated.",
+      });
+      setIsNotificationSaving(false);
+    }, 1000);
+  };
+  
+  // Security Settings
+  const handleSaveSecuritySettings = () => {
+    setIsSecuritySaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Security settings saved",
+        description: "Your security settings have been updated.",
+      });
+      setIsSecuritySaving(false);
+    }, 1000);
+  };
+  
+  // LDAP Configuration
+  const handleSaveLdapConfig = () => {
+    setIsLdapSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "LDAP configuration saved",
+        description: "Your LDAP integration settings have been updated.",
+      });
+      setIsLdapSaving(false);
+    }, 1000);
+  };
+  
+  // SSO Configuration
+  const handleSaveSsoConfig = () => {
+    setIsSsoSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "SSO configuration saved",
+        description: "Your Single Sign-On settings have been updated.",
+      });
+      setIsSsoSaving(false);
+    }, 1000);
+  };
+  
+  // User Permission Settings
+  const handleSavePermissionSettings = () => {
+    setIsPermissionSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Permission settings saved",
+        description: "User role permissions have been updated.",
+      });
+      setIsPermissionSaving(false);
+    }, 1000);
+  };
+  
+  // Email Templates
+  const handleSaveEmailTemplates = () => {
+    setIsEmailTemplateSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Email templates saved",
+        description: "Your notification email templates have been updated.",
+      });
+      setIsEmailTemplateSaving(false);
+    }, 1000);
+  };
+  
+  // Teams Settings
+  const handleCreateTeam = () => {
+    toast({
+      title: "Create new team",
+      description: "Opening team creation form...",
+    });
+  };
+  
+  const handleSaveTeamSettings = () => {
+    setIsTeamSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Team settings saved",
+        description: "Your team configuration has been updated.",
+      });
+      setIsTeamSaving(false);
+    }, 1000);
+  };
+  
+  // Objective Settings
+  const handleSaveObjectiveSettings = () => {
+    setIsObjectiveSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Objective settings saved",
+        description: "Your OKR default settings have been updated.",
+      });
+      setIsObjectiveSaving(false);
+    }, 1000);
+  };
+  
+  // Cadence Settings
+  const handleSaveCadenceSettings = () => {
+    setIsCadenceSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Cadence settings saved",
+        description: "Your check-in and review cadence settings have been updated.",
+      });
+      setIsCadenceSaving(false);
+    }, 1000);
+  };
+  
+  // Cycle Settings
+  const handleCreateCycle = () => {
+    toast({
+      title: "Create new cycle",
+      description: "Opening cycle creation dialog...",
+    });
+  };
+  
+  const handleSaveCycleSettings = () => {
+    setIsCycleSaving(true);
+    setTimeout(() => {
+      toast({
+        title: "Cycle settings saved",
+        description: "Your OKR cycle settings have been updated.",
+      });
+      setIsCycleSaving(false);
+    }, 1000);
   };
   return (
     <div>
@@ -938,9 +1087,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Preferences
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveNotificationSettings}
+                disabled={isNotificationSaving}
+              >
+                {isNotificationSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Preferences
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -985,9 +1147,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Security Settings
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveSecuritySettings}
+                disabled={isSecuritySaving}
+              >
+                {isSecuritySaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Security Settings
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -1095,9 +1270,22 @@ export default function Configure() {
                   Connection details are encrypted
                 </span>
               </div>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save LDAP Configuration
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveLdapConfig}
+                disabled={isLdapSaving}
+              >
+                {isLdapSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save LDAP Configuration
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -1260,9 +1448,22 @@ export default function Configure() {
                   SSO configuration is encrypted
                 </span>
               </div>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save SSO Configuration
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveSsoConfig}
+                disabled={isSsoSaving}
+              >
+                {isSsoSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save SSO Configuration
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -1439,9 +1640,22 @@ export default function Configure() {
               </Table>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Permission Settings
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSavePermissionSettings}
+                disabled={isPermissionSaving}
+              >
+                {isPermissionSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Permission Settings
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -1491,9 +1705,22 @@ export default function Configure() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Email Templates
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveEmailTemplates}
+                disabled={isEmailTemplateSaving}
+              >
+                {isEmailTemplateSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Email Templates
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
