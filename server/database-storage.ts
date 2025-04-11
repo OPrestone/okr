@@ -3,7 +3,8 @@ import {
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
   FinancialData, InsertFinancialData, Cycle, InsertCycle,
   users, teams, objectives, keyResults, meetings, resources, financialData, cycles,
-  checkIns, comments, userCycles, teamCycles, notifications, meetingAgendaItems
+  checkIns, comments, userCycles, teamCycles, notifications, meetingAgendaItems,
+  companySettings
 } from "@shared/schema";
 import { db } from './db';
 import { eq, and, gt, gte, lte, between, sql, desc, asc, isNull, not, or } from 'drizzle-orm';
@@ -590,6 +591,87 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error deleting cycle:", error);
       return false;
+    }
+  }
+  
+  // Company Settings operations
+  async getCompanySettings(): Promise<any> {
+    try {
+      const [settings] = await db.select().from(companySettings);
+      return settings || {};
+    } catch (error) {
+      console.error("Error fetching company settings:", error);
+      return {};
+    }
+  }
+  
+  async updateCompanyLogo(logoUrl: string): Promise<any> {
+    try {
+      const [settings] = await db.select().from(companySettings);
+      
+      if (settings) {
+        // Update existing settings
+        const [updatedSettings] = await db
+          .update(companySettings)
+          .set({
+            logoUrl,
+            updatedAt: new Date()
+          })
+          .where(eq(companySettings.id, settings.id))
+          .returning();
+          
+        return updatedSettings;
+      } else {
+        // Create settings if they don't exist
+        const [newSettings] = await db
+          .insert(companySettings)
+          .values({
+            logoUrl,
+            name: "My Company",
+            primaryColor: "#4f46e5",
+          })
+          .returning();
+          
+        return newSettings;
+      }
+    } catch (error) {
+      console.error("Error updating company logo:", error);
+      return {};
+    }
+  }
+  
+  async updateCompanySettings(settings: Partial<any>): Promise<any> {
+    try {
+      const [existingSettings] = await db.select().from(companySettings);
+      
+      if (existingSettings) {
+        // Update existing settings
+        const [updatedSettings] = await db
+          .update(companySettings)
+          .set({
+            ...settings,
+            updatedAt: new Date()
+          })
+          .where(eq(companySettings.id, existingSettings.id))
+          .returning();
+          
+        return updatedSettings;
+      } else {
+        // Create settings if they don't exist
+        const [newSettings] = await db
+          .insert(companySettings)
+          .values({
+            ...settings,
+            name: settings.name || "My Company",
+            primaryColor: settings.primaryColor || "#4f46e5",
+          })
+          .returning();
+          
+        return newSettings;
+      }
+    } catch (error) {
+      console.error("Error updating company settings:", error);
+      return {};
     }
   }
 }
