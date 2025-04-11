@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider } from "./hooks/use-sidebar";
+import { SearchProvider } from "./hooks/use-search";
 import { DashboardLayout } from "./components/dashboard/layout";
 import Home from "./pages/home";
 import QuickStart from "./pages/quick-start";
@@ -26,6 +27,7 @@ import CreateUser from "./pages/create-user";
 import SuggestedKeyResults from "./pages/suggested-key-results";
 import ImportFinancial from "./pages/import-financial";
 import CheckIns from "./pages/check-ins";
+import Search from "./pages/search";
 
 function Router() {
   return (
@@ -53,6 +55,7 @@ function Router() {
           <Route path="/create-user" component={CreateUser} />
           <Route path="/suggested-key-results" component={SuggestedKeyResults} />
           <Route path="/import-financial" component={ImportFinancial} />
+          <Route path="/search" component={Search} />
           <Route component={NotFound} />
         </Switch>
       </DashboardLayout>
@@ -63,8 +66,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <SearchProvider>
+        <Router />
+        <Toaster />
+      </SearchProvider>
     </QueryClientProvider>
   );
 }
