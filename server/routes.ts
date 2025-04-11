@@ -562,7 +562,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Logo upload endpoint
+  // Company logo upload endpoint
   app.post('/api/company-logo', upload.single('logo'), async (req, res) => {
     try {
       if (!req.file) {
@@ -583,6 +583,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error uploading logo:', error);
       res.status(500).json({ message: 'Failed to upload logo' });
+    }
+  });
+  
+  // System logo upload endpoint
+  app.post('/api/system-logo', upload.single('logo'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      
+      // Create URL to the uploaded file
+      const fileUrl = `/uploads/${req.file.filename}`;
+      
+      // Update system settings with the new logo URL
+      const updatedSettings = await storage.updateSystemSetting('systemLogoUrl', fileUrl, 'System logo URL', 'appearance');
+      
+      res.json({ 
+        success: true, 
+        logoUrl: fileUrl,
+        settings: updatedSettings
+      });
+    } catch (error) {
+      console.error('Error uploading system logo:', error);
+      res.status(500).json({ message: 'Failed to upload system logo' });
     }
   });
   
