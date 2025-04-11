@@ -67,6 +67,11 @@ export interface IStorage {
   createCycle(cycle: InsertCycle): Promise<Cycle>;
   updateCycle(id: number, cycle: Partial<InsertCycle>): Promise<Cycle | undefined>;
   deleteCycle(id: number): Promise<boolean>;
+  
+  // Company Settings operations
+  getCompanySettings(): Promise<any>;
+  updateCompanyLogo(logoUrl: string): Promise<any>;
+  updateCompanySettings(settings: Partial<any>): Promise<any>;
 }
 
 export class MemStorage implements IStorage {
@@ -79,6 +84,7 @@ export class MemStorage implements IStorage {
   private resources: Map<number, Resource>;
   private financialData: Map<number, FinancialData>;
   private cycles: Map<number, Cycle>;
+  private companySettings: any;
   
   private userCurrentId: number;
   private teamCurrentId: number;
@@ -110,6 +116,16 @@ export class MemStorage implements IStorage {
     this.resourceCurrentId = 1;
     this.financialDataCurrentId = 1;
     this.cycleCurrentId = 1;
+    
+    // Initialize company settings
+    this.companySettings = {
+      id: 1,
+      name: "My Company",
+      logoUrl: "",
+      primaryColor: "#4f46e5",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
     
     this.seedData();
   }
@@ -466,6 +482,26 @@ export class MemStorage implements IStorage {
   async deleteCycle(id: number): Promise<boolean> {
     if (!this.cycles.has(id)) return false;
     return this.cycles.delete(id);
+  }
+  
+  // Company Settings implementations
+  async getCompanySettings(): Promise<any> {
+    return this.companySettings;
+  }
+  
+  async updateCompanyLogo(logoUrl: string): Promise<any> {
+    this.companySettings.logoUrl = logoUrl;
+    this.companySettings.updatedAt = new Date();
+    return this.companySettings;
+  }
+  
+  async updateCompanySettings(settings: Partial<any>): Promise<any> {
+    this.companySettings = {
+      ...this.companySettings,
+      ...settings,
+      updatedAt: new Date()
+    };
+    return this.companySettings;
   }
 }
 

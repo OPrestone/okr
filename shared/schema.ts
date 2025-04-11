@@ -3,6 +3,22 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
 
+// Company settings schema
+export const companySettings = pgTable("company_settings", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().default("My Company"),
+  logoUrl: text("logo_url"),
+  primaryColor: text("primary_color").default("#4f46e5"), // Default primary color
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // User schema
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
