@@ -16,9 +16,10 @@ import {
   Loader2,
   Calendar,
   Clock,
-  X
+  X,
+  Link
 } from "lucide-react";
-import { getInitials } from "@/lib/utils";
+import { getInitials, generateGoogleMeetLink } from "@/lib/utils";
 import { cn, formatDate, formatTime } from "@/lib/utils";
 import { User, InsertMeeting } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,6 +47,7 @@ export default function OneOnOne() {
   const [meetingDate, setMeetingDate] = useState<Date | undefined>(new Date());
   const [meetingStartTime, setMeetingStartTime] = useState("09:00");
   const [meetingEndTime, setMeetingEndTime] = useState("10:00");
+  const [isVirtual, setIsVirtual] = useState(true); // Default to virtual meetings
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -250,6 +252,24 @@ export default function OneOnOne() {
                     value={meetingDescription} 
                     onChange={(e) => setMeetingDescription(e.target.value)} 
                     placeholder="What would you like to discuss?"
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1">
+                    <Label htmlFor="virtual-meeting" className="text-sm font-medium">
+                      Create as virtual meeting with Google Meet
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      A Google Meet link will be automatically generated
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="virtual-meeting"
+                    checked={isVirtual}
+                    onChange={(e) => setIsVirtual(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                   />
                 </div>
                 
