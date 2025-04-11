@@ -12,7 +12,8 @@ import {
   Share2,
   Play,
   AlertCircle,
-  Loader2
+  Loader2,
+  Users
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -279,7 +280,7 @@ export default function Reporting() {
 
                 <div className="flex justify-end">
                   <Button 
-                    className="bg-green-600 hover:bg-green-700 px-4"
+                    className="bg-[#34A853] hover:bg-[#2E964A] px-4 text-white"
                     onClick={handleExcelExport}
                     disabled={excelMutation.isPending}
                   >
@@ -337,13 +338,13 @@ export default function Reporting() {
                 <div className="flex justify-end space-x-2">
                   <Button 
                     variant="outline" 
-                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                    className="text-[#4285F4] border-[#4285F4]/30 hover:bg-[#E8F0FE]"
                   >
                     <Play className="h-4 w-4 mr-2" />
                     Present
                   </Button>
                   <Button 
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-[#4285F4] hover:bg-[#3B78E7] text-white"
                     onClick={handlePowerPointExport}
                     disabled={pptMutation.isPending}
                   >
@@ -401,21 +402,21 @@ export default function Reporting() {
                       <h4 className="font-medium p-3 border-b text-sm">Report Summary Preview</h4>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3">
-                        <div className="bg-blue-50 p-3 rounded-md border border-blue-100">
-                          <p className="text-xs text-blue-600 uppercase font-medium">Total Objectives</p>
-                          <p className="text-2xl font-bold">{previewData.summary.totalObjectives}</p>
+                        <div className="bg-[#E8F0FE] p-3 rounded-md border border-[#4285F4]/30">
+                          <p className="text-xs text-[#4285F4] uppercase font-medium">Total Objectives</p>
+                          <p className="text-2xl font-bold text-[#202124]">{previewData.summary.totalObjectives}</p>
                         </div>
-                        <div className="bg-green-50 p-3 rounded-md border border-green-100">
-                          <p className="text-xs text-green-600 uppercase font-medium">Completed</p>
-                          <p className="text-2xl font-bold">{previewData.summary.completedObjectives}</p>
+                        <div className="bg-[#E6F4EA] p-3 rounded-md border border-[#34A853]/30">
+                          <p className="text-xs text-[#34A853] uppercase font-medium">Completed</p>
+                          <p className="text-2xl font-bold text-[#202124]">{previewData.summary.completedObjectives}</p>
                         </div>
-                        <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
-                          <p className="text-xs text-amber-600 uppercase font-medium">At Risk</p>
-                          <p className="text-2xl font-bold">{previewData.summary.atRiskObjectives}</p>
+                        <div className="bg-[#FEF7E0] p-3 rounded-md border border-[#FBBC05]/30">
+                          <p className="text-xs text-[#FBBC05] uppercase font-medium">At Risk</p>
+                          <p className="text-2xl font-bold text-[#202124]">{previewData.summary.atRiskObjectives}</p>
                         </div>
-                        <div className="bg-purple-50 p-3 rounded-md border border-purple-100">
-                          <p className="text-xs text-purple-600 uppercase font-medium">Avg Progress</p>
-                          <p className="text-2xl font-bold">{previewData.summary.avgProgress}%</p>
+                        <div className="bg-[#FAD2CF] p-3 rounded-md border border-[#EA4335]/30">
+                          <p className="text-xs text-[#EA4335] uppercase font-medium">Avg Progress</p>
+                          <p className="text-2xl font-bold text-[#202124]">{previewData.summary.avgProgress}%</p>
                         </div>
                       </div>
                       
