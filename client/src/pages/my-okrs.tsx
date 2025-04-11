@@ -1,476 +1,455 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  ChevronDown, 
-  ChevronRight, 
-  MoreHorizontal, 
-  ChevronUp, 
-  Circle, 
-  CheckCircle,
-  ExternalLink
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-
-interface User {
-  id: string;
-  name: string;
-  initials: string;
-  color: string;
-}
+import { Plus, Target, TrendingUp, CheckCircle, Clock } from "lucide-react";
+import { Link } from "wouter";
 
 interface KeyResult {
-  id: string;
+  id: number;
   title: string;
   progress: number;
-  progressChange: number;
-  owner: User;
+  dueDate: string;
+  status: "on-track" | "at-risk" | "behind" | "complete";
 }
 
-interface Objective {
-  id: string;
+interface OKR {
+  id: number;
   title: string;
+  description: string;
+  progress: number;
+  timeframe: string;
+  status: "draft" | "active" | "completed" | "pending-approval";
+  type: "personal" | "team" | "company";
   keyResults: KeyResult[];
-  progress: number;
-  progressChange: number;
-  confidence: string;
-  owner: User;
-  isExpanded: boolean;
-}
-
-interface Group {
-  id: string;
-  name: string;
-  badgeCount: number;
-  objectives: Objective[];
-  isExpanded: boolean;
-}
-
-interface CheckIn {
-  id: string;
-  team: string;
-  progress: string;
-  dueDate: string;
-}
-
-interface Todo {
-  id: string;
-  type: 'key-result' | 'check-in';
-  title: string;
-  dueDate: string;
 }
 
 export default function MyOKRs() {
-  // Mock data for groups (quarters and teams)
-  const [groups, setGroups] = useState<Group[]>([
+  const [currentTab, setCurrentTab] = useState("active");
+  
+  const myOKRs: OKR[] = [
     {
-      id: 'q1-2025',
-      name: 'Q1 2025',
-      badgeCount: 2,
-      isExpanded: true,
-      objectives: [
+      id: 1,
+      title: "Revolutionize Digital Landscapes",
+      description: "Create groundbreaking digital products that redefine industry standards, pushing boundaries and setting new trends.",
+      progress: 15,
+      timeframe: "Q2 2025",
+      status: "active",
+      type: "personal",
+      keyResults: [
         {
-          id: 'obj-1',
-          title: 'Provide technological and digital solutions to generate 1.5B in revenue and a cum audience of 37M',
-          progress: 20,
-          progressChange: 20,
-          confidence: 'Medium',
-          owner: { id: 'user-1', name: 'Alex Morgan', initials: 'AM', color: 'bg-blue-500' },
-          isExpanded: true,
-          keyResults: [
-            {
-              id: 'kr-1',
-              title: '100% Implement new ERP to fully automate all divisions and processes',
-              progress: 40,
-              progressChange: 40,
-              owner: { id: 'user-2', name: 'Jane Doe', initials: 'JD', color: 'bg-green-500' },
-            },
-            {
-              id: 'kr-2',
-              title: '100% Build and Rollout of Innovative Digital Products',
-              progress: 0,
-              progressChange: 0,
-              owner: { id: 'user-2', name: 'Jane Doe', initials: 'JD', color: 'bg-green-500' },
-            }
-          ]
+          id: 101,
+          title: "Increase User Engagement by 40%",
+          progress: 25,
+          dueDate: "Jun 30, 2025",
+          status: "on-track"
         },
         {
-          id: 'obj-2',
-          title: 'Generate 1.5Billion shillings in sales revenue and a cum audience of 37 Million listeners for the year 2025',
+          id: 102,
+          title: "Launch 5 Innovative Digital Products",
           progress: 0,
-          progressChange: 0,
-          confidence: '',
-          owner: { id: 'user-3', name: 'Bonface Gitonga', initials: 'BG', color: 'bg-purple-500' },
-          isExpanded: false,
-          keyResults: []
-        }
-      ]
-    },
-    {
-      id: 'ict',
-      name: 'ICT',
-      badgeCount: 1,
-      isExpanded: true,
-      objectives: [
+          dueDate: "Sep 15, 2025",
+          status: "behind"
+        },
         {
-          id: 'obj-3',
-          title: '100% System Uptime',
+          id: 103,
+          title: "Achieve 90% Positive User Feedback",
+          progress: 20,
+          dueDate: "Aug 1, 2025",
+          status: "at-risk"
+        }
+      ]
+    },
+    {
+      id: 2,
+      title: "Optimize Development Workflow",
+      description: "Improve development processes to increase efficiency, reduce bugs, and accelerate delivery timelines.",
+      progress: 65,
+      timeframe: "Q2 2025",
+      status: "active",
+      type: "team",
+      keyResults: [
+        {
+          id: 201,
+          title: "Reduce bug rate by 30%",
+          progress: 80,
+          dueDate: "May 15, 2025",
+          status: "on-track"
+        },
+        {
+          id: 202,
+          title: "Implement CI/CD pipeline across all projects",
+          progress: 100,
+          dueDate: "Apr 30, 2025",
+          status: "complete"
+        },
+        {
+          id: 203,
+          title: "Increase code review coverage to 95%",
+          progress: 70,
+          dueDate: "Jun 15, 2025",
+          status: "on-track"
+        }
+      ]
+    },
+    {
+      id: 3,
+      title: "Ignite Innovation Fires",
+      description: "Fuel the development of cutting-edge digital solutions, sparking creativity and pioneering advancements.",
+      progress: 0,
+      timeframe: "Q3 2025",
+      status: "pending-approval",
+      type: "personal",
+      keyResults: [
+        {
+          id: 301,
+          title: "Establish innovation lab",
           progress: 0,
-          progressChange: 0,
-          confidence: '',
-          owner: { id: 'user-2', name: 'Jane Doe', initials: 'JD', color: 'bg-green-500' },
-          isExpanded: true,
-          keyResults: [
-            {
-              id: 'kr-3',
-              title: '100% Email System uptime',
-              progress: 0,
-              progressChange: 0,
-              owner: { id: 'user-2', name: 'Jane Doe', initials: 'JD', color: 'bg-green-500' },
-            }
-          ]
+          dueDate: "Aug 1, 2025",
+          status: "on-track"
+        },
+        {
+          id: 302,
+          title: "Organize 5 innovation workshops",
+          progress: 0,
+          dueDate: "Sep 30, 2025",
+          status: "on-track"
         }
       ]
     }
-  ]);
-
-  // Mock data for check-ins
-  const [checkIns, setCheckIns] = useState<CheckIn[]>([
+  ];
+  
+  const drafts: OKR[] = [
     {
-      id: 'check-1',
-      team: 'Executive Team',
-      progress: '0/1 published',
-      dueDate: 'Due on Sunday',
-    },
-    {
-      id: 'check-2',
-      team: 'ICT Team',
-      progress: '0/3 published',
-      dueDate: 'Due on Sunday',
+      id: 4,
+      title: "Enhance Team Collaboration",
+      description: "Improve communication and workflows between team members to boost productivity.",
+      progress: 0,
+      timeframe: "Q3 2025",
+      status: "draft",
+      type: "team",
+      keyResults: [
+        {
+          id: 401,
+          title: "Implement new collaboration tools",
+          progress: 0,
+          dueDate: "Oct 15, 2025",
+          status: "on-track"
+        },
+        {
+          id: 402,
+          title: "Conduct weekly sync-up meetings",
+          progress: 0,
+          dueDate: "Ongoing",
+          status: "on-track"
+        }
+      ]
     }
-  ]);
-
-  // Mock data for todos
-  const [todos, setTodos] = useState<Todo[]>([
+  ];
+  
+  const completedOKRs: OKR[] = [
     {
-      id: 'todo-1',
-      type: 'key-result',
-      title: '100% Email System uptime',
-      dueDate: 'Due on 12 Apr',
-    },
-    {
-      id: 'todo-2',
-      type: 'key-result',
-      title: '100% Build and Rollout of Innovative Digital Products',
-      dueDate: 'Due on 24 Mar',
-    },
-    {
-      id: 'todo-3',
-      type: 'key-result',
-      title: '100% Implement new ERP to fully automate all divisions...',
-      dueDate: 'Due on 24 Mar',
-    },
-    {
-      id: 'todo-4',
-      type: 'check-in',
-      title: 'Executive Team',
-      dueDate: 'Due on Sunday',
-    },
-    {
-      id: 'todo-5',
-      type: 'check-in',
-      title: 'ICT Team',
-      dueDate: 'Due on Sunday',
+      id: 5,
+      title: "Improve Customer Support Response Time",
+      description: "Reduce support ticket response and resolution times to improve customer satisfaction.",
+      progress: 100,
+      timeframe: "Q1 2025",
+      status: "completed",
+      type: "team",
+      keyResults: [
+        {
+          id: 501,
+          title: "Reduce first response time to under 4 hours",
+          progress: 100,
+          dueDate: "Mar 15, 2025",
+          status: "complete"
+        },
+        {
+          id: 502,
+          title: "Achieve 85% first-contact resolution rate",
+          progress: 100,
+          dueDate: "Mar 30, 2025",
+          status: "complete"
+        }
+      ]
     }
-  ]);
-
-  // Toggle group expansion
-  const toggleGroup = (groupId: string) => {
-    setGroups(groups.map(group => 
-      group.id === groupId ? { ...group, isExpanded: !group.isExpanded } : group
-    ));
+  ];
+  
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "on-track":
+        return <Badge className="bg-green-100 text-green-800">On Track</Badge>;
+      case "at-risk":
+        return <Badge className="bg-yellow-100 text-yellow-800">At Risk</Badge>;
+      case "behind":
+        return <Badge className="bg-red-100 text-red-800">Behind</Badge>;
+      case "complete":
+        return <Badge className="bg-blue-100 text-blue-800">Complete</Badge>;
+      case "pending-approval":
+        return <Badge className="bg-purple-100 text-purple-800">Pending Approval</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800">{status}</Badge>;
+    }
   };
-
-  // Toggle objective expansion
-  const toggleObjective = (groupId: string, objectiveId: string) => {
-    setGroups(groups.map(group => 
-      group.id === groupId 
-        ? { 
-            ...group, 
-            objectives: group.objectives.map(obj => 
-              obj.id === objectiveId ? { ...obj, isExpanded: !obj.isExpanded } : obj
-            )
-          }
-        : group
-    ));
+  
+  const getProgressColor = (progress: number) => {
+    if (progress >= 70) return "bg-green-500";
+    if (progress >= 40) return "bg-yellow-500";
+    return "bg-blue-500";
   };
-
+  
   return (
-    <div className="container mx-auto">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">My OKRs</h1>
-          <p className="text-gray-600 text-sm">Owned by me and my teams</p>
+          <h1 className="text-2xl font-bold text-neutral-900">My OKRs</h1>
+          <p className="text-neutral-600 mt-1">
+            Track and manage your personal objectives and key results
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon">
-            <ExternalLink className="h-5 w-5" />
+        
+        <Link href="/create-objective">
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create OKR
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Export</DropdownMenuItem>
-              <DropdownMenuItem>Filter</DropdownMenuItem>
-              <DropdownMenuItem>Print</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        </Link>
       </div>
-
-      {/* Main OKR Content */}
-      <div className="space-y-4">
-        {groups.map(group => (
-          <div key={group.id} className="border rounded-md overflow-hidden bg-white shadow-sm">
-            {/* Group Header */}
-            <div 
-              className="p-3 border-b bg-gray-50 flex items-center cursor-pointer"
-              onClick={() => toggleGroup(group.id)}
-            >
-              {group.isExpanded ? (
-                <ChevronDown className="h-4 w-4 mr-2 text-gray-500" />
-              ) : (
-                <ChevronRight className="h-4 w-4 mr-2 text-gray-500" />
-              )}
-              <span className="font-medium">{group.name}</span>
-              {group.badgeCount > 0 && (
-                <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                  {group.badgeCount}
-                </span>
-              )}
-              <div className="flex-1" />
-              <div className="grid grid-cols-3 gap-12 text-sm text-gray-500">
-                <span>Confidence</span>
-                <span>Owner</span>
-                <span>Progress</span>
-              </div>
-            </div>
-
-            {/* Group Content */}
-            {group.isExpanded && (
-              <div>
-                {group.objectives.map(objective => (
-                  <div key={objective.id} className="border-b last:border-b-0">
-                    {/* Objective */}
-                    <div className="flex items-start p-4">
-                      <div 
-                        className="p-1 cursor-pointer"
-                        onClick={() => toggleObjective(group.id, objective.id)}
-                      >
-                        <Circle className="h-4 w-4 text-blue-500" fill="#3B82F6" />
-                      </div>
-                      <div className="flex-1 ml-2">
-                        <div className="font-medium text-gray-900">{objective.title}</div>
-                      </div>
-                      <div className="flex items-center gap-8">
-                        <div className="w-20 text-center">
-                          {objective.confidence ? (
-                            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-                              {objective.confidence}
-                            </Badge>
-                          ) : (
-                            <span>—</span>
-                          )}
-                        </div>
-                        <div className="w-20 flex justify-center">
-                          {objective.owner ? (
-                            <div className={`h-8 w-8 rounded-full ${objective.owner.color} text-white flex items-center justify-center font-medium`}>
-                              {objective.owner.initials}
+      
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="active">Active ({myOKRs.filter(okr => okr.status === "active").length})</TabsTrigger>
+          <TabsTrigger value="pending-approval">Pending Approval ({myOKRs.filter(okr => okr.status === "pending-approval").length})</TabsTrigger>
+          <TabsTrigger value="drafts">Drafts ({drafts.length})</TabsTrigger>
+          <TabsTrigger value="completed">Completed ({completedOKRs.length})</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="active" className="space-y-4">
+          {myOKRs.filter(okr => okr.status === "active").map((okr) => (
+            <Card key={okr.id} className="shadow-sm">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <Badge variant="outline" className="mb-2">{okr.timeframe}</Badge>
+                    <CardTitle className="flex items-center gap-2">
+                      <Target className="h-5 w-5 text-primary" />
+                      {okr.title}
+                    </CardTitle>
+                    <CardDescription className="mt-1">{okr.description}</CardDescription>
+                  </div>
+                  
+                  <Badge className={okr.type === "personal" ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"}>
+                    {okr.type === "personal" ? "Personal" : okr.type === "team" ? "Team" : "Company"}
+                  </Badge>
+                </div>
+                
+                <div className="mt-2">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-neutral-600">Overall Progress</span>
+                    <span className="text-sm font-medium">{okr.progress}%</span>
+                  </div>
+                  <Progress value={okr.progress} className={`h-2 ${getProgressColor(okr.progress)}`} />
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                <h4 className="text-sm font-medium mb-2">Key Results</h4>
+                <div className="space-y-3">
+                  {okr.keyResults.map((kr) => (
+                    <div key={kr.id} className="flex justify-between items-center p-3 bg-neutral-50 rounded-md">
+                      <div className="flex items-start gap-3">
+                        <TrendingUp className="h-5 w-5 text-neutral-400 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">{kr.title}</p>
+                          <div className="flex items-center mt-1 gap-3">
+                            <div className="text-xs text-neutral-500 flex items-center">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {kr.dueDate}
                             </div>
-                          ) : (
-                            <span>—</span>
-                          )}
+                            {getStatusBadge(kr.status)}
+                          </div>
                         </div>
-                        <div className="w-32 flex items-center">
-                          <Progress className="h-2 w-16 mr-2" value={objective.progress} />
-                          <span className="text-sm">{objective.progress}%</span>
-                          {objective.progressChange > 0 && (
-                            <span className="ml-1 text-xs text-green-600">
-                              +{objective.progressChange}%
-                            </span>
-                          )}
-                        </div>
-                        <div className="ml-4">
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <ChevronLeft className="h-4 w-4 text-gray-400" />
-                          </Button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium">{kr.progress}%</div>
+                        <div className="w-16 h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full ${getProgressColor(kr.progress)}`} 
+                            style={{ width: `${kr.progress}%` }}
+                          ></div>
                         </div>
                       </div>
                     </div>
-
-                    {/* Key Results (if objective is expanded) */}
-                    {objective.isExpanded && objective.keyResults.length > 0 && (
-                      <div className="pl-12 border-t border-gray-100">
-                        {objective.keyResults.map(keyResult => (
-                          <div key={keyResult.id} className="flex items-center py-3 px-4 border-b last:border-b-0 border-gray-100">
-                            <div className="p-1">
-                              <Circle className="h-3 w-3 text-green-500" fill="#22C55E" />
-                            </div>
-                            <div className="flex-1 ml-2">
-                              <div className="text-sm text-gray-700">{keyResult.title}</div>
-                            </div>
-                            <div className="flex items-center gap-8">
-                              <div className="w-20 text-center">
-                                {/* Empty for confidence column */}
-                              </div>
-                              <div className="w-20 flex justify-center">
-                                <div className={`h-8 w-8 rounded-full ${keyResult.owner.color} text-white flex items-center justify-center font-medium`}>
-                                  {keyResult.owner.initials}
-                                </div>
-                              </div>
-                              <div className="w-32 flex items-center">
-                                <Progress className="h-2 w-16 mr-2" value={keyResult.progress} />
-                                <span className="text-sm">{keyResult.progress}%</span>
-                                {keyResult.progressChange > 0 && (
-                                  <span className="ml-1 text-xs text-green-600">
-                                    +{keyResult.progressChange}%
-                                  </span>
-                                )}
-                                {keyResult.progress === 0 && keyResult.progressChange === 0 && (
-                                  <span className="ml-1 text-xs text-gray-500">
-                                    0%
-                                  </span>
-                                )}
-                              </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+        
+        <TabsContent value="pending-approval" className="space-y-4">
+          {myOKRs.filter(okr => okr.status === "pending-approval").map((okr) => (
+            <Card key={okr.id} className="shadow-sm border-purple-200">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <Badge variant="outline" className="mb-2">{okr.timeframe}</Badge>
+                    <CardTitle className="flex items-center gap-2">
+                      <Target className="h-5 w-5 text-primary" />
+                      {okr.title}
+                    </CardTitle>
+                    <CardDescription className="mt-1">{okr.description}</CardDescription>
+                  </div>
+                  
+                  <Badge className="bg-purple-100 text-purple-800">Pending Approval</Badge>
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                <div className="bg-purple-50 p-3 rounded-md text-sm text-purple-800 mb-4">
+                  This OKR is awaiting approval from your manager. You'll be notified once it's reviewed.
+                </div>
+                
+                <h4 className="text-sm font-medium mb-2">Key Results</h4>
+                <div className="space-y-3">
+                  {okr.keyResults.map((kr) => (
+                    <div key={kr.id} className="flex justify-between items-center p-3 bg-neutral-50 rounded-md">
+                      <div className="flex items-start gap-3">
+                        <TrendingUp className="h-5 w-5 text-neutral-400 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">{kr.title}</p>
+                          <div className="flex items-center mt-1">
+                            <div className="text-xs text-neutral-500 flex items-center">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {kr.dueDate}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* To-dos and Check-ins sections */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        {/* To-dos Section */}
-        <div className="bg-white rounded-md shadow-sm border">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="font-semibold text-lg">To-dos</h2>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="p-4">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Key Results</h3>
-              <div className="space-y-2">
-                {todos.filter(todo => todo.type === 'key-result').map(todo => (
-                  <div key={todo.id} className="flex items-center justify-between">
-                    <div className="flex">
-                      <div className="mt-0.5">
-                        <Circle className="h-4 w-4 text-green-500 mr-2" fill="#22C55E" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm">{todo.title}</span>
-                        <span className="text-xs text-gray-500">{todo.dueDate}</span>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <Button size="sm" variant="outline" className="h-7 text-xs">
-                        Update
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium mb-2">Check-ins</h3>
-              <div className="space-y-2">
-                {todos.filter(todo => todo.type === 'check-in').map(todo => (
-                  <div key={todo.id} className="flex items-center justify-between">
-                    <div className="flex">
-                      <div className="mt-0.5">
-                        <Circle className="h-4 w-4 text-gray-400 mr-2" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm">{todo.title}</span>
-                        <span className="text-xs text-gray-500">{todo.dueDate}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Button size="sm" variant="outline" className="h-7 text-xs">
-                        Fill out
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Check-ins Section */}
-        <div className="bg-white rounded-md shadow-sm border">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="font-semibold text-lg">Check-ins</h2>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="space-y-4 p-4">
-            {checkIns.map(checkIn => (
-              <div key={checkIn.id} className="border rounded-md p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm">
-                    {checkIn.team.substring(0, 2)}
-                  </div>
-                  <div>
-                    <div className="font-medium">{checkIn.team}</div>
-                    <div className="text-xs text-gray-500">{checkIn.progress} • {checkIn.dueDate}</div>
-                  </div>
+                  ))}
                 </div>
-                <div className="flex justify-end">
-                  <Button size="sm" variant="outline">
-                    Fill out
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+        
+        <TabsContent value="drafts" className="space-y-4">
+          {drafts.length > 0 ? (
+            drafts.map((draft) => (
+              <Card key={draft.id} className="shadow-sm border-neutral-200">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Badge variant="outline" className="mb-2">{draft.timeframe}</Badge>
+                      <CardTitle className="flex items-center gap-2">
+                        <Target className="h-5 w-5 text-neutral-400" />
+                        {draft.title}
+                      </CardTitle>
+                      <CardDescription className="mt-1">{draft.description}</CardDescription>
+                    </div>
+                    
+                    <Badge className="bg-neutral-100 text-neutral-800">Draft</Badge>
+                  </div>
+                </CardHeader>
+                
+                <CardContent>
+                  <div className="bg-neutral-50 p-3 rounded-md text-sm text-neutral-600 mb-4">
+                    This draft has {draft.keyResults.length} key results and can be submitted when you're ready.
+                  </div>
+                  
+                  <div className="flex gap-2 justify-end">
+                    <Button variant="outline" size="sm">
+                      Edit Draft
+                    </Button>
+                    <Button size="sm">
+                      Submit for Approval
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <Card className="shadow-sm border-dashed border-2 border-neutral-200 bg-neutral-50">
+              <CardContent className="pt-6 flex flex-col items-center text-center p-12">
+                <Target className="h-12 w-12 text-neutral-300 mb-4" />
+                <h3 className="text-lg font-medium text-neutral-800 mb-2">No draft OKRs</h3>
+                <p className="text-neutral-600 mb-6 max-w-md">
+                  You don't have any draft OKRs yet. Create a draft to work on before submitting for approval.
+                </p>
+                <Link href="/create-draft-okr">
+                  <Button className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Create Draft OKR
                   </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="completed" className="space-y-4">
+          {completedOKRs.map((okr) => (
+            <Card key={okr.id} className="shadow-sm border-green-200">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <Badge variant="outline" className="mb-2">{okr.timeframe}</Badge>
+                    <CardTitle className="flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      {okr.title}
+                    </CardTitle>
+                    <CardDescription className="mt-1">{okr.description}</CardDescription>
+                  </div>
+                  
+                  <Badge className="bg-green-100 text-green-800">Completed</Badge>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+                
+                <div className="mt-2">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-neutral-600">Overall Progress</span>
+                    <span className="text-sm font-medium">{okr.progress}%</span>
+                  </div>
+                  <Progress value={okr.progress} className="h-2 bg-green-500" />
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                <h4 className="text-sm font-medium mb-2">Key Results</h4>
+                <div className="space-y-3">
+                  {okr.keyResults.map((kr) => (
+                    <div key={kr.id} className="flex justify-between items-center p-3 bg-neutral-50 rounded-md">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <div>
+                          <p className="font-medium text-sm">{kr.title}</p>
+                          <div className="flex items-center mt-1 gap-3">
+                            <div className="text-xs text-neutral-500">
+                              Completed: {kr.dueDate}
+                            </div>
+                            <Badge className="bg-green-100 text-green-800">Complete</Badge>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium">{kr.progress}%</div>
+                        <div className="w-16 h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-green-500" 
+                            style={{ width: `${kr.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
-
-const ChevronLeft = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="m15 18-6-6 6-6" />
-  </svg>
-);

@@ -23,6 +23,7 @@ import CreateOkrAi from "./pages/create-okr-ai";
 import CreateDraftOkr from "./pages/create-draft-okr";
 import Drafts from "./pages/drafts";
 import SuggestedOKRs from "./pages/suggested-okrs";
+import MyOKRs from "./pages/my-okrs";
 import Mission from "./pages/mission";
 import CreateTeam from "./pages/create-team";
 import CreateUser from "./pages/create-user";
