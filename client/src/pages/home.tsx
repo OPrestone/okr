@@ -1,5 +1,6 @@
 import { QuickStats } from "@/components/dashboard/quick-stats";
 import { GetStartedGuide } from "@/components/quick-start/get-started-guide";
+import { SetupWorkflow } from "@/components/quick-start/setup-workflow";
 import { ProgressChart } from "@/components/dashboard/progress-chart";
 import { TeamPerformance } from "@/components/dashboard/team-performance";
 import { UpcomingMeetings } from "@/components/dashboard/upcoming-meetings";
@@ -20,37 +21,40 @@ export default function Home() {
   return (
     <div>
       {/* Welcome Section */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-neutral-900 mb-2">Welcome to your OKR Dashboard</h1>
           <p className="text-neutral-600">Track your objectives and key results in one place</p>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700 text-white">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create OKR
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem className="cursor-pointer" asChild>
-              <Link href="/create-objective">
+        <div className="flex gap-3">
+          <SetupWorkflow />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-red-600 hover:bg-red-700 text-white">
                 <PlusCircle className="mr-2 h-4 w-4" />
-                <span>Create OKRs Manually</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" asChild>
-              <Link href="/create-okr-ai">
-                <Sparkles className="mr-2 h-4 w-4" />
-                <span>Create OKRs with AI</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              <FileEdit className="mr-2 h-4 w-4" />
-              <span>Create Draft OKRs</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                Create OKR
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-objective">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <span>Create OKRs Manually</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" asChild>
+                <Link href="/create-okr-ai">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  <span>Create OKRs with AI</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <FileEdit className="mr-2 h-4 w-4" />
+                <span>Create Draft OKRs</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Quick Stats */}

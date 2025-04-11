@@ -93,8 +93,63 @@ export function Header() {
       }));
   };
 
-  // Effect for live search
+  // Function to perform search
+  const performSearch = () => {
+    if (searchValue.length < 3) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    
+    // Combine results from all sources
+    const results = [
+      // Users
+      ...searchInCollection(users, searchValue, {
+        fields: ['fullName', 'username', 'email', 'role'],
+        type: 'user',
+        getUrl: (item) => `/users/${item.id}`,
+        getTitle: (item) => item.fullName,
+        getDescription: (item) => item.role
+      }),
+      
+      // Teams
+      ...searchInCollection(teams, searchValue, {
+        fields: ['name', 'description'],
+        type: 'team',
+        getUrl: (item) => `/teams/${item.id}`,
+        getTitle: (item) => item.name,
+        getDescription: (item) => item.description || 'No description available'
+      }),
+      
+      // Objectives
+      ...searchInCollection(objectives, searchValue, {
+        fields: ['title', 'description'],
+        type: 'objective',
+        getUrl: (item) => `/objectives/${item.id}`,
+        getTitle: (item) => item.title,
+        getDescription: (item) => item.description || 'No description available'
+      }),
+      
+      // Resources
+      ...searchInCollection(resources, searchValue, {
+        fields: ['title', 'description'],
+        type: 'resource',
+        getUrl: (item) => `/resources/${item.id}`,
+        getTitle: (item) => item.title,
+        getDescription: (item) => item.description || 'No description available'
+      })
+    ];
+    
+    setSearchResults(results);
+    setIsSearching(false);
+    if (results.length > 0) {
+      setShowResults(true);
+    }
+  };
+  
+  // Effect for live search with debounce
   useEffect(() => {
+    // Only search if we have at least 3 characters
     if (searchValue.length < 3) {
       setSearchResults([]);
       setIsSearching(false);
@@ -103,53 +158,13 @@ export function Header() {
     
     setIsSearching(true);
     
+    // Debounce search
     const timer = setTimeout(() => {
-      // Combine results from all sources
-      const results = [
-        // Users
-        ...searchInCollection(users, searchValue, {
-          fields: ['fullName', 'username', 'email', 'role'],
-          type: 'user',
-          getUrl: (item) => `/users/${item.id}`,
-          getTitle: (item) => item.fullName,
-          getDescription: (item) => item.role
-        }),
-        
-        // Teams
-        ...searchInCollection(teams, searchValue, {
-          fields: ['name', 'description'],
-          type: 'team',
-          getUrl: (item) => `/teams/${item.id}`,
-          getTitle: (item) => item.name,
-          getDescription: (item) => item.description || 'No description available'
-        }),
-        
-        // Objectives
-        ...searchInCollection(objectives, searchValue, {
-          fields: ['title', 'description'],
-          type: 'objective',
-          getUrl: (item) => `/objectives/${item.id}`,
-          getTitle: (item) => item.title,
-          getDescription: (item) => item.description || 'No description available'
-        }),
-        
-        // Resources
-        ...searchInCollection(resources, searchValue, {
-          fields: ['title', 'description'],
-          type: 'resource',
-          getUrl: (item) => `/resources/${item.id}`,
-          getTitle: (item) => item.title,
-          getDescription: (item) => item.description || 'No description available'
-        })
-      ];
-      
-      setSearchResults(results);
-      setIsSearching(false);
-      setShowResults(true);
+      performSearch();
     }, 300);
     
     return () => clearTimeout(timer);
-  }, [searchValue, objectives, users, teams, resources]);
+  }, [searchValue]);
   
   // Close search results when clicking outside
   useEffect(() => {
