@@ -1,7 +1,7 @@
 import { 
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
-  FinancialData, InsertFinancialData, Cycle, InsertCycle
+  FinancialData, InsertFinancialData, Cycle, InsertCycle, CheckIn, InsertCheckIn
 } from "@shared/schema";
 
 // Storage interface for all CRUD operations
@@ -32,6 +32,11 @@ export interface IStorage {
   getKeyResultsByObjective(objectiveId: number): Promise<KeyResult[]>;
   createKeyResult(keyResult: InsertKeyResult): Promise<KeyResult>;
   updateKeyResult(id: number, keyResult: Partial<InsertKeyResult>): Promise<KeyResult | undefined>;
+  
+  // Check-In operations
+  getCheckIn(id: number): Promise<CheckIn | undefined>;
+  getCheckInsByKeyResult(keyResultId: number): Promise<CheckIn[]>;
+  createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn>;
   
   // Meeting operations
   getMeeting(id: number): Promise<Meeting | undefined>;
@@ -69,6 +74,7 @@ export class MemStorage implements IStorage {
   private teams: Map<number, Team>;
   private objectives: Map<number, Objective>;
   private keyResults: Map<number, KeyResult>;
+  private checkIns: Map<number, CheckIn>;
   private meetings: Map<number, Meeting>;
   private resources: Map<number, Resource>;
   private financialData: Map<number, FinancialData>;
@@ -78,6 +84,7 @@ export class MemStorage implements IStorage {
   private teamCurrentId: number;
   private objectiveCurrentId: number;
   private keyResultCurrentId: number;
+  private checkInCurrentId: number;
   private meetingCurrentId: number;
   private resourceCurrentId: number;
   private financialDataCurrentId: number;
@@ -88,6 +95,7 @@ export class MemStorage implements IStorage {
     this.teams = new Map();
     this.objectives = new Map();
     this.keyResults = new Map();
+    this.checkIns = new Map();
     this.meetings = new Map();
     this.resources = new Map();
     this.financialData = new Map();
@@ -97,6 +105,7 @@ export class MemStorage implements IStorage {
     this.teamCurrentId = 1;
     this.objectiveCurrentId = 1;
     this.keyResultCurrentId = 1;
+    this.checkInCurrentId = 1;
     this.meetingCurrentId = 1;
     this.resourceCurrentId = 1;
     this.financialDataCurrentId = 1;
@@ -300,6 +309,24 @@ export class MemStorage implements IStorage {
     const updatedKeyResult = { ...existingKeyResult, ...keyResult };
     this.keyResults.set(id, updatedKeyResult);
     return updatedKeyResult;
+  }
+  
+  // Check-In implementations
+  async getCheckIn(id: number): Promise<CheckIn | undefined> {
+    return this.checkIns.get(id);
+  }
+  
+  async getCheckInsByKeyResult(keyResultId: number): Promise<CheckIn[]> {
+    return Array.from(this.checkIns.values()).filter(
+      checkIn => checkIn.keyResultId === keyResultId
+    );
+  }
+  
+  async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
+    const id = this.checkInCurrentId++;
+    const checkIn: CheckIn = { ...insertCheckIn, id, createdAt: new Date() };
+    this.checkIns.set(id, checkIn);
+    return checkIn;
   }
 
   // Meeting implementations

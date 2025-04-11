@@ -271,6 +271,41 @@ export class DatabaseStorage implements IStorage {
     return updatedKeyResult;
   }
   
+  // Check-In operations
+  async getCheckIn(id: number): Promise<CheckIn | undefined> {
+    const [checkIn] = await db.select().from(checkIns).where(eq(checkIns.id, id));
+    return checkIn;
+  }
+  
+  async getCheckInsByKeyResult(keyResultId: number): Promise<CheckIn[]> {
+    return db
+      .select()
+      .from(checkIns)
+      .where(eq(checkIns.keyResultId, keyResultId))
+      .orderBy(desc(checkIns.checkInDate));
+  }
+  
+  async createCheckIn(insertCheckIn: InsertCheckIn): Promise<CheckIn> {
+    const [checkIn] = await db.insert(checkIns).values({
+      ...insertCheckIn,
+      createdAt: new Date(),
+      checkInDate: new Date()
+    }).returning();
+    
+    // If a key result is associated, update its last updated timestamp
+    if (checkIn.keyResultId) {
+      await db
+        .update(keyResults)
+        .set({
+          lastUpdated: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(keyResults.id, checkIn.keyResultId));
+    }
+    
+    return checkIn;
+  }
+  
   // Meeting operations
   async getMeeting(id: number): Promise<Meeting | undefined> {
     const [meeting] = await db.select().from(meetings).where(eq(meetings.id, id));
