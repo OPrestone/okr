@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
-import { BarChart3, BookOpen, CalendarCheck, Flag, Home, LogOut, Rocket, Settings, Upload, Users, UserCog, UsersRound, PieChart, Compass, DollarSign } from "lucide-react";
+import { BarChart3, BookOpen, CalendarCheck, Flag, Home, LogOut, Rocket, Settings, Upload, Users, UserCog, UsersRound, PieChart, Compass, DollarSign, Target, FileEdit } from "lucide-react";
 import { Separator } from "./separator";
 
 interface SidebarItem {
@@ -43,6 +43,16 @@ export function Sidebar({ className }: SidebarProps) {
       icon: <Flag className="h-5 w-5" />,
       label: "Company Objectives",
       href: "/company-objectives",
+    },
+    {
+      icon: <Target className="h-5 w-5" />,
+      label: "My OKRs",
+      href: "/my-okrs",
+    },
+    {
+      icon: <FileEdit className="h-5 w-5" />,
+      label: "OKR Drafts",
+      href: "/drafts",
     },
     {
       icon: <Users className="h-5 w-5" />,

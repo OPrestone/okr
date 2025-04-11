@@ -55,6 +55,7 @@ function Router() {
           <Route path="/create-okr-ai" component={CreateOkrAi} />
           <Route path="/create-draft-okr" component={CreateDraftOkr} />
           <Route path="/drafts" component={Drafts} />
+          <Route path="/my-okrs" component={MyOKRs} />
           <Route path="/suggested-okrs" component={SuggestedOKRs} />
           <Route path="/create-team" component={CreateTeam} />
           <Route path="/create-user" component={CreateUser} />
