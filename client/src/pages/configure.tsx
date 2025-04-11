@@ -534,6 +534,11 @@ export default function Configure() {
   const [isCadenceSettingsSaving, setIsCadenceSettingsSaving] = useState(false);
   const [isCycleSaving, setIsCycleSaving] = useState(false);
   
+  // Integration states
+  const [isSlackConnecting, setIsSlackConnecting] = useState(false);
+  const [isGoogleCalendarConnecting, setIsGoogleCalendarConnecting] = useState(false);
+  const [isJiraConnecting, setIsJiraConnecting] = useState(false);
+  
 
   
   // Handler for saving general settings
@@ -809,6 +814,7 @@ export default function Configure() {
   
   // Integration Handlers
   const handleSlackConnect = () => {
+    setIsSlackConnecting(true);
     toast({
       title: "Connecting to Slack",
       description: "Setting up Slack integration...",
@@ -820,10 +826,12 @@ export default function Configure() {
         title: "Slack connected",
         description: "Successfully connected to Slack workspace.",
       });
+      setIsSlackConnecting(false);
     }, 2000);
   };
   
   const handleGoogleCalendarConnect = () => {
+    setIsGoogleCalendarConnecting(true);
     toast({
       title: "Connecting to Google Calendar",
       description: "Setting up Google Calendar integration...",
@@ -835,10 +843,12 @@ export default function Configure() {
         title: "Google Calendar connected",
         description: "Successfully connected to Google Calendar.",
       });
+      setIsGoogleCalendarConnecting(false);
     }, 2000);
   };
   
   const handleJiraConnect = () => {
+    setIsJiraConnecting(true);
     toast({
       title: "Connecting to Jira",
       description: "Setting up Jira integration...",
@@ -850,6 +860,7 @@ export default function Configure() {
         title: "Jira connected",
         description: "Successfully connected to Jira.",
       });
+      setIsJiraConnecting(false);
     }, 2000);
   };
   
