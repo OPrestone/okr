@@ -19,6 +19,9 @@ export const insertCompanySettingsSchema = createInsertSchema(companySettings).o
   updatedAt: true,
 });
 
+export type CompanySettings = typeof companySettings.$inferSelect;
+export type InsertCompanySettings = z.infer<typeof insertCompanySettingsSchema>;
+
 // User schema
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
