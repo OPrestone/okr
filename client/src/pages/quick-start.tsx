@@ -28,7 +28,7 @@ export default function QuickStart() {
             <p className="text-sm text-neutral-600 mb-4">
               Download ready-to-use templates for different departments and team sizes.
             </p>
-            <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
+            <a href="/resources" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
               Get templates
               <svg className="ml-1 w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -48,7 +48,7 @@ export default function QuickStart() {
             <p className="text-sm text-neutral-600 mb-4">
               Learn through our comprehensive video guides on implementing OKRs effectively.
             </p>
-            <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
+            <a href="/resources#tutorials" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
               Watch tutorials
               <svg className="ml-1 w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -68,7 +68,7 @@ export default function QuickStart() {
             <p className="text-sm text-neutral-600 mb-4">
               Learn from industry experts about OKR best practices and common pitfalls to avoid.
             </p>
-            <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
+            <a href="/resources#best-practices" className="text-sm font-medium text-primary-600 hover:text-primary-800 inline-flex items-center">
               Read best practices
               <svg className="ml-1 w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
