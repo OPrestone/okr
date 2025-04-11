@@ -72,6 +72,7 @@ export interface IStorage {
   getCompanySettings(): Promise<any>;
   updateCompanyLogo(logoUrl: string): Promise<any>;
   updateCompanySettings(settings: Partial<any>): Promise<any>;
+  updateSystemSetting(key: string, value: string, description?: string, category?: string): Promise<any>;
 }
 
 export class MemStorage implements IStorage {
@@ -502,6 +503,19 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     return this.companySettings;
+  }
+  
+  async updateSystemSetting(key: string, value: string, description: string = '', category: string = 'general'): Promise<any> {
+    // This is a simplified implementation for MemStorage
+    // In a real application, you would store this in a proper settings table
+    console.log(`Updating system setting: ${key} = ${value} (${category})`);
+    return {
+      key,
+      value,
+      description,
+      category,
+      updatedAt: new Date()
+    };
   }
 }
 

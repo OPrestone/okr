@@ -674,4 +674,45 @@ export class DatabaseStorage implements IStorage {
       return {};
     }
   }
+  
+  async updateSystemSetting(key: string, value: string, description: string = '', category: string = 'general'): Promise<any> {
+    try {
+      // Check if the setting exists
+      const [existingSetting] = await db
+        .select()
+        .from(systemSettings)
+        .where(eq(systemSettings.key, key));
+      
+      if (existingSetting) {
+        // Update existing setting
+        const [updatedSetting] = await db
+          .update(systemSettings)
+          .set({
+            value,
+            updatedAt: new Date()
+          })
+          .where(eq(systemSettings.id, existingSetting.id))
+          .returning();
+          
+        return updatedSetting;
+      } else {
+        // Create new setting
+        const [newSetting] = await db
+          .insert(systemSettings)
+          .values({
+            key,
+            value,
+            description,
+            category,
+            isPublic: true
+          })
+          .returning();
+          
+        return newSetting;
+      }
+    } catch (error) {
+      console.error(`Error updating system setting (${key}):`, error);
+      return {};
+    }
+  }
 }
