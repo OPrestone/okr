@@ -345,6 +345,8 @@ export const checkInsRelations = relations(checkIns, ({ one }) => ({
 export const insertCheckInSchema = createInsertSchema(checkIns).omit({
   id: true,
   createdAt: true,
+}).extend({
+  checkInDate: z.string().transform((str) => new Date(str)),
 });
 
 // Comments schema
