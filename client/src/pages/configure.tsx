@@ -522,6 +522,8 @@ export default function Configure() {
   const [isSecuritySaving, setIsSecuritySaving] = useState(false);
   const [isLdapSaving, setIsLdapSaving] = useState(false);
   const [isSsoSaving, setIsSsoSaving] = useState(false);
+  
+
   const [isPermissionSaving, setIsPermissionSaving] = useState(false);
   const [isEmailTemplateSaving, setIsEmailTemplateSaving] = useState(false);
   const [isTeamSaving, setIsTeamSaving] = useState(false);
@@ -3068,8 +3070,19 @@ export default function Configure() {
                 <h3 className="font-medium">Slack</h3>
                 <p className="text-sm text-neutral-500">Not connected</p>
               </div>
-              <Button variant="outline" size="sm" className="ml-auto">
-                Connect
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-auto"
+                onClick={handleSlackConnect}
+                disabled={isSlackConnecting}
+              >
+                {isSlackConnecting ? (
+                  <>
+                    <span className="animate-spin mr-1">⟳</span>
+                    Connecting...
+                  </>
+                ) : "Connect"}
               </Button>
             </div>
             
@@ -3083,8 +3096,19 @@ export default function Configure() {
                 <h3 className="font-medium">Google Calendar</h3>
                 <p className="text-sm text-neutral-500">Not connected</p>
               </div>
-              <Button variant="outline" size="sm" className="ml-auto">
-                Connect
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-auto"
+                onClick={handleGoogleCalendarConnect}
+                disabled={isGoogleCalendarConnecting}
+              >
+                {isGoogleCalendarConnecting ? (
+                  <>
+                    <span className="animate-spin mr-1">⟳</span>
+                    Connecting...
+                  </>
+                ) : "Connect"}
               </Button>
             </div>
             
@@ -3101,8 +3125,19 @@ export default function Configure() {
                 <h3 className="font-medium">Jira</h3>
                 <p className="text-sm text-neutral-500">Not connected</p>
               </div>
-              <Button variant="outline" size="sm" className="ml-auto">
-                Connect
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="ml-auto"
+                onClick={handleJiraConnect}
+                disabled={isJiraConnecting}
+              >
+                {isJiraConnecting ? (
+                  <>
+                    <span className="animate-spin mr-1">⟳</span>
+                    Connecting...
+                  </>
+                ) : "Connect"}
               </Button>
             </div>
           </div>
