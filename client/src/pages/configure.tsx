@@ -873,9 +873,22 @@ export default function Configure() {
                   />
                 </div>
               </div>
-              <Button className="flex items-center gap-2">
-                <Save className="h-4 w-4" />
-                Save Changes
+              <Button 
+                className="flex items-center gap-2"
+                onClick={handleSaveGeneralSettings}
+                disabled={isGeneralSaving}
+              >
+                {isGeneralSaving ? (
+                  <>
+                    <span className="animate-spin mr-2">⟳</span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -1064,7 +1077,11 @@ export default function Configure() {
                 </div>
                 
                 <div className="flex items-center mt-4">
-                  <Button variant="outline" className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2"
+                    onClick={handleLdapTestConnection}
+                  >
                     <Server className="h-4 w-4" />
                     Test Connection
                   </Button>
@@ -1177,16 +1194,31 @@ export default function Configure() {
                 
                 <div className="flex justify-between items-center gap-2 mt-4">
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center gap-1"
+                      onClick={handleSsoTestConnection}
+                    >
                       <Server className="h-4 w-4" />
                       Test Connection
                     </Button>
-                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex items-center gap-1"
+                      onClick={handleDownloadSsoMetadata}
+                    >
                       <Download className="h-4 w-4" />
                       Download Metadata
                     </Button>
                   </div>
-                  <Button variant="outline" size="sm" className="flex items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center gap-1"
+                    onClick={handleViewSsoInstructions}
+                  >
                     <Eye className="h-4 w-4" />
                     View Setup Instructions
                   </Button>
