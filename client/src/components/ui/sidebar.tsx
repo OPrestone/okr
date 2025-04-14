@@ -151,6 +151,11 @@ export function Sidebar({ className }: SidebarProps) {
           href: "/configure",
         },
         {
+          icon: <Users className="h-4 w-4" />,
+          label: "Team Management",
+          href: "/team-management",
+        },
+        {
           icon: <PanelLeftOpen className="h-4 w-4" />,
           label: "Integrations",
           href: "/integrations",

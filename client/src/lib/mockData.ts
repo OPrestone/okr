@@ -18,6 +18,11 @@ export interface Team {
   leaderId: number;
   description?: string;
   parentTeamId?: number;
+  color?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: 'active' | 'archived';
+  members?: number[]; // Array of user IDs who are members of this team
 }
 
 export interface Objective {
@@ -171,11 +176,11 @@ export interface DashboardStats {
 export const mockUsers: User[] = [
   {
     id: 1,
-    username: "testuser",
+    username: "alexmorgan",
     fullName: "Alex Morgan",
     email: "alex@example.com",
     role: "admin",
-    position: "Product Manager",
+    position: "CEO",
     avatarUrl: "/uploads/logo.png"
   },
   {
@@ -184,8 +189,8 @@ export const mockUsers: User[] = [
     fullName: "Jane Smith",
     email: "jane@example.com",
     role: "user",
-    teamId: 1,
-    position: "Designer"
+    teamId: 3,
+    position: "Design Director"
   },
   {
     id: 3,
@@ -193,29 +198,160 @@ export const mockUsers: User[] = [
     fullName: "John Doe",
     email: "john@example.com",
     role: "user",
-    teamId: 1,
-    position: "Developer"
+    teamId: 2,
+    position: "Engineering Director"
+  },
+  {
+    id: 4,
+    username: "sarahjones",
+    fullName: "Sarah Jones",
+    email: "sarah@example.com",
+    role: "user",
+    teamId: 7,
+    position: "Marketing Director"
+  },
+  {
+    id: 5,
+    username: "mikebrown",
+    fullName: "Mike Brown",
+    email: "mike@example.com",
+    role: "user",
+    teamId: 5,
+    position: "Frontend Lead"
+  },
+  {
+    id: 6,
+    username: "emilywang",
+    fullName: "Emily Wang",
+    email: "emily@example.com",
+    role: "user",
+    teamId: 6,
+    position: "UI Designer"
+  },
+  {
+    id: 7,
+    username: "davidlee",
+    fullName: "David Lee",
+    email: "david@example.com",
+    role: "user",
+    teamId: 4,
+    position: "Backend Developer"
+  },
+  {
+    id: 8,
+    username: "jennifergarcia",
+    fullName: "Jennifer Garcia",
+    email: "jennifer@example.com",
+    role: "user",
+    teamId: 8,
+    position: "Customer Success Manager"
+  },
+  {
+    id: 9,
+    username: "roberttaylor",
+    fullName: "Robert Taylor",
+    email: "robert@example.com",
+    role: "user",
+    teamId: 8,
+    position: "Support Specialist"
   }
 ];
 
 export const mockTeams: Team[] = [
   {
     id: 1,
-    name: "Test Team",
+    name: "Executive Leadership",
     leaderId: 1,
-    description: "This is a test team for development purposes."
+    description: "Strategic executive leadership team responsible for company vision and direction.",
+    color: "#4f46e5",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+    status: "active",
+    members: [1]
   },
   {
     id: 2,
-    name: "Engineering",
+    name: "Product & Engineering",
     leaderId: 3,
-    description: "Engineering department responsible for product development."
+    description: "Product management and engineering department responsible for product development.",
+    parentTeamId: 1,
+    color: "#0ea5e9",
+    createdAt: "2024-01-02T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+    status: "active",
+    members: [1, 3, 5, 7]
   },
   {
     id: 3,
     name: "Design",
     leaderId: 2,
-    description: "Design department responsible for UI/UX."
+    description: "Design department responsible for UI/UX and brand identity.",
+    parentTeamId: 1,
+    color: "#f59e0b",
+    createdAt: "2024-01-02T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+    status: "active",
+    members: [2, 6]
+  },
+  {
+    id: 4,
+    name: "Backend Engineering",
+    leaderId: 3,
+    description: "Backend development team responsible for server-side architecture and APIs.",
+    parentTeamId: 2,
+    color: "#10b981",
+    createdAt: "2024-01-03T00:00:00.000Z",
+    updatedAt: "2024-01-03T00:00:00.000Z",
+    status: "active",
+    members: [3, 7]
+  },
+  {
+    id: 5,
+    name: "Frontend Engineering",
+    leaderId: 5,
+    description: "Frontend development team responsible for client-side applications and user interfaces.",
+    parentTeamId: 2,
+    color: "#8b5cf6",
+    createdAt: "2024-01-03T00:00:00.000Z",
+    updatedAt: "2024-01-03T00:00:00.000Z",
+    status: "active",
+    members: [5]
+  },
+  {
+    id: 6,
+    name: "UI Design",
+    leaderId: 2,
+    description: "User interface design team responsible for visual design and interaction patterns.",
+    parentTeamId: 3,
+    color: "#ec4899",
+    createdAt: "2024-01-03T00:00:00.000Z",
+    updatedAt: "2024-01-03T00:00:00.000Z",
+    status: "active",
+    members: [2, 6]
+  },
+  {
+    id: 7,
+    name: "Marketing",
+    leaderId: 4,
+    description: "Marketing team responsible for brand promotion and customer acquisition.",
+    parentTeamId: 1,
+    color: "#f97316",
+    createdAt: "2024-01-02T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+    status: "active",
+    members: [4]
+  },
+  {
+    id: 8,
+    name: "Customer Success",
+    leaderId: 8,
+    description: "Customer success team responsible for customer onboarding, support, and retention.",
+    parentTeamId: 1,
+    color: "#14b8a6",
+    createdAt: "2024-01-02T00:00:00.000Z",
+    updatedAt: "2024-01-02T00:00:00.000Z",
+    status: "active",
+    members: [8, 9]
   }
 ];
 
