@@ -1,6 +1,22 @@
 // This file contains mock data structures to simulate API responses
 // when the external API is not available or during development
 
+export interface Permission {
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+}
+
+export interface AccessGroup {
+  id: number;
+  name: string;
+  description: string;
+  permissions: number[]; // Array of permission IDs assigned to this group
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface User {
   id: number;
   username: string;
@@ -10,6 +26,11 @@ export interface User {
   teamId?: number;
   position?: string;
   avatarUrl?: string;
+  managerId?: number; // ID of this user's manager
+  preferredLanguage?: string;
+  accessGroups?: number[]; // Array of access group IDs
+  status?: 'active' | 'invited' | 'inactive';
+  lastLogin?: string;
 }
 
 export interface Team {
@@ -991,6 +1012,171 @@ export const mockIntegrations = [
   }
 ];
 
+// Mock permission data
+export const mockPermissions: Permission[] = [
+  {
+    id: 1,
+    name: "objectives_create",
+    description: "Create new objectives",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 2,
+    name: "objectives_edit",
+    description: "Edit existing objectives",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 3,
+    name: "objectives_delete",
+    description: "Delete objectives",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 4,
+    name: "keyresults_create",
+    description: "Create new key results",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 5,
+    name: "keyresults_edit",
+    description: "Edit existing key results",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 6,
+    name: "keyresults_delete",
+    description: "Delete key results",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 7,
+    name: "keyresults_update_assigned",
+    description: "Update assigned key results",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 8,
+    name: "user_management",
+    description: "Manage users (create, edit, delete)",
+    category: "Administration"
+  },
+  {
+    id: 9,
+    name: "team_management",
+    description: "Manage teams (create, edit, delete)",
+    category: "Administration"
+  },
+  {
+    id: 10,
+    name: "access_group_management",
+    description: "Manage access groups",
+    category: "Administration"
+  },
+  {
+    id: 11,
+    name: "reports_view",
+    description: "View reports",
+    category: "Reporting"
+  },
+  {
+    id: 12,
+    name: "reports_export",
+    description: "Export reports",
+    category: "Reporting"
+  },
+  {
+    id: 13,
+    name: "meetings_create",
+    description: "Create meetings",
+    category: "Meetings"
+  },
+  {
+    id: 14,
+    name: "meetings_edit",
+    description: "Edit meetings",
+    category: "Meetings"
+  },
+  {
+    id: 15,
+    name: "checkins_create",
+    description: "Create check-ins",
+    category: "Check-ins"
+  },
+  {
+    id: 16,
+    name: "view_all_okrs",
+    description: "View all OKRs in the system",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 17,
+    name: "view_team_okrs",
+    description: "View team OKRs",
+    category: "Objectives & Key Results"
+  },
+  {
+    id: 18,
+    name: "settings_management",
+    description: "Manage system settings",
+    category: "Administration"
+  }
+];
+
+// Mock access groups data
+export const mockAccessGroups: AccessGroup[] = [
+  {
+    id: 1,
+    name: "Administrators",
+    description: "Full system access with all permissions",
+    permissions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z"
+  },
+  {
+    id: 2,
+    name: "Team Leaders",
+    description: "Can manage their team's OKRs and perform team-related activities",
+    permissions: [1, 2, 4, 5, 7, 11, 13, 14, 15, 16, 17],
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z"
+  },
+  {
+    id: 3,
+    name: "Contributors",
+    description: "Can create and update their own OKRs and view team data",
+    permissions: [1, 2, 4, 5, 7, 13, 15, 17],
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z"
+  },
+  {
+    id: 4,
+    name: "Viewers",
+    description: "Read-only access to view objectives and results",
+    permissions: [16, 17],
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z"
+  }
+];
+
+// Update mock users with additional fields
+mockUsers.forEach((user, index) => {
+  user.managerId = index > 0 ? Math.ceil(index / 3) : undefined;
+  user.preferredLanguage = "en";
+  user.status = "active";
+  user.lastLogin = "2025-01-15T10:00:00.000Z";
+  
+  // Assign access groups based on role
+  if (user.role === "admin") {
+    user.accessGroups = [1]; // Admin group
+  } else if (user.position?.includes("Director") || user.position?.includes("Lead")) {
+    user.accessGroups = [2]; // Team Leaders group
+  } else {
+    user.accessGroups = [3]; // Contributors group
+  }
+});
+
 // Export all mock data as a single object for easy import
 export const mockData = {
   "/api/users": mockUsers,
@@ -1005,7 +1191,9 @@ export const mockData = {
   "/api/cycles": mockCycles,
   "/api/dashboard": mockDashboardStats,
   "/api/company-settings": mockCompanySettings,
-  "/api/integrations": mockIntegrations
+  "/api/integrations": mockIntegrations,
+  "/api/permissions": mockPermissions,
+  "/api/access-groups": mockAccessGroups
 };
 
 export default mockData;
