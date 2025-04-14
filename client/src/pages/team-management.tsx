@@ -402,7 +402,7 @@ const TeamFormDialog = ({
                   <SelectValue placeholder="None (Top-level team)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None (Top-level team)</SelectItem>
+                  <SelectItem value="0">None (Top-level team)</SelectItem>
                   <SelectGroup>
                     <SelectLabel>Teams</SelectLabel>
                     {teams
@@ -465,7 +465,7 @@ const TeamFormDialog = ({
   );
 };
 
-// Team row with expandable sub-teams
+// Team row with expandable sub-teams and drag-drop functionality
 const TeamRow = ({
   team, 
   level = 0, 
@@ -473,7 +473,10 @@ const TeamRow = ({
   onToggleExpand, 
   currentUserId,
   onEditTeam,
-  allUsers
+  allUsers,
+  onDragStart,
+  onDragOver,
+  onDrop
 }: { 
   team: any; 
   level?: number; 
@@ -482,6 +485,9 @@ const TeamRow = ({
   currentUserId: number;
   onEditTeam: (team: Team) => void;
   allUsers: User[];
+  onDragStart?: (e: React.DragEvent, team: any) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (e: React.DragEvent, team: any) => void;
 }) => {
   const isExpanded = expanded[team.id];
   const hasChildren = team.children && team.children.length > 0;
@@ -490,11 +496,18 @@ const TeamRow = ({
   const owner = allUsers.find(user => user.id === team.leaderId);
   
   // Check if current user is a member of this team
-  const isUserMember = team.members.includes(currentUserId);
+  const isUserMember = team.members ? team.members.includes(currentUserId) : false;
 
   return (
     <>
-      <TableRow key={team.id} className="transition-colors hover:bg-muted/30">
+      <TableRow 
+        key={team.id} 
+        className="transition-colors hover:bg-muted/30 cursor-move"
+        draggable={true}
+        onDragStart={onDragStart ? (e) => onDragStart(e, team) : undefined}
+        onDragOver={onDragOver}
+        onDrop={onDrop ? (e) => onDrop(e, team) : undefined}
+      >
         <TableCell className="font-medium">
           <div className="flex items-center">
             <div style={{ width: `${level * 24}px` }} />
@@ -529,7 +542,7 @@ const TeamRow = ({
         
         <TableCell>
           <div className="flex items-center space-x-2">
-            <span>{team.members.length} members</span>
+            <span>{team.members?.length || 0} members</span>
             {isUserMember && (
               <Badge variant="outline" className="ml-2 bg-green-50 text-green-700 border-green-200">
                 <Check className="h-3 w-3 mr-1" />
@@ -600,6 +613,9 @@ const TeamRow = ({
           currentUserId={currentUserId}
           onEditTeam={onEditTeam}
           allUsers={allUsers}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
         />
       ))}
     </>
@@ -619,7 +635,7 @@ const TeamCard = ({
   allUsers: User[];
 }) => {
   const owner = allUsers.find(user => user.id === team.leaderId);
-  const isUserMember = team.members.includes(currentUserId);
+  const isUserMember = team.members ? team.members.includes(currentUserId) : false;
   
   return (
     <Card className="h-full">
@@ -666,7 +682,7 @@ const TeamCard = ({
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Members</span>
             <Badge variant="outline" className="font-normal">
-              {team.members.length}
+              {team.members?.length || 0}
             </Badge>
           </div>
           
@@ -722,6 +738,7 @@ export default function TeamManagement() {
   const [activeTab, setActiveTab] = useState("hierarchy");
   const [expandedTeams, setExpandedTeams] = useState<Record<number, boolean>>({});
   const [currentEditingTeam, setCurrentEditingTeam] = useState<Team | undefined>(undefined);
+  const [draggedTeam, setDraggedTeam] = useState<any>(null);
   
   // Fetch teams and users (from mock data for now)
   // In a real app, this would use the queryClient to fetch from the API
@@ -768,21 +785,37 @@ export default function TeamManagement() {
   // Create or update a team
   const handleSaveTeam = async (teamData: any) => {
     try {
+      // Since we're working with mock data, we'll simulate API operations
       if (teamData.id) {
         // Update existing team
+        const teamIndex = mockTeams.findIndex(t => t.id === teamData.id);
+        if (teamIndex >= 0) {
+          mockTeams[teamIndex] = { ...mockTeams[teamIndex], ...teamData };
+        }
+        
         toast({
           title: "Team updated",
           description: `${teamData.name} has been updated successfully.`,
         });
       } else {
-        // Create new team
+        // Create new team with a new ID
+        const newId = Math.max(...mockTeams.map(t => t.id)) + 1;
+        const newTeam = {
+          ...teamData,
+          id: newId,
+          createdAt: new Date(),
+          members: teamData.members || [],
+        };
+        
+        mockTeams.push(newTeam);
+        
         toast({
           title: "Team created",
           description: `${teamData.name} has been created successfully.`,
         });
       }
       
-      // Refetch teams after changes (would make an API call in a real implementation)
+      // Refetch teams to update UI
       await refetchTeams();
     } catch (error) {
       toast({
@@ -790,21 +823,41 @@ export default function TeamManagement() {
         description: "There was an error saving the team.",
         variant: "destructive",
       });
-      console.error("Error creating team:", error);
+      console.error("Error creating/updating team:", error);
     }
   };
   
   // Delete a team
   const handleDeleteTeam = async (teamId: number) => {
     try {
-      // Would make an API call to delete in a real implementation
-      toast({
-        title: "Team deleted",
-        description: "The team has been deleted successfully.",
-      });
+      // Find team index
+      const teamIndex = mockTeams.findIndex(t => t.id === teamId);
       
-      // Refetch teams after deletion
-      await refetchTeams();
+      if (teamIndex >= 0) {
+        // Check if team has children
+        const hasChildren = mockTeams.some(t => t.parentTeamId === teamId);
+        
+        if (hasChildren) {
+          toast({
+            title: "Cannot delete team",
+            description: "This team has sub-teams. Please reassign or delete them first.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Remove the team
+        const deletedTeam = mockTeams[teamIndex];
+        mockTeams.splice(teamIndex, 1);
+        
+        toast({
+          title: "Team deleted",
+          description: `${deletedTeam.name} has been deleted successfully.`,
+        });
+        
+        // Refetch teams after deletion
+        await refetchTeams();
+      }
     } catch (error) {
       toast({
         title: "Error",
