@@ -22,10 +22,16 @@ function QuickStat({
   progress, 
   description 
 }: QuickStatProps) {
+  // Calculate animation delay based on progress
+  const animationDelay = `${Math.min(progress / 100, 0.5)}s`;
+  
+  // Ensure progress is within valid range
+  const safeProgress = Math.max(0, Math.min(100, progress));
+  
   return (
-    <div className="bg-white rounded-lg shadow p-5 border border-neutral-100">
+    <div className="bg-white rounded-lg shadow p-5 border border-neutral-100 hover:shadow-md transition-shadow">
       <div className="flex items-center">
-        <div className={cn("p-3 rounded-full text-primary-600", bgColor, iconColor)}>
+        <div className={cn("p-3 rounded-full flex items-center justify-center", bgColor, iconColor)}>
           {icon}
         </div>
         <div className="ml-4">
@@ -34,16 +40,42 @@ function QuickStat({
         </div>
       </div>
       <div className="mt-3">
-        <div className="w-full bg-neutral-200 rounded-full h-1.5">
-          <div 
-            className="bg-primary-500 h-1.5 rounded-full" 
-            style={{ width: `${progress}%` }}
-          ></div>
+        {/* Progress wrapper with percentage indicator */}
+        <div className="flex items-center mb-1">
+          <div className="w-full bg-neutral-100 rounded-full h-2.5 mr-2">
+            <div 
+              className="h-2.5 rounded-full transition-all duration-1000 ease-out"
+              style={{ 
+                width: `${safeProgress}%`,
+                background: `linear-gradient(90deg, ${getProgressColor(safeProgress)} 0%, ${getProgressColor(safeProgress, 0.8)} 100%)`,
+                boxShadow: `0 0 6px ${getProgressColor(safeProgress, 0.5)}`,
+                animation: `growProgress 1.5s ease-out ${animationDelay} both`
+              }}
+            ></div>
+          </div>
+          <span className="text-xs font-medium" style={{ color: getProgressColor(safeProgress) }}>
+            {safeProgress}%
+          </span>
         </div>
-        <p className="text-xs text-neutral-500 mt-1.5">{description}</p>
+        <p className="text-xs text-neutral-500">{description}</p>
       </div>
+
+      {/* Animation is handled through the animation property in the style object */}
     </div>
   );
+}
+
+// Helper function to get a color based on progress percentage
+function getProgressColor(progress: number, opacity: number = 1): string {
+  if (progress < 25) {
+    return `rgba(239, 68, 68, ${opacity})`; // red
+  } else if (progress < 50) {
+    return `rgba(245, 158, 11, ${opacity})`; // amber
+  } else if (progress < 75) {
+    return `rgba(59, 130, 246, ${opacity})`; // blue
+  } else {
+    return `rgba(16, 185, 129, ${opacity})`; // green
+  }
 }
 
 export function QuickStats() {

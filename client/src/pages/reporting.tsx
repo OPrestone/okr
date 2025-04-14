@@ -403,23 +403,98 @@ export default function Reporting() {
                     <h4 className="font-medium mb-3">Report Summary Preview</h4>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-blue-50 p-3 rounded-md">
-                        <p className="text-xs text-blue-600 uppercase font-medium">Total Objectives</p>
-                        <p className="text-2xl font-bold">{previewData.summary?.totalObjectives || 0}</p>
+                      <div className="bg-blue-50 p-4 rounded-md shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                          <span className="text-blue-600 text-xl font-bold">{previewData.summary?.totalObjectives || 0}</span>
+                        </div>
+                        <p className="text-xs text-blue-600 uppercase font-medium text-center">Total Objectives</p>
+                        <div className="w-full mt-2 h-1 bg-blue-100 rounded-full">
+                          <div className="h-1 bg-blue-500 rounded-full" style={{ width: '100%' }}></div>
+                        </div>
                       </div>
-                      <div className="bg-green-50 p-3 rounded-md">
-                        <p className="text-xs text-green-600 uppercase font-medium">Completed</p>
-                        <p className="text-2xl font-bold">{previewData.summary?.completedObjectives || 0}</p>
+                      
+                      <div className="bg-green-50 p-4 rounded-md shadow-sm border border-green-100 flex flex-col items-center justify-center">
+                        <div className="relative w-12 h-12 mb-2">
+                          <div className="absolute inset-0">
+                            <svg viewBox="0 0 36 36" className="w-12 h-12">
+                              <path
+                                d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke="#E2F6E8"
+                                strokeWidth="2"
+                                strokeDasharray="100, 100"
+                              />
+                              <path
+                                d="M18 2.0845
+                                  a 15.9155 15.9155 0 0 1 0 31.831
+                                  a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke="#10B981"
+                                strokeWidth="2"
+                                strokeDasharray={`${(previewData.summary?.completedObjectives || 0) / (previewData.summary?.totalObjectives || 1) * 100}, 100`}
+                                className="animate-dashoffset"
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-green-600 text-sm font-bold">{previewData.summary?.completedObjectives || 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-xs text-green-600 uppercase font-medium text-center">Completed</p>
                       </div>
-                      <div className="bg-amber-50 p-3 rounded-md">
-                        <p className="text-xs text-amber-600 uppercase font-medium">At Risk</p>
-                        <p className="text-2xl font-bold">{previewData.summary?.atRiskObjectives || 0}</p>
+                      
+                      <div className="bg-amber-50 p-4 rounded-md shadow-sm border border-amber-100 flex flex-col items-center justify-center">
+                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-2 relative">
+                          <span className="text-amber-600 text-xl font-bold">{previewData.summary?.atRiskObjectives || 0}</span>
+                          <span className="absolute top-0 right-0 w-3 h-3 bg-amber-500 rounded-full animate-pulse"></span>
+                        </div>
+                        <p className="text-xs text-amber-600 uppercase font-medium text-center">At Risk</p>
+                        <div className="w-full mt-2 h-1 bg-amber-100 rounded-full">
+                          <div 
+                            className="h-1 bg-amber-500 rounded-full transition-all duration-1000" 
+                            style={{ 
+                              width: `${(previewData.summary?.atRiskObjectives || 0) / (previewData.summary?.totalObjectives || 1) * 100}%` 
+                            }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="bg-purple-50 p-3 rounded-md">
-                        <p className="text-xs text-purple-600 uppercase font-medium">Avg Progress</p>
-                        <p className="text-2xl font-bold">{previewData.summary?.avgProgress || 0}%</p>
+                      
+                      <div className="bg-purple-50 p-4 rounded-md shadow-sm border border-purple-100 flex flex-col items-center justify-center">
+                        <div className="relative w-12 h-12 mb-2">
+                          <svg className="w-12 h-12" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#F3E8FF" strokeWidth="2"></circle>
+                            <circle 
+                              cx="18" 
+                              cy="18" 
+                              r="16" 
+                              fill="none" 
+                              stroke="#9333EA" 
+                              strokeWidth="2" 
+                              strokeDasharray={`${previewData.summary?.avgProgress || 0}, 100`} 
+                              strokeDashoffset="25"
+                              className="transition-all duration-1000"
+                            ></circle>
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-purple-600 text-sm font-bold">{previewData.summary?.avgProgress || 0}%</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-purple-600 uppercase font-medium text-center">Avg Progress</p>
                       </div>
                     </div>
+                    
+                    <style jsx>{`
+                      @keyframes dashoffset {
+                        0% {
+                          stroke-dasharray: 0, 100;
+                        }
+                      }
+                      .animate-dashoffset {
+                        animation: dashoffset 1s ease-out forwards;
+                      }
+                    `}</style>
                     
                     {previewData.previewData?.objectives?.length > 0 ? (
                       <>
