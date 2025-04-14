@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Clock, Filter, Plus, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageHeader } from "../components/ui/page-header";
 
 // Status badge component for objectives
 const StatusBadge = ({ status }: { status: string }) => {
@@ -113,7 +113,7 @@ export default function ApprovedOKRs() {
   // Fetch approved objectives
   const { data: objectives, isLoading } = useQuery({
     queryKey: ["/api/objectives"],
-    select: (data) => 
+    select: (data: any[]) => 
       data.filter((obj: any) => obj.status !== "Draft" && obj.isApproved === true)
   });
 
