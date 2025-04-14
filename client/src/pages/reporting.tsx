@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/dashboard/layout";
+import { ReportLayout } from "@/components/dashboard/report-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -30,7 +30,7 @@ export default function Reporting() {
   const [showDetails, setShowDetails] = useState(false);
   
   // Fetch teams for the team filter
-  const { data: teams } = useQuery({
+  const { data: teams = [] } = useQuery<Team[]>({
     queryKey: ['/api/teams'],
     refetchOnWindowFocus: false
   });
@@ -161,7 +161,7 @@ export default function Reporting() {
   };
   
   return (
-    <DashboardLayout>
+    <ReportLayout>
       <div className="w-full">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">OKR Reports</h1>
@@ -483,6 +483,6 @@ export default function Reporting() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </ReportLayout>
   );
 }
