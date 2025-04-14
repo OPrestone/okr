@@ -777,23 +777,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllTimeframes(): Promise<Timeframe[]> {
-    return db.select().from(timeframes).orderBy([asc(timeframes.cadenceId), asc(timeframes.startDate)]);
+    return await db.select().from(timeframes);
   }
 
   async getTimeframesByCadence(cadenceId: number): Promise<Timeframe[]> {
-    return db
+    return await db
       .select()
       .from(timeframes)
-      .where(eq(timeframes.cadenceId, cadenceId))
-      .orderBy(asc(timeframes.startDate));
+      .where(eq(timeframes.cadenceId, cadenceId));
   }
 
   async getActiveTimeframes(): Promise<Timeframe[]> {
-    return db
+    return await db
       .select()
       .from(timeframes)
-      .where(eq(timeframes.isActive, true))
-      .orderBy(asc(timeframes.startDate));
+      .where(eq(timeframes.isActive, true));
   }
 
   async createTimeframe(insertTimeframe: InsertTimeframe): Promise<Timeframe> {
