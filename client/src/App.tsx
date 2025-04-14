@@ -42,6 +42,8 @@ import Integrations from "./pages/integrations";
 import TeamManagement from "./pages/team-management";
 import UserManagement from "./pages/user-management";
 import AccessGroups from "./pages/access-groups";
+import Cadences from "./pages/cadences";
+import Timeframes from "./pages/timeframes";
 
 function Router() {
   return (
@@ -79,6 +81,8 @@ function Router() {
           <Route path="/team-management" component={TeamManagement} />
           <Route path="/user-management" component={UserManagement} />
           <Route path="/access-groups" component={AccessGroups} />
+          <Route path="/cadences" component={Cadences} />
+          <Route path="/timeframes" component={Timeframes} />
           <Route path="/search" component={Search} />
           <Route path="/test-logo" component={TestLogo} />
           <Route component={NotFound} />

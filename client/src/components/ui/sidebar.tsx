@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 import { 
-  BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, 
+  BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, Calendar,
   Flag, Home, LogOut, Rocket, Settings, Tag, Users, UserCog, 
   UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle,
   PanelLeftOpen, Link as LinkIcon, Shield
@@ -174,6 +174,16 @@ export function Sidebar({ className }: SidebarProps) {
           icon: <CheckCircle className="h-4 w-4" />,
           label: "Status Settings",
           href: "/status-settings",
+        },
+        {
+          icon: <CalendarCheck className="h-4 w-4" />,
+          label: "Cadences",
+          href: "/cadences",
+        },
+        {
+          icon: <Calendar className="h-4 w-4" />,
+          label: "Timeframes",
+          href: "/timeframes",
         },
       ]
     },
