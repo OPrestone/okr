@@ -33,6 +33,7 @@ import ImportFinancial from "./pages/import-financial";
 import CheckIns from "./pages/check-ins";
 import Search from "./pages/search";
 import TestLogo from "./pages/test-logo";
+import ApprovedOKRs from "./pages/approved-okrs";
 
 function Router() {
   return (
@@ -58,6 +59,7 @@ function Router() {
           <Route path="/create-draft-okr" component={CreateDraftOkr} />
           <Route path="/drafts" component={Drafts} />
           <Route path="/my-okrs" component={MyOKRs} />
+          <Route path="/approved-okrs" component={ApprovedOKRs} />
           <Route path="/suggested-okrs" component={SuggestedOKRs} />
           <Route path="/create-team" component={CreateTeam} />
           <Route path="/create-user" component={CreateUser} />
