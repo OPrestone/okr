@@ -1,7 +1,6 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-
-// Base URL for API requests - can be configured from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.example.com';
+import { API_CONFIG } from './config';
+import mockData from './mockData';
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -10,20 +9,28 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+// Function to get authentication headers
+function getAuthHeaders(): Record<string, string> {
+  const headers = { ...API_CONFIG.DEFAULT_HEADERS };
+  
+  if (API_CONFIG.AUTH.INCLUDE_AUTH) {
+    const token = localStorage.getItem(API_CONFIG.AUTH.TOKEN_KEY);
+    if (token) {
+      headers[API_CONFIG.AUTH.AUTH_HEADER] = `${API_CONFIG.AUTH.TOKEN_PREFIX}${token}`;
+    }
+  }
+  
+  return headers;
+}
+
 export async function apiRequest(
   method: string,
   endpoint: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
+  const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.BASE_URL}${endpoint}`;
   
-  // Handle authentication - this could be updated to use API keys, OAuth tokens, etc.
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
-  };
-  
-  // You could add an API key or auth token here
-  // headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+  const headers = getAuthHeaders();
   
   const res = await fetch(url, {
     method,
@@ -35,9 +42,6 @@ export async function apiRequest(
   return res;
 }
 
-// Import mock data for development
-import mockData from './mockData';
-
 // Mock data service for development - can be used when API is not available
 class MockDataService {
   static mockData: Record<string, any> = mockData;
@@ -46,6 +50,15 @@ class MockDataService {
     // Remove any query parameters
     const path = endpoint.split('?')[0];
     return this.mockData[path] || null;
+  }
+  
+  // Simulate API latency in development
+  static async getDataWithDelay(endpoint: string, delayMs: number = 300) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(this.getData(endpoint));
+      }, delayMs);
+    });
   }
 }
 
@@ -57,19 +70,17 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const endpoint = queryKey[0] as string;
     
-    // Use mock data when running in development or testing without a real API
-    const useMockData = import.meta.env.VITE_USE_MOCK_DATA === 'true';
-    if (useMockData) {
-      const mockData = MockDataService.getData(endpoint);
+    // Use mock data when configured to do so
+    if (API_CONFIG.USE_MOCK_DATA) {
+      // Add artificial delay to simulate network request in development
+      const mockData = await MockDataService.getDataWithDelay(endpoint);
       if (mockData) return mockData;
+      // If no mock data is found for this endpoint, fall through to API request
+      console.warn(`No mock data found for endpoint: ${endpoint}`);
     }
     
-    const url = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
-    
-    // Add authentication headers as needed
-    const headers: Record<string, string> = {};
-    // You could add an API key or auth token here
-    // headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${API_CONFIG.BASE_URL}${endpoint}`;
+    const headers = getAuthHeaders();
     
     const res = await fetch(url, {
       headers

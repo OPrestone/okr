@@ -141,17 +141,28 @@ export interface DashboardStats {
     inProgress: number;
     atRisk: number;
     overdue: number;
+    progress: number;
   };
   keyResults: {
     total: number;
     completed: number;
     inProgress: number;
     atRisk: number;
+    completionRate: number;
   };
   checkIns: {
     total: number;
     lastWeek: number;
     thisWeek: number;
+  };
+  teamPerformance: {
+    average: number;
+    improvement: number;
+  };
+  timeRemaining: {
+    days: number;
+    percentage: number;
+    cycleId: number;
   };
   upcomingMeetings: number;
 }
@@ -537,18 +548,29 @@ export const mockDashboardStats: DashboardStats = {
     completed: 0,
     inProgress: 2,
     atRisk: 0,
-    overdue: 0
+    overdue: 0,
+    progress: 52 // Average progress percentage across all objectives
   },
   keyResults: {
     total: 2,
     completed: 0,
     inProgress: 2,
-    atRisk: 0
+    atRisk: 0,
+    completionRate: 62.5 // Average completion percentage
   },
   checkIns: {
     total: 2,
     lastWeek: 1,
     thisWeek: 1
+  },
+  teamPerformance: {
+    average: 68,
+    improvement: 12
+  },
+  timeRemaining: {
+    days: 76,
+    percentage: 83,
+    cycleId: 1
   },
   upcomingMeetings: 1
 };

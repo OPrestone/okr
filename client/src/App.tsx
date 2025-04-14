@@ -1,11 +1,13 @@
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
+import { API_CONFIG } from "./lib/config";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider } from "./hooks/use-sidebar";
 import { SearchProvider } from "./hooks/use-search";
 import { ThemeProvider } from "./hooks/use-theme";
+import { useEffect } from "react";
 import { DashboardLayout } from "./components/dashboard/layout";
 import Home from "./pages/home";
 import QuickStart from "./pages/quick-start";
@@ -79,10 +81,48 @@ function Router() {
 }
 
 function App() {
+  // Log a message when using mock data
+  useEffect(() => {
+    if (API_CONFIG.USE_MOCK_DATA) {
+      console.info(
+        '%c🔄 USING MOCK DATA MODE 🔄\n' + 
+        'The application is running with mock data instead of connecting to a real API.\n' +
+        'You can change this behavior by updating USE_MOCK_DATA in config.ts',
+        'background: #f0ad4e; color: #000; padding: 4px; border-radius: 3px; font-weight: bold;'
+      );
+    } else {
+      console.info(
+        '%c🌐 EXTERNAL API MODE 🌐\n' +
+        `Connected to API at: ${API_CONFIG.BASE_URL}`,
+        'background: #5bc0de; color: #000; padding: 4px; border-radius: 3px; font-weight: bold;'
+      );
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <SearchProvider>
+          {/* Display a development mode banner when using mock data */}
+          {API_CONFIG.USE_MOCK_DATA && (
+            <div 
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: '#f0ad4e',
+                color: '#000',
+                textAlign: 'center',
+                padding: '4px',
+                zIndex: 9999,
+                fontSize: '12px',
+                fontWeight: 'bold'
+              }}
+            >
+              DEVELOPMENT MODE - Using Mock Data (Client-Side Only)
+            </div>
+          )}
           <Router />
           <Toaster />
         </SearchProvider>
