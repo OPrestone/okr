@@ -73,6 +73,23 @@ export interface IStorage {
   updateCompanyLogo(logoUrl: string): Promise<any>;
   updateCompanySettings(settings: Partial<any>): Promise<any>;
   updateSystemSetting(key: string, value: string, description?: string, category?: string): Promise<any>;
+  
+  // Cadence operations
+  getCadence(id: number): Promise<Cadence | undefined>;
+  getAllCadences(): Promise<Cadence[]>;
+  createCadence(cadence: InsertCadence): Promise<Cadence>;
+  updateCadence(id: number, cadence: Partial<InsertCadence>): Promise<Cadence | undefined>;
+  deleteCadence(id: number): Promise<boolean>;
+  
+  // Timeframe operations
+  getTimeframe(id: number): Promise<Timeframe | undefined>;
+  getAllTimeframes(): Promise<Timeframe[]>;
+  getTimeframesByCadence(cadenceId: number): Promise<Timeframe[]>;
+  getActiveTimeframes(): Promise<Timeframe[]>;
+  createTimeframe(timeframe: InsertTimeframe): Promise<Timeframe>;
+  updateTimeframe(id: number, timeframe: Partial<InsertTimeframe>): Promise<Timeframe | undefined>;
+  deleteTimeframe(id: number): Promise<boolean>;
+  setTimeframeActive(id: number, isActive: boolean): Promise<Timeframe | undefined>;
 }
 
 export class MemStorage implements IStorage {

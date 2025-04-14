@@ -685,6 +685,82 @@ export const insertSystemSettingSchema = createInsertSchema(systemSettings).omit
   updatedAt: true,
 });
 
+// Cadence schema - defines the rhythm for OKR planning (quarterly, monthly, etc.)
+export const cadences = pgTable("cadences", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  color: varchar("color", { length: 7 }).default("#4f46e5"), // Hex color code
+  createdById: integer("created_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => {
+  return {
+    createdByIdIdx: index("cadences_created_by_id_idx").on(table.createdById),
+  };
+});
+
+export const cadencesRelations = relations(cadences, ({ one, many }) => ({
+  createdBy: one(users, {
+    fields: [cadences.createdById],
+    references: [users.id],
+  }),
+  timeframes: many(timeframes),
+}));
+
+export const insertCadenceSchema = createInsertSchema(cadences).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Cadence = typeof cadences.$inferSelect;
+export type InsertCadence = z.infer<typeof insertCadenceSchema>;
+
+// Timeframe schema - specific time periods within cadences (e.g., Q1 2025)
+export const timeframes = pgTable("timeframes", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  cadenceId: integer("cadence_id").notNull().references(() => cadences.id),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  isActive: boolean("is_active").default(false),
+  createdById: integer("created_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => {
+  return {
+    cadenceIdIdx: index("timeframes_cadence_id_idx").on(table.cadenceId),
+    createdByIdIdx: index("timeframes_created_by_id_idx").on(table.createdById),
+    dateIdx: index("timeframes_date_idx").on(table.startDate, table.endDate),
+    uniqueName: uniqueIndex("timeframes_cadence_name_idx").on(table.cadenceId, table.name),
+  };
+});
+
+export const timeframesRelations = relations(timeframes, ({ one, many }) => ({
+  cadence: one(cadences, {
+    fields: [timeframes.cadenceId],
+    references: [cadences.id],
+  }),
+  createdBy: one(users, {
+    fields: [timeframes.createdById],
+    references: [users.id],
+  }),
+  objectives: many(objectives),
+}));
+
+export const insertTimeframeSchema = createInsertSchema(timeframes).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  startDate: z.string().transform((str) => new Date(str)),
+  endDate: z.string().transform((str) => new Date(str)),
+});
+
+export type Timeframe = typeof timeframes.$inferSelect;
+export type InsertTimeframe = z.infer<typeof insertTimeframeSchema>;
+
 // Activity Log schema
 export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),
@@ -798,6 +874,12 @@ export type InsertUserSetting = z.infer<typeof insertUserSettingSchema>;
 
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+
+export type Cadence = typeof cadences.$inferSelect;
+export type InsertCadence = z.infer<typeof insertCadenceSchema>;
+
+export type Timeframe = typeof timeframes.$inferSelect;
+export type InsertTimeframe = z.infer<typeof insertTimeframeSchema>;
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
