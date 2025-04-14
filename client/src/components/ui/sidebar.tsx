@@ -2,10 +2,10 @@ import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 import { 
-  BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, Calendar,
+  BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight,
   Flag, Home, LogOut, Rocket, Settings, Tag, Users, UserCog, 
   UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle,
-  PanelLeftOpen, Link as LinkIcon, Shield
+  PanelLeftOpen, Link as LinkIcon, Shield, Clock
 } from "lucide-react";
 import { Separator } from "./separator";
 import { ThemeToggle } from "./theme-toggle";
@@ -181,7 +181,7 @@ export function Sidebar({ className }: SidebarProps) {
           href: "/cadences",
         },
         {
-          icon: <Calendar className="h-4 w-4" />,
+          icon: <Clock className="h-4 w-4" />,
           label: "Timeframes",
           href: "/timeframes",
         },
