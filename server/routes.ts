@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema, insertCheckInSchema } from "@shared/schema";
+import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema, insertCheckInSchema, insertCadenceSchema, insertTimeframeSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -639,6 +639,246 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.set('Cache-Control', 'public, max-age=31536000'); // 1 year
     next();
   }, express.static(uploadsDir));
+
+  // Cadence endpoints
+  app.get('/api/cadences', async (req, res) => {
+    try {
+      const cadences = await storage.getAllCadences();
+      res.json(cadences);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cadences" });
+    }
+  });
+
+  app.get('/api/cadences/:id', async (req, res) => {
+    try {
+      const cadenceId = parseInt(req.params.id);
+      if (isNaN(cadenceId)) {
+        return res.status(400).json({ message: "Invalid cadence ID" });
+      }
+      
+      const cadence = await storage.getCadence(cadenceId);
+      if (!cadence) {
+        return res.status(404).json({ message: "Cadence not found" });
+      }
+      
+      res.json(cadence);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cadence" });
+    }
+  });
+
+  app.post('/api/cadences', async (req, res) => {
+    try {
+      const cadenceData = insertCadenceSchema.parse(req.body);
+      const cadence = await storage.createCadence(cadenceData);
+      res.status(201).json(cadence);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid cadence data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create cadence" });
+    }
+  });
+
+  app.patch('/api/cadences/:id', async (req, res) => {
+    try {
+      const cadenceId = parseInt(req.params.id);
+      if (isNaN(cadenceId)) {
+        return res.status(400).json({ message: "Invalid cadence ID" });
+      }
+      
+      const updateData = req.body;
+      const updatedCadence = await storage.updateCadence(cadenceId, updateData);
+      
+      if (!updatedCadence) {
+        return res.status(404).json({ message: "Cadence not found" });
+      }
+      
+      res.json(updatedCadence);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update cadence" });
+    }
+  });
+
+  app.delete('/api/cadences/:id', async (req, res) => {
+    try {
+      const cadenceId = parseInt(req.params.id);
+      if (isNaN(cadenceId)) {
+        return res.status(400).json({ message: "Invalid cadence ID" });
+      }
+      
+      const success = await storage.deleteCadence(cadenceId);
+      if (!success) {
+        return res.status(400).json({ 
+          message: "Cannot delete cadence. It might have associated timeframes or may not exist." 
+        });
+      }
+      
+      res.status(200).json({ message: "Cadence deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete cadence" });
+    }
+  });
+
+  // Timeframe endpoints
+  app.get('/api/timeframes', async (req, res) => {
+    try {
+      // Check if filtering by cadence ID
+      const cadenceId = req.query.cadenceId ? parseInt(req.query.cadenceId as string) : null;
+      
+      if (cadenceId && !isNaN(cadenceId)) {
+        const timeframes = await storage.getTimeframesByCadence(cadenceId);
+        return res.json(timeframes);
+      }
+      
+      // Otherwise return all timeframes
+      const timeframes = await storage.getAllTimeframes();
+      res.json(timeframes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch timeframes" });
+    }
+  });
+
+  app.get('/api/timeframes/active', async (req, res) => {
+    try {
+      const timeframes = await storage.getActiveTimeframes();
+      res.json(timeframes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch active timeframes" });
+    }
+  });
+
+  app.get('/api/timeframes/:id', async (req, res) => {
+    try {
+      const timeframeId = parseInt(req.params.id);
+      if (isNaN(timeframeId)) {
+        return res.status(400).json({ message: "Invalid timeframe ID" });
+      }
+      
+      const timeframe = await storage.getTimeframe(timeframeId);
+      if (!timeframe) {
+        return res.status(404).json({ message: "Timeframe not found" });
+      }
+      
+      res.json(timeframe);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch timeframe" });
+    }
+  });
+
+  app.post('/api/timeframes', async (req, res) => {
+    try {
+      const timeframeData = insertTimeframeSchema.parse(req.body);
+      
+      // If setting this timeframe as active, deactivate other timeframes in the same cadence
+      if (timeframeData.isActive) {
+        const existingTimeframes = await storage.getTimeframesByCadence(timeframeData.cadenceId);
+        for (const timeframe of existingTimeframes) {
+          if (timeframe.isActive) {
+            await storage.setTimeframeActive(timeframe.id, false);
+          }
+        }
+      }
+      
+      const timeframe = await storage.createTimeframe(timeframeData);
+      res.status(201).json(timeframe);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid timeframe data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create timeframe" });
+    }
+  });
+
+  app.patch('/api/timeframes/:id', async (req, res) => {
+    try {
+      const timeframeId = parseInt(req.params.id);
+      if (isNaN(timeframeId)) {
+        return res.status(400).json({ message: "Invalid timeframe ID" });
+      }
+      
+      const updateData = req.body;
+      
+      // If updating active status to true, deactivate other timeframes in the same cadence
+      if (updateData.isActive === true) {
+        const timeframe = await storage.getTimeframe(timeframeId);
+        if (timeframe) {
+          const existingTimeframes = await storage.getTimeframesByCadence(timeframe.cadenceId);
+          for (const tf of existingTimeframes) {
+            if (tf.id !== timeframeId && tf.isActive) {
+              await storage.setTimeframeActive(tf.id, false);
+            }
+          }
+        }
+      }
+      
+      const updatedTimeframe = await storage.updateTimeframe(timeframeId, updateData);
+      
+      if (!updatedTimeframe) {
+        return res.status(404).json({ message: "Timeframe not found" });
+      }
+      
+      res.json(updatedTimeframe);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update timeframe" });
+    }
+  });
+
+  app.patch('/api/timeframes/:id/active', async (req, res) => {
+    try {
+      const timeframeId = parseInt(req.params.id);
+      if (isNaN(timeframeId)) {
+        return res.status(400).json({ message: "Invalid timeframe ID" });
+      }
+      
+      const { isActive } = req.body;
+      if (typeof isActive !== 'boolean') {
+        return res.status(400).json({ message: "isActive must be a boolean value" });
+      }
+      
+      // If setting to active, deactivate others in the same cadence
+      if (isActive) {
+        const timeframe = await storage.getTimeframe(timeframeId);
+        if (timeframe) {
+          const existingTimeframes = await storage.getTimeframesByCadence(timeframe.cadenceId);
+          for (const tf of existingTimeframes) {
+            if (tf.id !== timeframeId && tf.isActive) {
+              await storage.setTimeframeActive(tf.id, false);
+            }
+          }
+        }
+      }
+      
+      const updatedTimeframe = await storage.setTimeframeActive(timeframeId, isActive);
+      
+      if (!updatedTimeframe) {
+        return res.status(404).json({ message: "Timeframe not found" });
+      }
+      
+      res.json(updatedTimeframe);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update timeframe active status" });
+    }
+  });
+
+  app.delete('/api/timeframes/:id', async (req, res) => {
+    try {
+      const timeframeId = parseInt(req.params.id);
+      if (isNaN(timeframeId)) {
+        return res.status(400).json({ message: "Invalid timeframe ID" });
+      }
+      
+      const success = await storage.deleteTimeframe(timeframeId);
+      if (!success) {
+        return res.status(404).json({ message: "Timeframe not found" });
+      }
+      
+      res.status(200).json({ message: "Timeframe deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete timeframe" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
