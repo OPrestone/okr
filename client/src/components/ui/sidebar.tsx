@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { 
   BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, 
   Flag, Home, LogOut, Rocket, Settings, Tag, Users, UserCog, 
-  UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle
+  UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle,
+  PanelLeftOpen, Link as LinkIcon
 } from "lucide-react";
 import { Separator } from "./separator";
 import { ThemeToggle } from "./theme-toggle";
@@ -136,6 +137,11 @@ export function Sidebar({ className }: SidebarProps) {
       icon: <DollarSign className="h-5 w-5" />,
       label: "Import Financial Data",
       href: "/import-financial",
+    },
+    {
+      icon: <PanelLeftOpen className="h-5 w-5" />,
+      label: "Integrations",
+      href: "/integrations",
     },
     {
       icon: <Settings className="h-5 w-5" />,

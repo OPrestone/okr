@@ -584,6 +584,277 @@ export const mockCompanySettings: CompanySettings = {
   updatedAt: "2024-01-01T00:00:00.000Z"
 };
 
+// Mock integrations data
+export const mockIntegrations = [
+  {
+    id: "microsoft-teams",
+    name: "Microsoft Teams",
+    description: "Connect your OKR system with Microsoft Teams to send notifications, updates and create meetings directly within Teams.",
+    icon: "microsoft-teams",
+    isConnected: false,
+    status: "inactive",
+    features: [
+      "Send OKR progress notifications to Teams channels",
+      "Schedule check-in meetings through Teams",
+      "Share OKR updates in team channels",
+      "Access OKR dashboards within Teams"
+    ],
+    category: "communication",
+    connectionUrl: "https://login.microsoftonline.com/oauth2/authorize",
+    configOptions: [
+      {
+        name: "Default Channel ID",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Send Notifications",
+        type: "toggle",
+        value: true
+      },
+      {
+        name: "Notification Frequency",
+        type: "select",
+        value: "Daily",
+        options: ["Daily", "Weekly", "Only on updates"]
+      }
+    ]
+  },
+  {
+    id: "google-workspace",
+    name: "Google Workspace",
+    description: "Integrate with Google Workspace to sync with Google Calendar, access Google Drive documents, and collaborate using Google Meet.",
+    icon: "google-workspace",
+    isConnected: true,
+    status: "active",
+    features: [
+      "Schedule check-in meetings in Google Calendar",
+      "Store OKR documents in Google Drive",
+      "Start Google Meet calls for OKR discussions",
+      "Attach relevant Google Docs to objectives"
+    ],
+    category: "productivity",
+    connectionUrl: "https://accounts.google.com/o/oauth2/auth",
+    configOptions: [
+      {
+        name: "Default Calendar",
+        type: "text",
+        value: "Primary"
+      },
+      {
+        name: "Auto-create Google Docs",
+        type: "toggle",
+        value: true
+      },
+      {
+        name: "Drive Folder ID",
+        type: "text",
+        value: "1Abc2DefGHijKLmnOPqr"
+      }
+    ]
+  },
+  {
+    id: "odoo",
+    name: "Odoo",
+    description: "Connect with Odoo ERP to align objectives with financial data, employee management, and business processes.",
+    icon: "odoo",
+    isConnected: false,
+    status: "inactive",
+    features: [
+      "Import financial KPIs from Odoo",
+      "Link objectives to Odoo projects",
+      "Sync employee data between systems",
+      "Push OKR results to Odoo dashboards"
+    ],
+    category: "erp",
+    connectionUrl: "https://myodoo.example.com/web/login",
+    configOptions: [
+      {
+        name: "Odoo Instance URL",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Database Name",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Import Financial Data",
+        type: "toggle",
+        value: true
+      }
+    ]
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    description: "Integrate with Slack to get OKR updates, notifications, and facilitate team discussions about objectives.",
+    icon: "slack",
+    isConnected: true,
+    status: "active",
+    features: [
+      "Receive OKR updates in Slack channels",
+      "Use slash commands to check progress",
+      "Get reminders for pending check-ins",
+      "Interactive OKR bot for updates"
+    ],
+    category: "communication",
+    connectionUrl: "https://slack.com/oauth/authorize",
+    configOptions: [
+      {
+        name: "Default Channel",
+        type: "text",
+        value: "#okr-updates"
+      },
+      {
+        name: "Bot Username",
+        type: "text",
+        value: "OKRBot"
+      },
+      {
+        name: "Enable Reminders",
+        type: "toggle",
+        value: true
+      }
+    ]
+  },
+  {
+    id: "jira",
+    name: "Jira",
+    description: "Connect your OKR system with Jira to align objectives with software development tasks and sprints.",
+    icon: "jira",
+    isConnected: false,
+    status: "inactive",
+    features: [
+      "Link key results to Jira tickets",
+      "Monitor sprint progress as key results",
+      "Create Jira tickets from key results",
+      "Synchronize completion status"
+    ],
+    category: "project-management",
+    connectionUrl: "https://auth.atlassian.com/authorize",
+    configOptions: [
+      {
+        name: "Jira Instance URL",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Default Project Key",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Two-way Sync",
+        type: "toggle",
+        value: false
+      }
+    ]
+  },
+  {
+    id: "asana",
+    name: "Asana",
+    description: "Integrate with Asana to connect objectives with projects and tasks for better alignment.",
+    icon: "asana",
+    isConnected: false,
+    status: "inactive",
+    features: [
+      "Create Asana tasks from key results",
+      "Track Asana project progress as objectives",
+      "Link objectives to Asana projects",
+      "Update progress automatically"
+    ],
+    category: "project-management",
+    connectionUrl: "https://app.asana.com/-/oauth_authorize",
+    configOptions: [
+      {
+        name: "Default Workspace",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Create Tasks for New KRs",
+        type: "toggle",
+        value: true
+      },
+      {
+        name: "Task Template",
+        type: "select",
+        value: "Basic",
+        options: ["Basic", "Detailed", "Custom"]
+      }
+    ]
+  },
+  {
+    id: "github",
+    name: "GitHub",
+    description: "Connect with GitHub to align OKRs with development milestones, issues, and pull requests.",
+    icon: "SiGithub",
+    isConnected: false,
+    status: "inactive",
+    features: [
+      "Link key results to GitHub issues",
+      "Track PR completion rates as metrics",
+      "Connect milestones to objectives",
+      "Update progress based on issue status"
+    ],
+    category: "development",
+    connectionUrl: "https://github.com/login/oauth/authorize",
+    configOptions: [
+      {
+        name: "Organization Name",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Default Repository",
+        type: "text",
+        value: ""
+      },
+      {
+        name: "Sync Issues",
+        type: "toggle",
+        value: true
+      }
+    ]
+  },
+  {
+    id: "miro",
+    name: "Miro",
+    description: "Integrate with Miro to visualize and collaborate on OKRs using virtual whiteboards.",
+    icon: "SiMiro",
+    isConnected: true,
+    status: "error",
+    features: [
+      "Visualize OKRs on Miro boards",
+      "Collaborate on objective planning",
+      "Export OKR tree diagrams to Miro",
+      "Conduct OKR workshops using templates"
+    ],
+    category: "productivity",
+    connectionUrl: "https://miro.com/oauth/authorize",
+    configOptions: [
+      {
+        name: "Team ID",
+        type: "text",
+        value: "team12345"
+      },
+      {
+        name: "Default Board Template",
+        type: "select",
+        value: "OKR Framework",
+        options: ["OKR Framework", "Strategy Map", "Blank"]
+      },
+      {
+        name: "Auto-create Boards",
+        type: "toggle",
+        value: true
+      }
+    ]
+  }
+];
+
 // Export all mock data as a single object for easy import
 export const mockData = {
   "/api/users": mockUsers,
@@ -597,7 +868,8 @@ export const mockData = {
   "/api/resources": mockResources,
   "/api/cycles": mockCycles,
   "/api/dashboard": mockDashboardStats,
-  "/api/company-settings": mockCompanySettings
+  "/api/company-settings": mockCompanySettings,
+  "/api/integrations": mockIntegrations
 };
 
 export default mockData;
