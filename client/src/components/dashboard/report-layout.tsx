@@ -1,50 +1,35 @@
 import { ReactNode } from "react";
-import { Sidebar } from "@/components/ui/sidebar";
-import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 
 interface ReportLayoutProps {
   children: ReactNode;
 }
 
 export function ReportLayout({ children }: ReportLayoutProps) {
-  const { isSidebarOpen, toggleSidebar } = useSidebar();
+  const [, navigate] = useLocation();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content without Header */}
-      <div 
-        className={cn(
-          "flex-1 overflow-auto h-screen transition-all duration-300",
-          isSidebarOpen ? "md:ml-[30px]" : "md:ml-0"
-        )}
-        style={{
-          marginLeft: isSidebarOpen ? "calc(256px - 30px)" : "0px"
-        }}
-      >
-        {/* Simple top bar with only menu toggle for mobile */}
-        <div className="flex items-center h-14 px-4 border-b border-gray-200 md:hidden bg-white">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSidebar}
-            className="text-gray-500"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </div>
-        
-        {/* Content */}
-        <main className="p-4 md:p-6">
-          {children}
-        </main>
+    <div className="min-h-screen bg-neutral-50">
+      {/* Simple top bar with back button */}
+      <div className="flex items-center h-14 px-4 border-b border-gray-200 bg-white">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate('/')}
+          className="text-gray-500 flex items-center"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Dashboard
+        </Button>
       </div>
+      
+      {/* Content */}
+      <main className="p-4 md:p-6">
+        {children}
+      </main>
     </div>
   );
 }
