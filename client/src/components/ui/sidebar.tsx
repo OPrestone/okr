@@ -82,7 +82,7 @@ export function Sidebar({ className }: SidebarProps) {
         },
         {
           icon: <Flag className="h-4 w-4" />,
-          label: "Company OKRs",
+          label: "Company Objectives",
           href: "/company-objectives",
         },
       ]
