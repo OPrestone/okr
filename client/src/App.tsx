@@ -39,6 +39,7 @@ import ApprovedOKRs from "./pages/approved-okrs";
 import StatusSettings from "./pages/status-settings";
 import StatusTrackingDemo from "./pages/status-tracking-demo";
 import Integrations from "./pages/integrations";
+import TeamManagement from "./pages/team-management";
 
 function Router() {
   return (
@@ -73,6 +74,7 @@ function Router() {
           <Route path="/status-settings" component={StatusSettings} />
           <Route path="/status-tracking-demo" component={StatusTrackingDemo} />
           <Route path="/integrations" component={Integrations} />
+          <Route path="/team-management" component={TeamManagement} />
           <Route path="/search" component={Search} />
           <Route path="/test-logo" component={TestLogo} />
           <Route component={NotFound} />
