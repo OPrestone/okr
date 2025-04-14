@@ -2,9 +2,10 @@ import {
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
   FinancialData, InsertFinancialData, Cycle, InsertCycle, SystemSetting,
+  Cadence, InsertCadence, Timeframe, InsertTimeframe,
   users, teams, objectives, keyResults, meetings, resources, financialData, cycles,
   checkIns, comments, userCycles, teamCycles, notifications, meetingAgendaItems,
-  companySettings, systemSettings
+  companySettings, systemSettings, cadences, timeframes
 } from "@shared/schema";
 import { db } from './db';
 import { eq, and, gt, gte, lte, between, sql, desc, asc, isNull, not, or } from 'drizzle-orm';
@@ -713,6 +714,193 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error(`Error updating system setting (${key}):`, error);
       return {};
+    }
+  }
+
+  // Cadence operations
+  async getCadence(id: number): Promise<Cadence | undefined> {
+    const [cadence] = await db.select().from(cadences).where(eq(cadences.id, id));
+    return cadence;
+  }
+
+  async getAllCadences(): Promise<Cadence[]> {
+    return db.select().from(cadences).orderBy(asc(cadences.name));
+  }
+
+  async createCadence(insertCadence: InsertCadence): Promise<Cadence> {
+    const [cadence] = await db.insert(cadences).values({
+      ...insertCadence,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+    return cadence;
+  }
+
+  async updateCadence(id: number, cadenceData: Partial<InsertCadence>): Promise<Cadence | undefined> {
+    const [updatedCadence] = await db
+      .update(cadences)
+      .set({
+        ...cadenceData,
+        updatedAt: new Date()
+      })
+      .where(eq(cadences.id, id))
+      .returning();
+    return updatedCadence;
+  }
+
+  async deleteCadence(id: number): Promise<boolean> {
+    try {
+      // Check if there are timeframes using this cadence
+      const timeframesCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(timeframes)
+        .where(eq(timeframes.cadenceId, id));
+      
+      if (timeframesCount[0]?.count > 0) {
+        console.error(`Cannot delete cadence ${id} because it has associated timeframes`);
+        return false;
+      }
+      
+      // Delete the cadence
+      await db.delete(cadences).where(eq(cadences.id, id));
+      return true;
+    } catch (error) {
+      console.error(`Error deleting cadence ${id}:`, error);
+      return false;
+    }
+  }
+
+  // Timeframe operations
+  async getTimeframe(id: number): Promise<Timeframe | undefined> {
+    const [timeframe] = await db.select().from(timeframes).where(eq(timeframes.id, id));
+    return timeframe;
+  }
+
+  async getAllTimeframes(): Promise<Timeframe[]> {
+    return db.select().from(timeframes).orderBy([asc(timeframes.cadenceId), asc(timeframes.startDate)]);
+  }
+
+  async getTimeframesByCadence(cadenceId: number): Promise<Timeframe[]> {
+    return db
+      .select()
+      .from(timeframes)
+      .where(eq(timeframes.cadenceId, cadenceId))
+      .orderBy(asc(timeframes.startDate));
+  }
+
+  async getActiveTimeframes(): Promise<Timeframe[]> {
+    return db
+      .select()
+      .from(timeframes)
+      .where(eq(timeframes.isActive, true))
+      .orderBy(asc(timeframes.startDate));
+  }
+
+  async createTimeframe(insertTimeframe: InsertTimeframe): Promise<Timeframe> {
+    // When creating an active timeframe, deactivate other timeframes in the same cadence
+    if (insertTimeframe.isActive) {
+      await db
+        .update(timeframes)
+        .set({ isActive: false })
+        .where(
+          and(
+            eq(timeframes.cadenceId, insertTimeframe.cadenceId),
+            eq(timeframes.isActive, true)
+          )
+        );
+    }
+    
+    const [timeframe] = await db.insert(timeframes).values({
+      ...insertTimeframe,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+    
+    return timeframe;
+  }
+
+  async updateTimeframe(id: number, timeframeData: Partial<InsertTimeframe>): Promise<Timeframe | undefined> {
+    // Get the current timeframe to know its cadence
+    const [currentTimeframe] = await db
+      .select()
+      .from(timeframes)
+      .where(eq(timeframes.id, id));
+    
+    if (!currentTimeframe) {
+      return undefined;
+    }
+    
+    // If setting as active, deactivate other timeframes in the same cadence
+    if (timeframeData.isActive) {
+      const cadenceId = timeframeData.cadenceId || currentTimeframe.cadenceId;
+      await db
+        .update(timeframes)
+        .set({ isActive: false })
+        .where(
+          and(
+            eq(timeframes.cadenceId, cadenceId),
+            eq(timeframes.isActive, true),
+            not(eq(timeframes.id, id))
+          )
+        );
+    }
+    
+    const [updatedTimeframe] = await db
+      .update(timeframes)
+      .set({
+        ...timeframeData,
+        updatedAt: new Date()
+      })
+      .where(eq(timeframes.id, id))
+      .returning();
+    
+    return updatedTimeframe;
+  }
+
+  async setTimeframeActive(id: number, isActive: boolean): Promise<Timeframe | undefined> {
+    // Get the current timeframe to know its cadence
+    const [currentTimeframe] = await db
+      .select()
+      .from(timeframes)
+      .where(eq(timeframes.id, id));
+    
+    if (!currentTimeframe) {
+      return undefined;
+    }
+    
+    // If setting as active, deactivate other timeframes in the same cadence
+    if (isActive) {
+      await db
+        .update(timeframes)
+        .set({ isActive: false })
+        .where(
+          and(
+            eq(timeframes.cadenceId, currentTimeframe.cadenceId),
+            eq(timeframes.isActive, true),
+            not(eq(timeframes.id, id))
+          )
+        );
+    }
+    
+    const [updatedTimeframe] = await db
+      .update(timeframes)
+      .set({
+        isActive,
+        updatedAt: new Date()
+      })
+      .where(eq(timeframes.id, id))
+      .returning();
+    
+    return updatedTimeframe;
+  }
+
+  async deleteTimeframe(id: number): Promise<boolean> {
+    try {
+      await db.delete(timeframes).where(eq(timeframes.id, id));
+      return true;
+    } catch (error) {
+      console.error(`Error deleting timeframe ${id}:`, error);
+      return false;
     }
   }
 }
