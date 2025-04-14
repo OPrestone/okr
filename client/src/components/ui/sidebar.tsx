@@ -156,7 +156,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Logo and Toggle */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-neutral-200">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-primary-600 rounded-md flex items-center justify-center">
+          <div className="w-8 h-8 logo-bg rounded-md flex items-center justify-center">
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
           <span className="text-lg font-semibold text-neutral-900">OKR System</span>
@@ -252,7 +252,7 @@ export function Sidebar({ className }: SidebarProps) {
               >
                 <div className={cn(
                   "mr-3 text-lg",
-                  location === item.href ? "text-primary-500" : "text-neutral-500"
+                  location === item.href ? "text-primary" : "text-neutral-500"
                 )}>
                   {item.icon}
                 </div>
