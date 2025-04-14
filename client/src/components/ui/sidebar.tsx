@@ -178,15 +178,13 @@ export function Sidebar({ className }: SidebarProps) {
           <Link 
             href="/quick-start"
             className={cn(
-              "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
-              location === "/quick-start" 
-                ? "bg-opacity-10 bg-primary text-primary" 
-                : "text-neutral-700 hover:bg-neutral-100"
+              "flex items-center px-4 py-2.5 text-sm font-medium rounded-md menu-item",
+              location === "/quick-start" && "menu-item-active"
             )}
           >
             <Rocket className={cn(
-              "mr-3 text-lg",
-              location === "/quick-start" ? "text-primary" : "text-neutral-500"
+              "mr-3 text-lg menu-item-icon",
+              location === "/quick-start" && "text-primary"
             )} />
             <span>Quick Get Started Guide</span>
           </Link>
@@ -201,15 +199,15 @@ export function Sidebar({ className }: SidebarProps) {
                   className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md menu-item"
                 >
                   <div className="flex items-center">
-                    <div className="mr-3 text-lg text-neutral-500">
+                    <div className="mr-3 text-lg menu-item-icon">
                       {item.icon}
                     </div>
                     <span>{item.label}</span>
                   </div>
                   {item.isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-neutral-500" />
+                    <ChevronDown className="h-4 w-4 menu-item-icon" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-neutral-500" />
+                    <ChevronRight className="h-4 w-4 menu-item-icon" />
                   )}
                 </button>
                 
@@ -220,16 +218,14 @@ export function Sidebar({ className }: SidebarProps) {
                         key={subItem.label}
                         href={subItem.href || "/"}
                         className={cn(
-                          "flex items-center px-4 py-2 text-sm font-medium rounded-md",
-                          location === subItem.href
-                            ? "bg-opacity-10 bg-primary text-primary"
-                            : "text-neutral-600 hover:bg-neutral-100"
+                          "flex items-center px-4 py-2 text-sm font-medium rounded-md menu-item",
+                          location === subItem.href && "menu-item-active"
                         )}
                       >
                         <div
                           className={cn(
-                            "mr-2 text-sm",
-                            location === subItem.href ? "text-primary" : "text-neutral-500"
+                            "mr-2 text-sm menu-item-icon",
+                            location === subItem.href && "text-primary"
                           )}
                         >
                           {subItem.icon}
@@ -245,15 +241,13 @@ export function Sidebar({ className }: SidebarProps) {
                 key={item.label} 
                 href={item.href || "/"}
                 className={cn(
-                  "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
-                  location === item.href 
-                    ? "bg-opacity-10 bg-primary text-primary" 
-                    : "text-neutral-700 hover:bg-neutral-100"
+                  "flex items-center px-4 py-2.5 text-sm font-medium rounded-md menu-item",
+                  location === item.href && "menu-item-active"
                 )}
               >
                 <div className={cn(
-                  "mr-3 text-lg",
-                  location === item.href ? "text-primary" : "text-neutral-500"
+                  "mr-3 text-lg menu-item-icon",
+                  location === item.href && "text-primary"
                 )}>
                   {item.icon}
                 </div>

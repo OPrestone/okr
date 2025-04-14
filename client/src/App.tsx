@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import { SidebarProvider } from "./hooks/use-sidebar";
 import { SearchProvider } from "./hooks/use-search";
+import { ThemeProvider } from "./hooks/use-theme";
 import { DashboardLayout } from "./components/dashboard/layout";
 import Home from "./pages/home";
 import QuickStart from "./pages/quick-start";
@@ -74,10 +75,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SearchProvider>
-        <Router />
-        <Toaster />
-      </SearchProvider>
+      <ThemeProvider>
+        <SearchProvider>
+          <Router />
+          <Toaster />
+        </SearchProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
