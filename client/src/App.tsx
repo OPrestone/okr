@@ -40,6 +40,8 @@ import StatusSettings from "./pages/status-settings";
 import StatusTrackingDemo from "./pages/status-tracking-demo";
 import Integrations from "./pages/integrations";
 import TeamManagement from "./pages/team-management";
+import UserManagement from "./pages/user-management";
+import AccessGroups from "./pages/access-groups";
 
 function Router() {
   return (
@@ -75,6 +77,8 @@ function Router() {
           <Route path="/status-tracking-demo" component={StatusTrackingDemo} />
           <Route path="/integrations" component={Integrations} />
           <Route path="/team-management" component={TeamManagement} />
+          <Route path="/user-management" component={UserManagement} />
+          <Route path="/access-groups" component={AccessGroups} />
           <Route path="/search" component={Search} />
           <Route path="/test-logo" component={TestLogo} />
           <Route component={NotFound} />
