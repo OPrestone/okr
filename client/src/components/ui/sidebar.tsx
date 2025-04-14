@@ -3,7 +3,7 @@ import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
 import { 
   BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, 
-  Flag, Home, LogOut, Rocket, Settings, Users, UserCog, 
+  Flag, Home, LogOut, Rocket, Settings, Tag, Users, UserCog, 
   UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle
 } from "lucide-react";
 import { Separator } from "./separator";
@@ -141,6 +141,11 @@ export function Sidebar({ className }: SidebarProps) {
       icon: <Settings className="h-5 w-5" />,
       label: "Configure",
       href: "/configure",
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
+      label: "Status Settings",
+      href: "/status-settings",
     },
   ];
 

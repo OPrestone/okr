@@ -148,18 +148,23 @@ export default function StatusSettings() {
             Configure status labels and colors for objectives and key results
           </p>
         </div>
-        {!isEditing ? (
-          <Button onClick={startEditing}>Customize Statuses</Button>
-        ) : (
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" onClick={cancelEditing}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saveChangesMutation.isPending}>
-              {saveChangesMutation.isPending ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" onClick={() => window.location.href = '/status-tracking-demo'}>
+            View Demo
+          </Button>
+          {!isEditing ? (
+            <Button onClick={startEditing}>Customize Statuses</Button>
+          ) : (
+            <>
+              <Button variant="outline" onClick={cancelEditing}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave} disabled={saveChangesMutation.isPending}>
+                {saveChangesMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       <Tabs defaultValue="objective-statuses" value={activeTab} onValueChange={setActiveTab}>
