@@ -176,13 +176,13 @@ export function Sidebar({ className }: SidebarProps) {
             className={cn(
               "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
               location === "/quick-start" 
-                ? "bg-primary-50 text-primary-700" 
+                ? "bg-opacity-10 bg-primary text-primary" 
                 : "text-neutral-700 hover:bg-neutral-100"
             )}
           >
             <Rocket className={cn(
               "mr-3 text-lg",
-              location === "/quick-start" ? "text-primary-500" : "text-neutral-500"
+              location === "/quick-start" ? "text-primary" : "text-neutral-500"
             )} />
             <span>Quick Get Started Guide</span>
           </Link>
@@ -221,14 +221,14 @@ export function Sidebar({ className }: SidebarProps) {
                         className={cn(
                           "flex items-center px-4 py-2 text-sm font-medium rounded-md",
                           location === subItem.href
-                            ? "bg-primary-50 text-primary-700"
+                            ? "bg-opacity-10 bg-primary text-primary"
                             : "text-neutral-600 hover:bg-neutral-100"
                         )}
                       >
                         <div
                           className={cn(
                             "mr-2 text-sm",
-                            location === subItem.href ? "text-primary-500" : "text-neutral-500"
+                            location === subItem.href ? "text-primary" : "text-neutral-500"
                           )}
                         >
                           {subItem.icon}
@@ -246,7 +246,7 @@ export function Sidebar({ className }: SidebarProps) {
                 className={cn(
                   "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
                   location === item.href 
-                    ? "bg-primary-50 text-primary-700" 
+                    ? "bg-opacity-10 bg-primary text-primary" 
                     : "text-neutral-700 hover:bg-neutral-100"
                 )}
               >
