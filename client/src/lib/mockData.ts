@@ -1178,6 +1178,107 @@ mockUsers.forEach((user, index) => {
 });
 
 // Export all mock data as a single object for easy import
+// Define mock cadences
+export interface Cadence {
+  id: number;
+  name: string;
+  description: string | null;
+  color: string;
+  createdById: number | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export const mockCadences: Cadence[] = [
+  {
+    id: 1,
+    name: "Quarterly",
+    description: "Standard quarterly planning cycle",
+    color: "#4f46e5",
+    createdById: 1,
+    createdAt: "2024-01-01T10:00:00.000Z",
+    updatedAt: "2024-01-01T10:00:00.000Z"
+  },
+  {
+    id: 2,
+    name: "Annual",
+    description: "Yearly strategic planning",
+    color: "#059669",
+    createdById: 1,
+    createdAt: "2024-01-01T10:00:00.000Z",
+    updatedAt: "2024-01-01T10:00:00.000Z"
+  },
+  {
+    id: 3,
+    name: "Monthly",
+    description: "Short-term monthly planning",
+    color: "#dc2626",
+    createdById: 1,
+    createdAt: "2024-01-01T10:00:00.000Z",
+    updatedAt: "2024-01-01T10:00:00.000Z"
+  }
+];
+
+// Define mock timeframes
+export interface Timeframe {
+  id: number;
+  name: string;
+  cadenceId: number;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  createdById: number | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}
+
+export const mockTimeframes: Timeframe[] = [
+  {
+    id: 1,
+    name: "Q1 2025",
+    cadenceId: 1,
+    startDate: "2025-01-01T00:00:00.000Z",
+    endDate: "2025-03-31T23:59:59.000Z",
+    isActive: true,
+    createdById: 1,
+    createdAt: "2024-12-15T10:00:00.000Z",
+    updatedAt: "2024-12-15T10:00:00.000Z"
+  },
+  {
+    id: 2,
+    name: "Q2 2025",
+    cadenceId: 1,
+    startDate: "2025-04-01T00:00:00.000Z",
+    endDate: "2025-06-30T23:59:59.000Z",
+    isActive: false,
+    createdById: 1,
+    createdAt: "2024-12-15T10:00:00.000Z",
+    updatedAt: "2024-12-15T10:00:00.000Z"
+  },
+  {
+    id: 3,
+    name: "2025 - Annual",
+    cadenceId: 2,
+    startDate: "2025-01-01T00:00:00.000Z",
+    endDate: "2025-12-31T23:59:59.000Z",
+    isActive: true,
+    createdById: 1,
+    createdAt: "2024-12-10T10:00:00.000Z",
+    updatedAt: "2024-12-10T10:00:00.000Z"
+  },
+  {
+    id: 4,
+    name: "January 2025",
+    cadenceId: 3,
+    startDate: "2025-01-01T00:00:00.000Z",
+    endDate: "2025-01-31T23:59:59.000Z",
+    isActive: true,
+    createdById: 1,
+    createdAt: "2024-12-20T10:00:00.000Z",
+    updatedAt: "2024-12-20T10:00:00.000Z"
+  }
+];
+
 export const mockData = {
   "/api/users": mockUsers,
   "/api/teams": mockTeams,
@@ -1193,7 +1294,9 @@ export const mockData = {
   "/api/company-settings": mockCompanySettings,
   "/api/integrations": mockIntegrations,
   "/api/permissions": mockPermissions,
-  "/api/access-groups": mockAccessGroups
+  "/api/access-groups": mockAccessGroups,
+  "/api/cadences": mockCadences,
+  "/api/timeframes": mockTimeframes
 };
 
 export default mockData;

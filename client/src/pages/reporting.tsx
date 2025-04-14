@@ -485,7 +485,7 @@ export default function Reporting() {
                       </div>
                     </div>
                     
-                    <style jsx>{`
+                    <style>{`
                       @keyframes dashoffset {
                         0% {
                           stroke-dasharray: 0, 100;
