@@ -146,20 +146,24 @@ export function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-neutral-200 flex flex-col",
+        "fixed inset-y-0 left-0 z-50 w-64 flex flex-col",
         "transform transition-transform duration-300 ease-in-out",
         isSidebarOpen ? "translate-x-0" : "-translate-x-full",
         "md:fixed md:translate-x-0",
         className
       )}
+      style={{
+        backgroundColor: "var(--color-sidebar)",
+        borderRight: "1px solid var(--color-border)"
+      }}
     >
       {/* Logo and Toggle */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-neutral-200">
+      <div className="flex items-center justify-between h-16 px-4 border-b" style={{ borderColor: "var(--color-border)" }}>
         <Link href="/" className="flex items-center space-x-2">
           <div className="w-8 h-8 logo-bg rounded-md flex items-center justify-center">
             <BarChart3 className="h-5 w-5 text-white" />
           </div>
-          <span className="text-lg font-semibold text-neutral-900">OKR System</span>
+          <span className="text-lg font-semibold">OKR System</span>
         </Link>
         <button onClick={toggleSidebar} className="md:hidden text-neutral-500 hover:text-neutral-700">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,10 +198,7 @@ export function Sidebar({ className }: SidebarProps) {
               <div key={item.label} className="mb-2">
                 <button
                   onClick={item.onToggle}
-                  className={cn(
-                    "w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md",
-                    "text-neutral-700 hover:bg-neutral-100"
-                  )}
+                  className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md menu-item"
                 >
                   <div className="flex items-center">
                     <div className="mr-3 text-lg text-neutral-500">
@@ -264,18 +265,23 @@ export function Sidebar({ className }: SidebarProps) {
       </nav>
 
       {/* User Profile */}
-      <div className="border-t border-neutral-200 p-4">
+      <div className="border-t p-4" style={{ borderColor: "var(--color-border)" }}>
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full bg-neutral-200 flex items-center justify-center">
-            <span className="text-xs font-medium text-neutral-600">AM</span>
+          <div className="h-8 w-8 rounded-full flex items-center justify-center" 
+               style={{ backgroundColor: "var(--color-hover)" }}>
+            <span className="text-xs font-medium">AM</span>
           </div>
           <div className="ml-3">
-            <p className="text-sm font-medium text-neutral-700">Alex Morgan</p>
-            <p className="text-xs text-neutral-500">Product Manager</p>
+            <p className="text-sm font-medium">Alex Morgan</p>
+            <p className="text-xs opacity-70">Product Manager</p>
           </div>
-          <button className="ml-auto text-neutral-400 hover:text-neutral-500">
-            <LogOut className="h-4 w-4" />
-          </button>
+          <div className="ml-auto flex items-center space-x-1">
+            {/* Import ThemeToggle once we wrap the app */}
+            {/* <ThemeToggle /> */}
+            <button className="opacity-70 hover:opacity-100">
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
     </aside>
