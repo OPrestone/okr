@@ -1,13 +1,21 @@
 import { Link, useLocation } from "wouter";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { cn } from "@/lib/utils";
-import { BarChart3, BookOpen, CalendarCheck, Flag, Home, LogOut, Rocket, Settings, Upload, Users, UserCog, UsersRound, PieChart, Compass, DollarSign, Target, FileEdit } from "lucide-react";
+import { 
+  BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, 
+  Flag, Home, LogOut, Rocket, Settings, Users, UserCog, 
+  UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle
+} from "lucide-react";
 import { Separator } from "./separator";
+import { useState } from "react";
 
 interface SidebarItem {
   icon: React.ReactNode;
   label: string;
-  href: string;
+  href?: string;
+  subMenu?: SidebarItem[];
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }
 
 interface SidebarProps {
@@ -17,6 +25,17 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [location] = useLocation();
+  const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
+    "manageOkrs": true,
+    "userManagement": true
+  });
+
+  const toggleSubMenu = (key: string) => {
+    setExpandedMenus(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
 
   const menuItems: SidebarItem[] = [
     {
@@ -40,29 +59,50 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/dashboards",
     },
     {
-      icon: <Flag className="h-5 w-5" />,
-      label: "Company Objectives",
-      href: "/company-objectives",
-    },
-    {
       icon: <Target className="h-5 w-5" />,
-      label: "My OKRs",
-      href: "/my-okrs",
-    },
-    {
-      icon: <FileEdit className="h-5 w-5" />,
-      label: "OKR Drafts",
-      href: "/drafts",
+      label: "Manage OKRs",
+      isExpanded: expandedMenus["manageOkrs"],
+      onToggle: () => toggleSubMenu("manageOkrs"),
+      subMenu: [
+        {
+          icon: <Target className="h-4 w-4" />,
+          label: "My OKRs",
+          href: "/my-okrs",
+        },
+        {
+          icon: <FileEdit className="h-4 w-4" />,
+          label: "Draft OKRs",
+          href: "/drafts",
+        },
+        {
+          icon: <CheckCircle className="h-4 w-4" />,
+          label: "Approved OKRs",
+          href: "/approved-okrs",
+        },
+        {
+          icon: <Flag className="h-4 w-4" />,
+          label: "Company OKRs",
+          href: "/company-objectives",
+        },
+      ]
     },
     {
       icon: <Users className="h-5 w-5" />,
-      label: "Teams",
-      href: "/teams",
-    },
-    {
-      icon: <UserCog className="h-5 w-5" />,
-      label: "Users",
-      href: "/users",
+      label: "User Management",
+      isExpanded: expandedMenus["userManagement"],
+      onToggle: () => toggleSubMenu("userManagement"),
+      subMenu: [
+        {
+          icon: <Users className="h-4 w-4" />,
+          label: "Teams",
+          href: "/teams",
+        },
+        {
+          icon: <UserCog className="h-4 w-4" />,
+          label: "Users",
+          href: "/users",
+        },
+      ]
     },
     {
       icon: <UsersRound className="h-5 w-5" />,
@@ -149,26 +189,77 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
 
         <div className="space-y-1">
-          {menuItems.slice(1).map((item) => (
-            <Link 
-              key={item.href} 
-              href={item.href}
-              className={cn(
-                "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
-                location === item.href 
-                  ? "bg-primary-50 text-primary-700" 
-                  : "text-neutral-700 hover:bg-neutral-100"
-              )}
-            >
-              <div className={cn(
-                "mr-3 text-lg",
-                location === item.href ? "text-primary-500" : "text-neutral-500"
-              )}>
-                {item.icon}
+          {menuItems.slice(1).map((item, index) => 
+            item.subMenu ? (
+              <div key={item.label} className="mb-2">
+                <button
+                  onClick={item.onToggle}
+                  className={cn(
+                    "w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium rounded-md",
+                    "text-neutral-700 hover:bg-neutral-100"
+                  )}
+                >
+                  <div className="flex items-center">
+                    <div className="mr-3 text-lg text-neutral-500">
+                      {item.icon}
+                    </div>
+                    <span>{item.label}</span>
+                  </div>
+                  {item.isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-neutral-500" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-neutral-500" />
+                  )}
+                </button>
+                
+                {item.isExpanded && (
+                  <div className="mt-1 ml-6 space-y-1">
+                    {item.subMenu.map((subItem) => (
+                      <Link
+                        key={subItem.label}
+                        href={subItem.href || "/"}
+                        className={cn(
+                          "flex items-center px-4 py-2 text-sm font-medium rounded-md",
+                          location === subItem.href
+                            ? "bg-primary-50 text-primary-700"
+                            : "text-neutral-600 hover:bg-neutral-100"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "mr-2 text-sm",
+                            location === subItem.href ? "text-primary-500" : "text-neutral-500"
+                          )}
+                        >
+                          {subItem.icon}
+                        </div>
+                        <span>{subItem.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
-              <span>{item.label}</span>
-            </Link>
-          ))}
+            ) : (
+              <Link 
+                key={item.label} 
+                href={item.href || "/"}
+                className={cn(
+                  "flex items-center px-4 py-2.5 text-sm font-medium rounded-md",
+                  location === item.href 
+                    ? "bg-primary-50 text-primary-700" 
+                    : "text-neutral-700 hover:bg-neutral-100"
+                )}
+              >
+                <div className={cn(
+                  "mr-3 text-lg",
+                  location === item.href ? "text-primary-500" : "text-neutral-500"
+                )}>
+                  {item.icon}
+                </div>
+                <span>{item.label}</span>
+              </Link>
+            )
+          )}
         </div>
       </nav>
 
