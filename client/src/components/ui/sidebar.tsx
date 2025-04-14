@@ -161,8 +161,8 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Logo and Toggle */}
       <div className="flex items-center justify-between h-16 px-4 border-b" style={{ borderColor: "var(--color-border)" }}>
         <Link href="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 logo-bg rounded-md flex items-center justify-center">
-            <BarChart3 className="h-5 w-5 text-white" />
+          <div className="w-8 h-8 rounded-md flex items-center justify-center overflow-hidden">
+            <img src="/uploads/logo-1744375156430-327086218.png" alt="OKR System Logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-lg font-semibold">OKR System</span>
         </Link>
@@ -262,9 +262,9 @@ export function Sidebar({ className }: SidebarProps) {
       {/* User Profile */}
       <div className="border-t p-4" style={{ borderColor: "var(--color-border)" }}>
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-full flex items-center justify-center" 
-               style={{ backgroundColor: "var(--color-hover)" }}>
-            <span className="text-xs font-medium">AM</span>
+          <div className="h-8 w-8 rounded-full flex items-center justify-center overflow-hidden border" 
+               style={{ borderColor: "var(--color-border)" }}>
+            <img src="/uploads/logo-1744375156430-327086218.png" alt="User" className="w-full h-full object-cover" />
           </div>
           <div className="ml-3">
             <p className="text-sm font-medium">Alex Morgan</p>
