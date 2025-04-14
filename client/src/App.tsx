@@ -34,6 +34,7 @@ import CheckIns from "./pages/check-ins";
 import Search from "./pages/search";
 import TestLogo from "./pages/test-logo";
 import ApprovedOKRs from "./pages/approved-okrs";
+import StatusSettings from "./pages/status-settings";
 
 function Router() {
   return (
@@ -65,6 +66,7 @@ function Router() {
           <Route path="/create-user" component={CreateUser} />
           <Route path="/suggested-key-results" component={SuggestedKeyResults} />
           <Route path="/import-financial" component={ImportFinancial} />
+          <Route path="/status-settings" component={StatusSettings} />
           <Route path="/search" component={Search} />
           <Route path="/test-logo" component={TestLogo} />
           <Route component={NotFound} />
