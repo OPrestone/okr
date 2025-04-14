@@ -5,7 +5,7 @@ import {
   BarChart3, BookOpen, CalendarCheck, ChevronDown, ChevronRight, 
   Flag, Home, LogOut, Rocket, Settings, Tag, Users, UserCog, 
   UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle,
-  PanelLeftOpen, Link as LinkIcon
+  PanelLeftOpen, Link as LinkIcon, Shield
 } from "lucide-react";
 import { Separator } from "./separator";
 import { ThemeToggle } from "./theme-toggle";
@@ -154,6 +154,16 @@ export function Sidebar({ className }: SidebarProps) {
           icon: <Users className="h-4 w-4" />,
           label: "Team Management",
           href: "/team-management",
+        },
+        {
+          icon: <UserCog className="h-4 w-4" />,
+          label: "Users Management",
+          href: "/user-management",
+        },
+        {
+          icon: <Shield className="h-4 w-4" />,
+          label: "Access Groups",
+          href: "/access-groups",
         },
         {
           icon: <PanelLeftOpen className="h-4 w-4" />,
