@@ -714,9 +714,6 @@ export const insertCadenceSchema = createInsertSchema(cadences).omit({
   updatedAt: true,
 });
 
-export type Cadence = typeof cadences.$inferSelect;
-export type InsertCadence = z.infer<typeof insertCadenceSchema>;
-
 // Timeframe schema - specific time periods within cadences (e.g., Q1 2025)
 export const timeframes = pgTable("timeframes", {
   id: serial("id").primaryKey(),
@@ -757,9 +754,6 @@ export const insertTimeframeSchema = createInsertSchema(timeframes).omit({
   startDate: z.string().transform((str) => new Date(str)),
   endDate: z.string().transform((str) => new Date(str)),
 });
-
-export type Timeframe = typeof timeframes.$inferSelect;
-export type InsertTimeframe = z.infer<typeof insertTimeframeSchema>;
 
 // Activity Log schema
 export const activityLogs = pgTable("activity_logs", {
