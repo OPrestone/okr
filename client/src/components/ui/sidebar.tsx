@@ -29,7 +29,8 @@ export function Sidebar({ className }: SidebarProps) {
   const [location] = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
     "manageOkrs": false,
-    "userManagement": false
+    "userManagement": false,
+    "configure": false
   });
 
   const toggleSubMenu = (key: string) => {
@@ -139,19 +140,27 @@ export function Sidebar({ className }: SidebarProps) {
       href: "/import-financial",
     },
     {
-      icon: <PanelLeftOpen className="h-5 w-5" />,
-      label: "Integrations",
-      href: "/integrations",
-    },
-    {
       icon: <Settings className="h-5 w-5" />,
       label: "Configure",
-      href: "/configure",
-    },
-    {
-      icon: <CheckCircle className="h-5 w-5" />,
-      label: "Status Settings",
-      href: "/status-settings",
+      isExpanded: expandedMenus["configure"],
+      onToggle: () => toggleSubMenu("configure"),
+      subMenu: [
+        {
+          icon: <Settings className="h-4 w-4" />,
+          label: "General Settings",
+          href: "/configure",
+        },
+        {
+          icon: <PanelLeftOpen className="h-4 w-4" />,
+          label: "Integrations",
+          href: "/integrations",
+        },
+        {
+          icon: <CheckCircle className="h-4 w-4" />,
+          label: "Status Settings",
+          href: "/status-settings",
+        },
+      ]
     },
   ];
 
