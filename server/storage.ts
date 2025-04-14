@@ -1,7 +1,8 @@
 import { 
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
-  FinancialData, InsertFinancialData, Cycle, InsertCycle, CheckIn, InsertCheckIn
+  FinancialData, InsertFinancialData, Cycle, InsertCycle, CheckIn, InsertCheckIn,
+  Cadence, InsertCadence, Timeframe, InsertTimeframe
 } from "@shared/schema";
 
 // Storage interface for all CRUD operations
@@ -541,6 +542,123 @@ export class MemStorage implements IStorage {
       category,
       updatedAt: new Date()
     };
+  }
+
+  // Cadence implementations
+  async getCadence(id: number): Promise<Cadence | undefined> {
+    return this.cadences.get(id);
+  }
+
+  async getAllCadences(): Promise<Cadence[]> {
+    return Array.from(this.cadences.values());
+  }
+
+  async createCadence(insertCadence: InsertCadence): Promise<Cadence> {
+    const id = this.cadenceCurrentId++;
+    const now = new Date();
+    const cadence: Cadence = { 
+      ...insertCadence, 
+      id, 
+      createdAt: now, 
+      updatedAt: now
+    };
+    this.cadences.set(id, cadence);
+    return cadence;
+  }
+
+  async updateCadence(id: number, cadence: Partial<InsertCadence>): Promise<Cadence | undefined> {
+    const existingCadence = this.cadences.get(id);
+    if (!existingCadence) return undefined;
+    
+    const updatedCadence = { 
+      ...existingCadence, 
+      ...cadence, 
+      updatedAt: new Date() 
+    };
+    this.cadences.set(id, updatedCadence);
+    return updatedCadence;
+  }
+
+  async deleteCadence(id: number): Promise<boolean> {
+    if (!this.cadences.has(id)) return false;
+    
+    // Check if there are any timeframes using this cadence
+    const hasTimeframes = Array.from(this.timeframes.values()).some(
+      timeframe => timeframe.cadenceId === id
+    );
+    
+    if (hasTimeframes) {
+      console.log(`Cannot delete cadence ${id} because it has associated timeframes`);
+      return false;
+    }
+    
+    return this.cadences.delete(id);
+  }
+
+  // Timeframe implementations
+  async getTimeframe(id: number): Promise<Timeframe | undefined> {
+    return this.timeframes.get(id);
+  }
+
+  async getAllTimeframes(): Promise<Timeframe[]> {
+    return Array.from(this.timeframes.values());
+  }
+
+  async getTimeframesByCadence(cadenceId: number): Promise<Timeframe[]> {
+    return Array.from(this.timeframes.values()).filter(
+      timeframe => timeframe.cadenceId === cadenceId
+    );
+  }
+
+  async getActiveTimeframes(): Promise<Timeframe[]> {
+    return Array.from(this.timeframes.values()).filter(
+      timeframe => timeframe.isActive
+    );
+  }
+
+  async createTimeframe(insertTimeframe: InsertTimeframe): Promise<Timeframe> {
+    const id = this.timeframeCurrentId++;
+    const now = new Date();
+    const timeframe: Timeframe = { 
+      ...insertTimeframe, 
+      id, 
+      createdAt: now, 
+      updatedAt: now,
+      isActive: insertTimeframe.isActive || false
+    };
+    this.timeframes.set(id, timeframe);
+    return timeframe;
+  }
+
+  async updateTimeframe(id: number, timeframe: Partial<InsertTimeframe>): Promise<Timeframe | undefined> {
+    const existingTimeframe = this.timeframes.get(id);
+    if (!existingTimeframe) return undefined;
+    
+    const updatedTimeframe = { 
+      ...existingTimeframe, 
+      ...timeframe, 
+      updatedAt: new Date() 
+    };
+    this.timeframes.set(id, updatedTimeframe);
+    return updatedTimeframe;
+  }
+
+  async deleteTimeframe(id: number): Promise<boolean> {
+    if (!this.timeframes.has(id)) return false;
+    return this.timeframes.delete(id);
+  }
+
+  async setTimeframeActive(id: number, isActive: boolean): Promise<Timeframe | undefined> {
+    const existingTimeframe = this.timeframes.get(id);
+    if (!existingTimeframe) return undefined;
+    
+    const updatedTimeframe = { 
+      ...existingTimeframe, 
+      isActive, 
+      updatedAt: new Date() 
+    };
+    this.timeframes.set(id, updatedTimeframe);
+    return updatedTimeframe;
   }
 }
 
