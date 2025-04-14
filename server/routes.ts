@@ -729,19 +729,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Timeframe endpoints
   app.get('/api/timeframes', async (req, res) => {
     try {
+      // Add debugging for storage object
+      console.log('Storage type:', storage.constructor.name);
+      console.log('Timeframe methods available:', 'getAllTimeframes' in storage);
+      
       // Check if filtering by cadence ID
       const cadenceId = req.query.cadenceId ? parseInt(req.query.cadenceId as string) : null;
       
       if (cadenceId && !isNaN(cadenceId)) {
+        console.log('Fetching timeframes for cadence ID:', cadenceId);
         const timeframes = await storage.getTimeframesByCadence(cadenceId);
         return res.json(timeframes);
       }
       
       // Otherwise return all timeframes
+      console.log('Fetching all timeframes');
       const timeframes = await storage.getAllTimeframes();
       res.json(timeframes);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch timeframes" });
+      console.error('Error fetching timeframes:', error);
+      res.status(500).json({ message: "Failed to fetch timeframes", error: String(error) });
     }
   });
 
