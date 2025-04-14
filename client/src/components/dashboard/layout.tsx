@@ -18,12 +18,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <div 
-        className={cn(
-          "flex-1 overflow-auto h-screen transition-all duration-300",
-          isSidebarOpen ? "md:ml-[30px]" : "md:ml-0"
-        )}
+        className="flex-1 overflow-auto h-screen transition-all duration-300"
         style={{
-          marginLeft: isSidebarOpen ? "calc(256px - 30px)" : "0px"
+          marginLeft: "256px"
         }}
       >
         {/* Header */}
