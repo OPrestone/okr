@@ -26,8 +26,8 @@ export function Sidebar({ className }: SidebarProps) {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [location] = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
-    "manageOkrs": true,
-    "userManagement": true
+    "manageOkrs": false,
+    "userManagement": false
   });
 
   const toggleSubMenu = (key: string) => {
