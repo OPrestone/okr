@@ -3,7 +3,7 @@
 // API configuration
 export const API_CONFIG = {
   // Base URL for the external API - can be overridden with environment variables
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://api.example.com',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000',
   
   // Default headers to include with API requests
   DEFAULT_HEADERS: {
@@ -13,7 +13,7 @@ export const API_CONFIG = {
   
   // Whether to use mock data instead of making real API calls
   // In a real app, this would be controlled by environment variables
-  USE_MOCK_DATA: true, // Set to true to use mock data by default
+  USE_MOCK_DATA: false, // Set to false to use real API endpoints
   
   // Authentication settings
   AUTH: {
