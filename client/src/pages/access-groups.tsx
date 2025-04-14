@@ -299,10 +299,11 @@ const AccessGroupForm = ({
                             <Checkbox
                               id={`category-${category}`}
                               checked={allSelected}
-                              indeterminate={!allSelected && someSelected}
                               onCheckedChange={() => handleCategoryToggle(categoryPermissions)}
                               onClick={(e) => e.stopPropagation()}
-                              className="mr-2 data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground"
+                              className="mr-2"
+                              // Apply custom styling for indeterminate state
+                              style={!allSelected && someSelected ? { opacity: 0.5 } : undefined}
                             />
                           </div>
                         </AccordionTrigger>

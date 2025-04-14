@@ -38,43 +38,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { PageHeader } from "@/components/page-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import { 
-  User, 
-  Team, 
-  AccessGroup, 
-  mockUsers, 
-  mockTeams, 
-  mockAccessGroups 
-} from "@/lib/mockData";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  UserCog, 
   MoreHorizontal, 
-  UserPlus, 
   Search, 
-  Mail, 
   FileEdit, 
-  Trash2,
-  Shield,
-  UserCheck,
-  XCircle,
+  Trash2, 
+  UserPlus, 
+  Mail, 
+  Shield, 
+  Languages,
   CheckCircle2,
-  Languages
+  XCircle
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { User, Team, AccessGroup, mockUsers, mockTeams, mockAccessGroups } from "@/lib/mockData";
 
-// Helper to get initials from a name
-const getInitials = (name: string) => {
-  const parts = name.split(" ");
-  return parts.length > 1
-    ? `${parts[0][0]}${parts[parts.length - 1][0]}`
-    : parts[0].substring(0, 2);
+// Helper function to get initials from full name
+const getInitials = (name: string): string => {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 };
 
-// User form for creating and editing users
+// User Form component for creating and editing users
 const UserForm = ({
   isOpen,
   onClose,
@@ -99,16 +94,13 @@ const UserForm = ({
     user
       ? { ...user }
       : {
-          username: "",
           fullName: "",
           email: "",
-          role: "user",
-          teamId: undefined,
+          username: "",
           position: "",
-          managerId: undefined,
-          preferredLanguage: "en",
           accessGroups: [],
           status: "active",
+          preferredLanguage: "en",
         }
   );
   const [sendInvitation, setSendInvitation] = useState(true);
@@ -152,6 +144,11 @@ const UserForm = ({
       formData.username = nameToUsername;
     }
 
+    // Set default language if not provided
+    if (!formData.preferredLanguage) {
+      formData.preferredLanguage = "en";
+    }
+
     onSave(formData);
     onClose();
   };
@@ -168,17 +165,6 @@ const UserForm = ({
     (u) => !user || u.id !== user.id
   );
 
-  // Available language options
-  const languageOptions = [
-    { value: "en", label: "English" },
-    { value: "es", label: "Spanish" },
-    { value: "fr", label: "French" },
-    { value: "de", label: "German" },
-    { value: "zh", label: "Chinese" },
-    { value: "ja", label: "Japanese" },
-    { value: "pt", label: "Portuguese" },
-  ];
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -194,231 +180,200 @@ const UserForm = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="firstName" className="text-right">
-                First Name
-              </Label>
-              <Input
-                id="firstName"
-                value={formData.fullName.split(" ")[0] || ""}
-                onChange={(e) => {
-                  const lastName = formData.fullName.split(" ").slice(1).join(" ");
-                  handleChange(
-                    "fullName",
-                    `${e.target.value} ${lastName}`.trim()
-                  );
-                }}
-                className="col-span-3"
-                placeholder="John"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="lastName" className="text-right">
-                Last Name
-              </Label>
-              <Input
-                id="lastName"
-                value={formData.fullName.split(" ").slice(1).join(" ") || ""}
-                onChange={(e) => {
-                  const firstName = formData.fullName.split(" ")[0] || "";
-                  handleChange(
-                    "fullName",
-                    `${firstName} ${e.target.value}`.trim()
-                  );
-                }}
-                className="col-span-3"
-                placeholder="Doe"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Official Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email || ""}
-                onChange={(e) => handleChange("email", e.target.value)}
-                className="col-span-3"
-                placeholder="john.doe@example.com"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="position" className="text-right">
-                Position
-              </Label>
-              <Input
-                id="position"
-                value={formData.position || ""}
-                onChange={(e) => handleChange("position", e.target.value)}
-                className="col-span-3"
-                placeholder="Product Manager"
-              />
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="team" className="text-right">
-                Team
-              </Label>
-              <Select
-                value={formData.teamId?.toString()}
-                onValueChange={(value) =>
-                  handleChange("teamId", value ? parseInt(value) : undefined)
-                }
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a team" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">None</SelectItem>
-                  <SelectGroup>
-                    <SelectLabel>Teams</SelectLabel>
-                    {teams.map((team) => (
-                      <SelectItem key={team.id} value={team.id.toString()}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="manager" className="text-right">
-                Manager
-              </Label>
-              <Select
-                value={formData.managerId?.toString()}
-                onValueChange={(value) =>
-                  handleChange("managerId", value ? parseInt(value) : undefined)
-                }
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a manager" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">None</SelectItem>
-                  <SelectGroup>
-                    <SelectLabel>Potential Managers</SelectLabel>
-                    {potentialManagers.map((manager) => (
-                      <SelectItem
-                        key={manager.id}
-                        value={manager.id.toString()}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback>
-                              {getInitials(manager.fullName)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span>{manager.fullName}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="language" className="text-right">
-                Preferred Language
-              </Label>
-              <Select
-                value={formData.preferredLanguage || "en"}
-                onValueChange={(value) =>
-                  handleChange("preferredLanguage", value)
-                }
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Languages</SelectLabel>
-                    {languageOptions.map((lang) => (
-                      <SelectItem key={lang.value} value={lang.value}>
-                        {lang.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right pt-2">Access Groups</Label>
-              <div className="col-span-3 space-y-2">
-                {accessGroups.map((group) => (
-                  <div key={group.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`group-${group.id}`}
-                      checked={(formData.accessGroups || []).includes(group.id)}
-                      onCheckedChange={() => handleAccessGroupToggle(group.id)}
-                    />
-                    <label
-                      htmlFor={`group-${group.id}`}
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                    >
-                      {group.name}
-                    </label>
-                    <span className="text-xs text-muted-foreground">
-                      ({group.description})
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {!isEditing && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <div className="col-start-2 col-span-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="send-invitation"
-                      checked={sendInvitation}
-                      onCheckedChange={(checked) =>
-                        setSendInvitation(!!checked)
-                      }
-                    />
-                    <label
-                      htmlFor="send-invitation"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                    >
-                      Send invitation by email
-                    </label>
-                  </div>
+          <div className="grid gap-6 py-4">
+            {/* Personal Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Personal Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    value={formData.fullName.split(" ")[0] || ""}
+                    onChange={(e) => {
+                      const lastName = formData.fullName.split(" ").slice(1).join(" ");
+                      handleChange(
+                        "fullName",
+                        `${e.target.value} ${lastName}`.trim()
+                      );
+                    }}
+                    placeholder="John"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={formData.fullName.split(" ").slice(1).join(" ") || ""}
+                    onChange={(e) => {
+                      const firstName = formData.fullName.split(" ")[0] || "";
+                      handleChange(
+                        "fullName",
+                        `${firstName} ${e.target.value}`.trim()
+                      );
+                    }}
+                    placeholder="Doe"
+                  />
                 </div>
               </div>
-            )}
 
-            {isEditing && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status" className="text-right">
-                  Status
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="email">Official Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email || ""}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  placeholder="john.doe@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="position">Position</Label>
+                <Input
+                  id="position"
+                  value={formData.position || ""}
+                  onChange={(e) => handleChange("position", e.target.value)}
+                  placeholder="Product Manager"
+                />
+              </div>
+            </div>
+
+            {/* Organization Section */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Organization</h3>
+              <div className="space-y-2">
+                <Label htmlFor="team">Team</Label>
                 <Select
-                  value={formData.status || "active"}
-                  onValueChange={(value) => handleChange("status", value)}
+                  value={formData.teamId?.toString()}
+                  onValueChange={(value) =>
+                    handleChange("teamId", value ? parseInt(value) : undefined)
+                  }
                 >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select status" />
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a team" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="0">None</SelectItem>
                     <SelectGroup>
-                      <SelectLabel>User Status</SelectLabel>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="invited">Invited</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectLabel>Teams</SelectLabel>
+                      {teams.map((team) => (
+                        <SelectItem key={team.id} value={team.id.toString()}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
               </div>
-            )}
+
+              <div className="space-y-2">
+                <Label htmlFor="manager">Manager</Label>
+                <Select
+                  value={formData.managerId?.toString()}
+                  onValueChange={(value) =>
+                    handleChange("managerId", value ? parseInt(value) : undefined)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a manager" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">None</SelectItem>
+                    <SelectGroup>
+                      <SelectLabel>Potential Managers</SelectLabel>
+                      {potentialManagers.map((manager) => (
+                        <SelectItem
+                          key={manager.id}
+                          value={manager.id.toString()}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback>
+                                {getInitials(manager.fullName)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span>{manager.fullName}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Access Groups */}
+              <div className="space-y-2">
+                <Label>Access Groups</Label>
+                <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
+                  {accessGroups.map((group) => (
+                    <div key={group.id} className="flex items-center space-x-2 py-1 hover:bg-muted/50 rounded-sm px-1">
+                      <Checkbox
+                        id={`group-${group.id}`}
+                        checked={(formData.accessGroups || []).includes(group.id)}
+                        onCheckedChange={() => handleAccessGroupToggle(group.id)}
+                      />
+                      <div className="flex-1">
+                        <label
+                          htmlFor={`group-${group.id}`}
+                          className="text-sm font-medium leading-none cursor-pointer"
+                        >
+                          {group.name}
+                        </label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {group.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Settings */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Additional Settings</h3>
+              
+              {!isEditing && (
+                <div className="flex items-center space-x-2 py-2">
+                  <Checkbox
+                    id="send-invitation"
+                    checked={sendInvitation}
+                    onCheckedChange={(checked) =>
+                      setSendInvitation(!!checked)
+                    }
+                  />
+                  <label
+                    htmlFor="send-invitation"
+                    className="text-sm font-medium leading-none cursor-pointer"
+                  >
+                    Send invitation by email
+                  </label>
+                </div>
+              )}
+
+              {isEditing && (
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status || "active"}
+                    onValueChange={(value) => handleChange("status", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>User Status</SelectLabel>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="invited">Invited</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
           </div>
 
           <DialogFooter className={isEditing ? "justify-between" : "justify-end"}>
@@ -702,7 +657,6 @@ export default function UserManagement() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Access Group(s)</TableHead>
-                <TableHead>Language</TableHead>
                 <TableHead>Manager</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -745,12 +699,6 @@ export default function UserManagement() {
                         ) : (
                           <span className="text-muted-foreground text-sm">—</span>
                         )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <Languages className="h-4 w-4 mr-1 text-muted-foreground" />
-                        {getLanguageName(user.preferredLanguage)}
                       </div>
                     </TableCell>
                     <TableCell>
