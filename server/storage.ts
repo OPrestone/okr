@@ -102,6 +102,8 @@ export class MemStorage implements IStorage {
   private resources: Map<number, Resource>;
   private financialData: Map<number, FinancialData>;
   private cycles: Map<number, Cycle>;
+  private cadences: Map<number, Cadence>; 
+  private timeframes: Map<number, Timeframe>;
   private companySettings: any;
   
   private userCurrentId: number;
@@ -113,6 +115,8 @@ export class MemStorage implements IStorage {
   private resourceCurrentId: number;
   private financialDataCurrentId: number;
   private cycleCurrentId: number;
+  private cadenceCurrentId: number;
+  private timeframeCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -124,6 +128,8 @@ export class MemStorage implements IStorage {
     this.resources = new Map();
     this.financialData = new Map();
     this.cycles = new Map();
+    this.cadences = new Map();
+    this.timeframes = new Map();
     
     this.userCurrentId = 1;
     this.teamCurrentId = 1;
@@ -134,6 +140,8 @@ export class MemStorage implements IStorage {
     this.resourceCurrentId = 1;
     this.financialDataCurrentId = 1;
     this.cycleCurrentId = 1;
+    this.cadenceCurrentId = 1;
+    this.timeframeCurrentId = 1;
     
     // Initialize company settings
     this.companySettings = {
