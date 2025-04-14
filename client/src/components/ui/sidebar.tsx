@@ -7,6 +7,7 @@ import {
   UsersRound, PieChart, Compass, DollarSign, Target, FileEdit, FolderOpen, CheckCircle
 } from "lucide-react";
 import { Separator } from "./separator";
+import { ThemeToggle } from "./theme-toggle";
 import { useState } from "react";
 
 interface SidebarItem {
@@ -270,8 +271,7 @@ export function Sidebar({ className }: SidebarProps) {
             <p className="text-xs opacity-70">Product Manager</p>
           </div>
           <div className="ml-auto flex items-center space-x-1">
-            {/* Import ThemeToggle once we wrap the app */}
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
             <button className="opacity-70 hover:opacity-100">
               <LogOut className="h-4 w-4" />
             </button>
