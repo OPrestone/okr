@@ -790,7 +790,7 @@ export const mockIntegrations = [
     id: "github",
     name: "GitHub",
     description: "Connect with GitHub to align OKRs with development milestones, issues, and pull requests.",
-    icon: "SiGithub",
+    icon: "github",
     isConnected: false,
     status: "inactive",
     features: [
@@ -823,7 +823,7 @@ export const mockIntegrations = [
     id: "miro",
     name: "Miro",
     description: "Integrate with Miro to visualize and collaborate on OKRs using virtual whiteboards.",
-    icon: "SiMiro",
+    icon: "miro",
     isConnected: true,
     status: "error",
     features: [
