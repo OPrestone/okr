@@ -47,6 +47,7 @@ import {
   Figma,
   Star,
   Globe,
+  GripVertical,
   Shield,
   Phone,
   Server,
@@ -502,7 +503,7 @@ const TeamRow = ({
     <>
       <TableRow 
         key={team.id} 
-        className="transition-colors hover:bg-muted/30 cursor-move"
+        className="transition-colors hover:bg-muted/30 cursor-move group"
         draggable={true}
         onDragStart={onDragStart ? (e) => onDragStart(e, team) : undefined}
         onDragOver={onDragOver}
@@ -510,6 +511,10 @@ const TeamRow = ({
       >
         <TableCell className="font-medium">
           <div className="flex items-center">
+            <div className="opacity-0 group-hover:opacity-50 mr-2">
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+            
             <div style={{ width: `${level * 24}px` }} />
             
             {hasChildren ? (
@@ -867,6 +872,102 @@ export default function TeamManagement() {
       console.error("Error deleting team:", error);
     }
   };
+  
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, team: any) => {
+    setDraggedTeam(team);
+    e.dataTransfer.setData("text/plain", team.id.toString());
+    e.dataTransfer.effectAllowed = "move";
+    
+    // Add visual cue for dragged element
+    const target = e.currentTarget as HTMLElement;
+    if (target) {
+      target.classList.add("opacity-60", "border-dashed", "border-primary");
+      
+      // Remove the effect when drag ends
+      const handleDragEnd = () => {
+        target.classList.remove("opacity-60", "border-dashed", "border-primary");
+        target.removeEventListener("dragend", handleDragEnd);
+      };
+      
+      target.addEventListener("dragend", handleDragEnd);
+    }
+  };
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    
+    // Add visual cue for drop target
+    const target = e.currentTarget as HTMLElement;
+    if (target && !target.classList.contains("bg-muted")) {
+      target.classList.add("bg-muted");
+      
+      // Remove the highlight when dragging leaves
+      const handleDragLeave = () => {
+        target.classList.remove("bg-muted");
+        target.removeEventListener("dragleave", handleDragLeave);
+      };
+      
+      target.addEventListener("dragleave", handleDragLeave);
+    }
+  };
+  
+  const handleDrop = async (e: React.DragEvent, targetTeam: any) => {
+    e.preventDefault();
+    
+    // Remove the visual highlight
+    const target = e.currentTarget as HTMLElement;
+    if (target && target.classList.contains("bg-muted")) {
+      target.classList.remove("bg-muted");
+    }
+    
+    if (!draggedTeam || draggedTeam.id === targetTeam.id) {
+      return;
+    }
+    
+    // Prevent dropping a team onto its descendant
+    let currentParent = targetTeam.parentTeamId;
+    while (currentParent) {
+      const parent = mockTeams.find(t => t.id === currentParent);
+      if (parent?.id === draggedTeam.id) {
+        toast({
+          title: "Invalid operation",
+          description: "Cannot move a team to its own descendant.",
+          variant: "destructive",
+        });
+        return;
+      }
+      currentParent = parent?.parentTeamId;
+    }
+    
+    try {
+      // Update the team's parent
+      const teamIndex = mockTeams.findIndex(t => t.id === draggedTeam.id);
+      if (teamIndex >= 0) {
+        mockTeams[teamIndex] = {
+          ...mockTeams[teamIndex],
+          parentTeamId: targetTeam.id
+        };
+        
+        toast({
+          title: "Team moved",
+          description: `"${draggedTeam.name}" is now a sub-team of "${targetTeam.name}".`,
+        });
+        
+        await refetchTeams();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update team hierarchy.",
+        variant: "destructive",
+      });
+      console.error("Error updating team hierarchy:", error);
+    }
+    
+    setDraggedTeam(null);
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -927,6 +1028,9 @@ export default function TeamManagement() {
                     currentUserId={currentUser.id}
                     onEditTeam={handleEditTeam}
                     allUsers={users}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
                   />
                 ))}
               </TableBody>
