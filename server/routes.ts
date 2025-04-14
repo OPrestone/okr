@@ -643,10 +643,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cadence endpoints
   app.get('/api/cadences', async (req, res) => {
     try {
+      // Add debugging for storage object
+      console.log('Storage type:', storage.constructor.name);
+      console.log('Cadence methods available:', 'getAllCadences' in storage);
+      
       const cadences = await storage.getAllCadences();
       res.json(cadences);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch cadences" });
+      console.error('Error fetching cadences:', error);
+      res.status(500).json({ message: "Failed to fetch cadences", error: String(error) });
     }
   });
 
