@@ -25,3 +25,22 @@
     color: var(--color-text);
   }
 }
+
+/* Custom utilities */
+@layer components {
+  .bg-primary {
+    background-color: var(--color-primary) !important;
+  }
+  
+  .text-primary {
+    color: var(--color-primary) !important;
+  }
+  
+  .border-primary {
+    border-color: var(--color-primary) !important;
+  }
+  
+  .logo-bg {
+    background-color: var(--color-primary);
+  }
+}
