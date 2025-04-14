@@ -121,9 +121,9 @@ export default function Resources() {
           <Tabs defaultValue="all">
             <TabsList>
               <TabsTrigger value="all">All Resources</TabsTrigger>
-              <TabsTrigger value="guides">Guides</TabsTrigger>
-              <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="videos">Videos</TabsTrigger>
+              <TabsTrigger value="templates">OKR Templates</TabsTrigger>
+              <TabsTrigger value="videos">Video Tutorials</TabsTrigger>
+              <TabsTrigger value="best-practices">Best Practices</TabsTrigger>
             </TabsList>
             
             <TabsContent value="all" className="pt-4">
@@ -165,45 +165,156 @@ export default function Resources() {
                   )}
                 </div>
               )}
-            </TabsContent>
-            
-            <TabsContent value="guides" className="pt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredResources
-                  .filter((resource: any) => resource.type === "article")
-                  .map((resource: any) => (
-                    <ResourceCard key={resource.id} resource={resource} />
-                  ))}
-              </div>
+              
+              {!isLoading && !error && filteredResources.length > 0 && (
+                <div className="mt-8 flex justify-center">
+                  <Button variant="outline">View All Resources</Button>
+                </div>
+              )}
             </TabsContent>
             
             <TabsContent value="templates" className="pt-4">
+              <div className="mb-6">
+                <h3 className="text-lg font-medium mb-2">OKR Templates</h3>
+                <p className="text-sm text-neutral-500">
+                  Downloadable templates to help you structure and track your OKRs effectively.
+                  These templates can be customized to fit your organization's specific needs.
+                </p>
+              </div>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredResources
                   .filter((resource: any) => resource.type === "template")
                   .map((resource: any) => (
                     <ResourceCard key={resource.id} resource={resource} />
                   ))}
+                
+                {filteredResources.filter((resource: any) => resource.type === "template").length === 0 && (
+                  <div className="col-span-full text-center py-8 text-neutral-500">
+                    No templates found matching your search
+                  </div>
+                )}
               </div>
             </TabsContent>
             
             <TabsContent value="videos" className="pt-4">
+              <div className="mb-6">
+                <h3 className="text-lg font-medium mb-2">Video Tutorials</h3>
+                <p className="text-sm text-neutral-500">
+                  Watch step-by-step video tutorials to help you master different aspects of OKR implementation,
+                  from setting objectives to conducting effective check-ins.
+                </p>
+              </div>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredResources
                   .filter((resource: any) => resource.type === "video")
                   .map((resource: any) => (
                     <ResourceCard key={resource.id} resource={resource} />
                   ))}
+                  
+                {filteredResources.filter((resource: any) => resource.type === "video").length === 0 && (
+                  <div className="col-span-full text-center py-8 text-neutral-500">
+                    No video tutorials found matching your search
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="best-practices" className="pt-4">
+              <div className="mb-6">
+                <h3 className="text-lg font-medium mb-2">OKR Best Practices</h3>
+                <p className="text-sm text-neutral-500">
+                  Learn from industry experts about the best practices for implementing and running an effective OKR system.
+                  These resources provide insights into common pitfalls and strategies for success.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredResources
+                  .filter((resource: any) => 
+                    resource.type === "article" && 
+                    (resource.category === "best-practices" || resource.tags.includes("best-practices"))
+                  )
+                  .map((resource: any) => (
+                    <ResourceCard key={resource.id} resource={resource} />
+                  ))}
+                  
+                {filteredResources.filter((resource: any) => 
+                  resource.type === "article" && 
+                  (resource.category === "best-practices" || resource.tags.includes("best-practices"))
+                ).length === 0 && (
+                  <div className="col-span-full text-center py-8 text-neutral-500">
+                    No best practices guides found matching your search
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
 
-      {/* Featured Resource */}
+      {/* Featured Resources Section */}
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Featured Guide</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4">
+              <div className="bg-neutral-100 rounded-lg flex items-center justify-center h-36">
+                <FileText className="text-neutral-400 text-5xl" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">OKR Best Practices Guide</h3>
+                <div className="flex items-center mb-3">
+                  <Badge variant="outline" className="mr-2">article</Badge>
+                  <Badge variant="secondary" className="mr-2">best practice</Badge>
+                </div>
+                <p className="text-neutral-600 mb-4 text-sm">
+                  Comprehensive guide on OKR best practices gathered from industry leaders. Learn implementation strategies that have been proven successful.
+                </p>
+                <Button className="flex items-center gap-1" size="sm">
+                  Read Full Guide
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Popular Template</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4">
+              <div className="bg-neutral-100 rounded-lg flex items-center justify-center h-36">
+                <FileArchive className="text-neutral-400 text-5xl" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">Quarterly OKR Template for Product Teams</h3>
+                <div className="flex items-center mb-3">
+                  <Badge variant="outline" className="mr-2">template</Badge>
+                  <Badge variant="secondary" className="mr-2">product</Badge>
+                </div>
+                <p className="text-neutral-600 mb-4 text-sm">
+                  A comprehensive template designed specifically for product teams to set and track their quarterly objectives and key results.
+                </p>
+                <Button className="flex items-center gap-1" size="sm">
+                  Download Template
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* OKR Implementation Guide */}
       <Card>
         <CardHeader>
-          <CardTitle>Featured Resource</CardTitle>
+          <CardTitle>OKR Implementation Handbook</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-6">
@@ -211,22 +322,23 @@ export default function Resources() {
               <FileText className="text-neutral-400 text-6xl" />
             </div>
             <div className="md:w-2/3">
-              <h3 className="text-xl font-semibold text-neutral-900 mb-2">OKR Implementation Guide</h3>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-2">The Complete OKR Handbook</h3>
               <div className="flex items-center mb-3">
                 <Badge variant="outline" className="mr-2">article</Badge>
-                <span className="text-sm text-neutral-500">Published {formatDate(new Date())}</span>
+                <span className="text-sm text-neutral-500">Most downloaded resource</span>
               </div>
               <p className="text-neutral-600 mb-4">
-                A comprehensive guide to implementing OKRs in your organization. Learn how to write effective objectives and key results, cascade them throughout your organization, and track progress effectively.
+                A comprehensive handbook for implementing OKRs in your organization. Learn how to write effective objectives and key results, cascade them throughout your organization, and track progress effectively.
               </p>
               <ul className="list-disc list-inside text-sm text-neutral-600 mb-4 space-y-1">
                 <li>Step-by-step implementation process</li>
                 <li>Common pitfalls and how to avoid them</li>
                 <li>Example OKRs for different departments</li>
                 <li>Best practices for OKR reviews</li>
+                <li>Strategies for aligning team and company objectives</li>
               </ul>
               <Button className="flex items-center gap-1">
-                Read Full Guide
+                Read Full Handbook
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </div>
