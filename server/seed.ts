@@ -1,351 +1,347 @@
-import { db } from './db';
+/**
+ * Database seeding script for initial setup
+ * 
+ * Run with: npm run seed
+ */
+
+import { pool, db } from './db';
 import { 
-  users, teams, objectives, keyResults, meetings, resources, financialData, cycles
-} from '@shared/schema';
+  statusLabels, 
+  cadences, 
+  timeframes, 
+  users, 
+  teams 
+} from '../shared/schema';
 import { eq } from 'drizzle-orm';
 
-/**
- * Seeds the database with initial data
- */
-async function seedDatabase() {
-  console.log('Seeding database...');
+async function seedStatusLabels() {
+  console.log('Seeding status labels...');
+  
+  // Check if status labels already exist
+  const existingLabels = await db.select().from(statusLabels);
+  if (existingLabels.length > 0) {
+    console.log('Status labels already exist, skipping...');
+    return;
+  }
 
+  const objectiveStatusLabels = [
+    {
+      name: 'Not Started',
+      description: 'This objective has not been started yet',
+      color: '#6c757d',
+      type: 'objective',
+      isDefault: true,
+      isActive: true,
+      sortOrder: 10
+    },
+    {
+      name: 'In Progress',
+      description: 'Work on this objective is currently in progress',
+      color: '#0d6efd',
+      type: 'objective',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 20
+    },
+    {
+      name: 'At Risk',
+      description: 'This objective is at risk of not being completed on time',
+      color: '#dc3545',
+      type: 'objective',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 30
+    },
+    {
+      name: 'On Track',
+      description: 'This objective is progressing as expected',
+      color: '#198754',
+      type: 'objective',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 40
+    },
+    {
+      name: 'Completed',
+      description: 'This objective has been completed',
+      color: '#20c997',
+      type: 'objective',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 50
+    }
+  ];
+
+  const keyResultStatusLabels = [
+    {
+      name: 'Not Started',
+      description: 'This key result has not been started yet',
+      color: '#6c757d',
+      type: 'key_result',
+      isDefault: true,
+      isActive: true,
+      sortOrder: 10
+    },
+    {
+      name: 'Behind',
+      description: 'This key result is behind schedule',
+      color: '#fd7e14',
+      type: 'key_result',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 20
+    },
+    {
+      name: 'At Risk',
+      description: 'This key result is at risk of not being achieved',
+      color: '#dc3545',
+      type: 'key_result',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 30
+    },
+    {
+      name: 'On Track',
+      description: 'This key result is on track to be achieved',
+      color: '#198754',
+      type: 'key_result',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 40
+    },
+    {
+      name: 'Achieved',
+      description: 'This key result has been achieved',
+      color: '#20c997',
+      type: 'key_result',
+      isDefault: false,
+      isActive: true,
+      sortOrder: 50
+    }
+  ];
+
+  await db.insert(statusLabels).values([...objectiveStatusLabels, ...keyResultStatusLabels]);
+  console.log('Status labels seeded successfully');
+}
+
+async function seedCadences() {
+  console.log('Seeding cadences...');
+  
+  // Check if cadences already exist
+  const existingCadences = await db.select().from(cadences);
+  if (existingCadences.length > 0) {
+    console.log('Cadences already exist, skipping...');
+    return;
+  }
+
+  const cadenceData = [
+    {
+      name: 'Quarterly',
+      description: 'Standard quarterly OKR planning cycle',
+      color: '#4f46e5'
+    },
+    {
+      name: 'Monthly',
+      description: 'Monthly planning cycle for rapid iteration',
+      color: '#0ea5e9'
+    },
+    {
+      name: 'Annual',
+      description: 'Annual strategic planning cycle',
+      color: '#8b5cf6'
+    },
+    {
+      name: 'Custom',
+      description: 'Custom timeframe for special projects',
+      color: '#ec4899'
+    }
+  ];
+
+  await db.insert(cadences).values(cadenceData);
+  console.log('Cadences seeded successfully');
+}
+
+async function seedTimeframes() {
+  console.log('Seeding timeframes...');
+  
+  // Check if timeframes already exist
+  const existingTimeframes = await db.select().from(timeframes);
+  if (existingTimeframes.length > 0) {
+    console.log('Timeframes already exist, skipping...');
+    return;
+  }
+
+  // Get cadence IDs
+  const cadenceList = await db.select().from(cadences);
+  if (cadenceList.length === 0) {
+    console.log('No cadences found, please seed cadences first');
+    return;
+  }
+
+  const cadenceMap = new Map(cadenceList.map(c => [c.name, c.id]));
+
+  const quarterlyId = cadenceMap.get('Quarterly');
+  const monthlyId = cadenceMap.get('Monthly');
+  const annualId = cadenceMap.get('Annual');
+  const customId = cadenceMap.get('Custom');
+
+  if (!quarterlyId || !monthlyId || !annualId || !customId) {
+    console.log('Missing cadences, cannot seed timeframes');
+    return;
+  }
+
+  const timeframeData = [
+    {
+      name: 'Q1 2025',
+      cadenceId: quarterlyId,
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2025-03-31'),
+      isActive: true
+    },
+    {
+      name: 'Q2 2025',
+      cadenceId: quarterlyId,
+      startDate: new Date('2025-04-01'),
+      endDate: new Date('2025-06-30'),
+      isActive: false
+    },
+    {
+      name: 'Q3 2025',
+      cadenceId: quarterlyId,
+      startDate: new Date('2025-07-01'),
+      endDate: new Date('2025-09-30'),
+      isActive: false
+    },
+    {
+      name: 'Q4 2025',
+      cadenceId: quarterlyId,
+      startDate: new Date('2025-10-01'),
+      endDate: new Date('2025-12-31'),
+      isActive: false
+    },
+    {
+      name: 'January 2025',
+      cadenceId: monthlyId,
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2025-01-31'),
+      isActive: true
+    },
+    {
+      name: 'February 2025',
+      cadenceId: monthlyId,
+      startDate: new Date('2025-02-01'),
+      endDate: new Date('2025-02-28'),
+      isActive: false
+    },
+    {
+      name: 'March 2025',
+      cadenceId: monthlyId,
+      startDate: new Date('2025-03-01'),
+      endDate: new Date('2025-03-31'),
+      isActive: false
+    },
+    {
+      name: '2025',
+      cadenceId: annualId,
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2025-12-31'),
+      isActive: true
+    },
+    {
+      name: 'Marketing Campaign',
+      cadenceId: customId,
+      startDate: new Date('2025-03-01'),
+      endDate: new Date('2025-05-31'),
+      isActive: true
+    }
+  ];
+
+  await db.insert(timeframes).values(timeframeData);
+  console.log('Timeframes seeded successfully');
+}
+
+async function seedBasicTeams() {
+  console.log('Seeding basic teams...');
+  
+  // Check if teams already exist
+  const existingTeams = await db.select().from(teams);
+  if (existingTeams.length > 0) {
+    console.log('Teams already exist, skipping...');
+    return;
+  }
+
+  const teamData = [
+    {
+      name: 'Product Team',
+      description: 'Responsible for product development'
+    },
+    {
+      name: 'Engineering',
+      description: 'Technical development team'
+    },
+    {
+      name: 'Marketing',
+      description: 'Market research and promotion'
+    },
+    {
+      name: 'Sales',
+      description: 'Sales and customer relationship'
+    }
+  ];
+
+  await db.insert(teams).values(teamData);
+  console.log('Basic teams seeded successfully');
+}
+
+async function seedDemoUser() {
+  console.log('Seeding demo user...');
+  
+  // Check if user already exists
+  const existingUser = await db.select().from(users).where(eq(users.username, 'demo'));
+  if (existingUser.length > 0) {
+    console.log('Demo user already exists, skipping...');
+    return;
+  }
+
+  // Get first team
+  const team = await db.select().from(teams).limit(1);
+  const teamId = team.length > 0 ? team[0].id : null;
+
+  const userData = {
+    username: 'demo',
+    password: '$2b$10$rGnCbja8dP8kXJ4GlbLOVOyAB0xJL2ExY5sLgQpY.VuVjNlLEu/Ai', // hashed 'password123'
+    fullName: 'Demo User',
+    email: 'demo@example.com',
+    role: 'Product Manager',
+    teamId: teamId
+  };
+
+  await db.insert(users).values(userData);
+  console.log('Demo user seeded successfully');
+}
+
+async function seed() {
   try {
-    // Clear existing data
-    await db.delete(keyResults);
-    await db.delete(objectives);
-    await db.delete(meetings);
-    await db.delete(resources);
-    await db.delete(financialData);
-    await db.delete(cycles);
-    await db.delete(users);
-    await db.delete(teams);
-
-    console.log('Cleared existing data');
-
-    // Teams
-    const teamsData = [
-      { name: "Product Team", description: "Responsible for product development", memberCount: 8, performance: 94 },
-      { name: "Engineering", description: "Technical development team", memberCount: 12, performance: 78 },
-      { name: "Marketing", description: "Market research and promotion", memberCount: 6, performance: 85 },
-      { name: "Sales", description: "Sales and customer relationship", memberCount: 9, performance: 62 }
-    ];
-
-    const insertedTeams = await db.insert(teams).values(teamsData).returning();
-    console.log(`Inserted ${insertedTeams.length} teams`);
-
-    // Users
-    const usersData = [
-      { username: "alex.morgan", password: "password", fullName: "Alex Morgan", email: "alex@example.com", role: "Product Manager", teamId: insertedTeams[0].id },
-      { username: "sarah.thompson", password: "password", fullName: "Sarah Thompson", email: "sarah@example.com", role: "UI/UX Designer", teamId: insertedTeams[0].id },
-      { username: "michael.chen", password: "password", fullName: "Michael Chen", email: "michael@example.com", role: "Software Engineer", teamId: insertedTeams[1].id },
-      { username: "james.wilson", password: "password", fullName: "James Wilson", email: "james@example.com", role: "Product Manager", teamId: insertedTeams[0].id }
-    ];
-
-    const insertedUsers = await db.insert(users).values(usersData).returning();
-    console.log(`Inserted ${insertedUsers.length} users`);
-
-    // Update teams with leader IDs
-    await db.update(teams)
-      .set({ leaderId: insertedUsers[0].id })
-      .where(eq(teams.id, insertedTeams[0].id));
-
-    await db.update(teams)
-      .set({ leaderId: insertedUsers[2].id })
-      .where(eq(teams.id, insertedTeams[1].id));
-
-    console.log('Updated team leaders');
-
-    // Objectives
-    const currentDate = new Date();
-    const endDate1 = new Date(currentDate);
-    endDate1.setDate(currentDate.getDate() + 90);
+    console.log('Starting database seeding...');
     
-    const endDate2 = new Date(currentDate);
-    endDate2.setDate(currentDate.getDate() + 60);
+    // Seed in sequence
+    await seedStatusLabels();
+    await seedCadences();
+    await seedTimeframes();
+    await seedBasicTeams();
+    await seedDemoUser();
     
-    const endDate3 = new Date(currentDate);
-    endDate3.setDate(currentDate.getDate() + 30);
-
-    const objectivesData = [
-      { 
-        title: "Increase Customer Retention", 
-        description: "Focus on customer satisfaction and retention", 
-        progress: 72, 
-        isCompanyObjective: true, 
-        startDate: currentDate, 
-        endDate: endDate1,
-        teamId: insertedTeams[0].id,
-        ownerId: insertedUsers[0].id
-      },
-      { 
-        title: "Launch New Product Line", 
-        description: "Develop and launch new product offerings", 
-        progress: 45, 
-        isCompanyObjective: true, 
-        startDate: currentDate, 
-        endDate: endDate2,
-        teamId: insertedTeams[1].id,
-        ownerId: insertedUsers[2].id
-      },
-      { 
-        title: "Improve Team Engagement", 
-        description: "Increase team satisfaction and productivity", 
-        progress: 89, 
-        isCompanyObjective: true, 
-        startDate: currentDate, 
-        endDate: endDate3,
-        teamId: insertedTeams[0].id,
-        ownerId: insertedUsers[1].id
-      },
-      { 
-        title: "Increase Revenue by 20%", 
-        description: "Focus on sales growth and efficiency", 
-        progress: 63, 
-        isCompanyObjective: true, 
-        startDate: currentDate, 
-        endDate: endDate1,
-        teamId: insertedTeams[3].id,
-        ownerId: insertedUsers[3].id
-      }
-    ];
-
-    const insertedObjectives = await db.insert(objectives).values(objectivesData).returning();
-    console.log(`Inserted ${insertedObjectives.length} objectives`);
-
-    // Key Results
-    const keyResultsData = [
-      {
-        title: "Reduce monthly churn rate to under 2%",
-        description: "Improve retention by addressing key customer pain points",
-        progress: 40,
-        objectiveId: insertedObjectives[0].id,
-        ownerId: insertedUsers[0].id,
-        startValue: 4.5,
-        targetValue: 2,
-        currentValue: 3.5,
-        isCompleted: false
-      },
-      {
-        title: "Increase NPS score from 35 to 50",
-        description: "Implement customer feedback initiatives to improve satisfaction",
-        progress: 50,
-        objectiveId: insertedObjectives[0].id,
-        ownerId: insertedUsers[0].id,
-        startValue: 35,
-        targetValue: 50,
-        currentValue: 42.5,
-        isCompleted: false
-      },
-      {
-        title: "Create component library with 50+ elements",
-        description: "Build a comprehensive UI component library for designers and developers",
-        progress: 75,
-        objectiveId: insertedObjectives[1].id,
-        ownerId: insertedUsers[1].id,
-        startValue: 0,
-        targetValue: 50,
-        currentValue: 37,
-        isCompleted: false
-      },
-      {
-        title: "Implement design system in 5 key products",
-        description: "Roll out the new design system across major product lines",
-        progress: 60,
-        objectiveId: insertedObjectives[1].id,
-        ownerId: insertedUsers[2].id,
-        startValue: 0,
-        targetValue: 5,
-        currentValue: 3,
-        isCompleted: false
-      }
-    ];
-
-    const insertedKeyResults = await db.insert(keyResults).values(keyResultsData).returning();
-    console.log(`Inserted ${insertedKeyResults.length} key results`);
-
-    // Meetings
-    const tomorrow = new Date(currentDate);
-    tomorrow.setDate(currentDate.getDate() + 1);
-    
-    const nextWeek = new Date(currentDate);
-    nextWeek.setDate(currentDate.getDate() + 7);
-
-    const meetingsData = [
-      { 
-        title: "OKR Review", 
-        description: "Weekly performance review", 
-        userId1: insertedUsers[0].id, 
-        userId2: insertedUsers[1].id, 
-        startTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1, 14, 0), 
-        endTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1, 14, 30),
-        status: "scheduled"
-      },
-      { 
-        title: "Project Planning", 
-        description: "Discuss next sprint", 
-        userId1: insertedUsers[0].id, 
-        userId2: insertedUsers[2].id, 
-        startTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1, 10, 0), 
-        endTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1, 10, 30),
-        status: "scheduled"
-      },
-      { 
-        title: "Product Strategy", 
-        description: "Roadmap discussion", 
-        userId1: insertedUsers[0].id, 
-        userId2: insertedUsers[3].id, 
-        startTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7, 15, 30), 
-        endTime: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7, 16, 0),
-        status: "scheduled"
-      }
-    ];
-
-    const insertedMeetings = await db.insert(meetings).values(meetingsData).returning();
-    console.log(`Inserted ${insertedMeetings.length} meetings`);
-
-    // Resources
-    const resourcesData = [
-      { 
-        title: "OKR Best Practices Guide", 
-        description: "Learn how to write effective objectives and key results", 
-        type: "article", 
-        url: "/resources/okr-best-practices.pdf",
-        createdAt: new Date()
-      },
-      { 
-        title: "Video Tutorial Series", 
-        description: "Watch our step-by-step guide to implementing OKRs", 
-        type: "video", 
-        url: "/resources/okr-video-tutorial.mp4",
-        createdAt: new Date()
-      },
-      { 
-        title: "OKR Templates", 
-        description: "Download ready-to-use templates for different departments", 
-        type: "template", 
-        url: "/resources/okr-templates.zip",
-        createdAt: new Date()
-      }
-    ];
-
-    const insertedResources = await db.insert(resources).values(resourcesData).returning();
-    console.log(`Inserted ${insertedResources.length} resources`);
-
-    // Financial Data
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-    
-    const financialDataEntries = [
-      {
-        date: new Date(currentYear, currentMonth - 3, 15), // 3 months ago
-        revenue: 720000.00,
-        cost: 450000.00,
-        ebitda: 270000.00,
-        profitAfterTaxMargin: 0.28,
-        cumulativeAudience: 125000,
-        notes: "Q1 financial performance data",
-        objectiveId: insertedObjectives[3].id, // Link to revenue objective
-        uploadedById: insertedUsers[0].id
-      },
-      {
-        date: new Date(currentYear, currentMonth - 2, 15), // 2 months ago
-        revenue: 780000.00,
-        cost: 470000.00,
-        ebitda: 310000.00,
-        profitAfterTaxMargin: 0.31,
-        cumulativeAudience: 140000,
-        notes: "Strong performance in new markets",
-        objectiveId: insertedObjectives[3].id,
-        uploadedById: insertedUsers[0].id
-      },
-      {
-        date: new Date(currentYear, currentMonth - 1, 15), // 1 month ago
-        revenue: 820000.00,
-        cost: 490000.00,
-        ebitda: 330000.00,
-        profitAfterTaxMargin: 0.30,
-        cumulativeAudience: 155000,
-        notes: "Increasing customer acquisition",
-        objectiveId: insertedObjectives[3].id,
-        uploadedById: insertedUsers[0].id
-      },
-      {
-        date: new Date(currentYear, currentMonth, 15), // Current month
-        revenue: 850000.00,
-        cost: 510000.00,
-        ebitda: 340000.00,
-        profitAfterTaxMargin: 0.29,
-        cumulativeAudience: 168000,
-        notes: "Product launch impact on revenue",
-        objectiveId: insertedObjectives[3].id,
-        uploadedById: insertedUsers[0].id
-      }
-    ];
-    
-    const insertedFinancialData = await db.insert(financialData).values(financialDataEntries).returning();
-    console.log(`Inserted ${insertedFinancialData.length} financial data entries`);
-    
-    // Cycles
-    const cyclesData = [
-      {
-        name: "Q1 2025",
-        description: "First quarter objectives and key results",
-        startDate: new Date(2025, 0, 1), // Jan 1, 2025
-        endDate: new Date(2025, 2, 31), // Mar 31, 2025
-        status: "completed",
-        type: "quarterly",
-        createdById: insertedUsers[0].id,
-        isDefault: false
-      },
-      {
-        name: "Q2 2025",
-        description: "Second quarter objectives and key results",
-        startDate: new Date(2025, 3, 1), // Apr 1, 2025
-        endDate: new Date(2025, 5, 30), // Jun 30, 2025
-        status: "active",
-        type: "quarterly",
-        createdById: insertedUsers[0].id,
-        isDefault: true
-      },
-      {
-        name: "Q3 2025",
-        description: "Third quarter objectives and key results",
-        startDate: new Date(2025, 6, 1), // Jul 1, 2025
-        endDate: new Date(2025, 8, 30), // Sep 30, 2025
-        status: "upcoming",
-        type: "quarterly",
-        createdById: insertedUsers[0].id,
-        isDefault: false
-      },
-      {
-        name: "Annual Plan 2025",
-        description: "Company-wide annual objectives",
-        startDate: new Date(2025, 0, 1), // Jan 1, 2025
-        endDate: new Date(2025, 11, 31), // Dec 31, 2025
-        status: "active",
-        type: "annual",
-        createdById: insertedUsers[0].id,
-        isDefault: false
-      }
-    ];
-    
-    const insertedCycles = await db.insert(cycles).values(cyclesData).returning();
-    console.log(`Inserted ${insertedCycles.length} cycles`);
-
-    console.log('Database seeding completed successfully!');
+    console.log('Database seeding completed successfully');
   } catch (error) {
     console.error('Error seeding database:', error);
+  } finally {
+    await pool.end();
   }
 }
 
-// Run the seed function
-seedDatabase()
-  .then(() => {
-    console.log('Seed operation completed');
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error('Seed operation failed:', error);
-    process.exit(1);
-  });
+// Run the seed function if this file is executed directly
+if (process.argv[1] === import.meta.url) {
+  seed().catch(console.error);
+}
+
+export { seed };
