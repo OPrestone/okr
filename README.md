@@ -124,6 +124,15 @@ To start the production server:
 npm start
 ```
 
+### 6. Version Control and GitHub
+
+To push this project to GitHub, follow the detailed instructions in the [GitHub Setup Guide](GITHUB_SETUP.md). This guide includes:
+
+- Creating a GitHub repository
+- Initializing Git in your local project
+- Pushing your code to GitHub
+- Best practices for Git workflow
+
 ## Project Structure
 
 - `/client` - Frontend React application
