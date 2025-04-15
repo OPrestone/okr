@@ -2,10 +2,10 @@ import {
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
   FinancialData, InsertFinancialData, Cycle, InsertCycle, SystemSetting,
-  Cadence, InsertCadence, Timeframe, InsertTimeframe,
+  Cadence, InsertCadence, Timeframe, InsertTimeframe, StatusLabel, InsertStatusLabel,
   users, teams, objectives, keyResults, meetings, resources, financialData, cycles,
   checkIns, comments, userCycles, teamCycles, notifications, meetingAgendaItems,
-  companySettings, systemSettings, cadences, timeframes
+  companySettings, systemSettings, cadences, timeframes, statusLabels
 } from "@shared/schema";
 import { db } from './db';
 import { eq, and, gt, gte, lte, between, sql, desc, asc, isNull, not, or } from 'drizzle-orm';
@@ -898,6 +898,115 @@ export class DatabaseStorage implements IStorage {
       return true;
     } catch (error) {
       console.error(`Error deleting timeframe ${id}:`, error);
+      return false;
+    }
+  }
+  
+  // Status Label operations
+  async getStatusLabel(id: number): Promise<StatusLabel | undefined> {
+    const [statusLabel] = await db.select().from(statusLabels).where(eq(statusLabels.id, id));
+    return statusLabel;
+  }
+  
+  async getAllStatusLabels(): Promise<StatusLabel[]> {
+    return await db.select().from(statusLabels).orderBy(asc(statusLabels.sortOrder), asc(statusLabels.name));
+  }
+  
+  async getStatusLabelsByType(type: string): Promise<StatusLabel[]> {
+    return await db
+      .select()
+      .from(statusLabels)
+      .where(eq(statusLabels.type, type))
+      .orderBy(asc(statusLabels.sortOrder), asc(statusLabels.name));
+  }
+  
+  async getDefaultStatusLabel(type: string): Promise<StatusLabel | undefined> {
+    const [defaultLabel] = await db
+      .select()
+      .from(statusLabels)
+      .where(
+        and(
+          eq(statusLabels.type, type),
+          eq(statusLabels.isDefault, true)
+        )
+      );
+    return defaultLabel;
+  }
+  
+  async createStatusLabel(insertStatusLabel: InsertStatusLabel): Promise<StatusLabel> {
+    // If this is being set as default, first clear any existing defaults of the same type
+    if (insertStatusLabel.isDefault) {
+      await db
+        .update(statusLabels)
+        .set({ isDefault: false })
+        .where(
+          and(
+            eq(statusLabels.type, insertStatusLabel.type),
+            eq(statusLabels.isDefault, true)
+          )
+        );
+    }
+    
+    const [statusLabel] = await db
+      .insert(statusLabels)
+      .values({
+        ...insertStatusLabel,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+      
+    return statusLabel;
+  }
+  
+  async updateStatusLabel(id: number, statusLabelData: Partial<InsertStatusLabel>): Promise<StatusLabel | undefined> {
+    // If this is being set as default, first clear any existing defaults of the same type
+    if (statusLabelData.isDefault && statusLabelData.type) {
+      await db
+        .update(statusLabels)
+        .set({ isDefault: false })
+        .where(
+          and(
+            eq(statusLabels.type, statusLabelData.type),
+            eq(statusLabels.isDefault, true),
+            not(eq(statusLabels.id, id))
+          )
+        );
+    }
+    
+    const [updatedStatusLabel] = await db
+      .update(statusLabels)
+      .set({
+        ...statusLabelData,
+        updatedAt: new Date()
+      })
+      .where(eq(statusLabels.id, id))
+      .returning();
+      
+    return updatedStatusLabel;
+  }
+  
+  async deleteStatusLabel(id: number): Promise<boolean> {
+    // Check if this is the default status label - don't allow deleting default labels
+    const [statusLabel] = await db
+      .select()
+      .from(statusLabels)
+      .where(
+        and(
+          eq(statusLabels.id, id),
+          eq(statusLabels.isDefault, true)
+        )
+      );
+      
+    if (statusLabel) {
+      return false; // Can't delete default status labels
+    }
+    
+    try {
+      await db.delete(statusLabels).where(eq(statusLabels.id, id));
+      return true;
+    } catch (error) {
+      console.error(`Error deleting status label ${id}:`, error);
       return false;
     }
   }
