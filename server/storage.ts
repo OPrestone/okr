@@ -114,6 +114,7 @@ export class MemStorage implements IStorage {
   private cycles: Map<number, Cycle>;
   private cadences: Map<number, Cadence>; 
   private timeframes: Map<number, Timeframe>;
+  private statusLabels: Map<number, StatusLabel>;
   private companySettings: any;
   
   private userCurrentId: number;
@@ -127,6 +128,7 @@ export class MemStorage implements IStorage {
   private cycleCurrentId: number;
   private cadenceCurrentId: number;
   private timeframeCurrentId: number;
+  private statusLabelCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -140,6 +142,7 @@ export class MemStorage implements IStorage {
     this.cycles = new Map();
     this.cadences = new Map();
     this.timeframes = new Map();
+    this.statusLabels = new Map();
     
     this.userCurrentId = 1;
     this.teamCurrentId = 1;
@@ -152,6 +155,7 @@ export class MemStorage implements IStorage {
     this.cycleCurrentId = 1;
     this.cadenceCurrentId = 1;
     this.timeframeCurrentId = 1;
+    this.statusLabelCurrentId = 1;
     
     // Initialize company settings
     this.companySettings = {
@@ -655,6 +659,109 @@ export class MemStorage implements IStorage {
   async deleteTimeframe(id: number): Promise<boolean> {
     if (!this.timeframes.has(id)) return false;
     return this.timeframes.delete(id);
+  }
+
+  // Status Label implementations
+  async getStatusLabel(id: number): Promise<StatusLabel | undefined> {
+    return this.statusLabels.get(id);
+  }
+  
+  async getAllStatusLabels(): Promise<StatusLabel[]> {
+    return Array.from(this.statusLabels.values())
+      .sort((a, b) => {
+        // Sort by sortOrder first (ascending)
+        if (a.sortOrder !== b.sortOrder) {
+          return (a.sortOrder || 0) - (b.sortOrder || 0);
+        }
+        
+        // Then by name (alphabetical)
+        return a.name.localeCompare(b.name);
+      });
+  }
+  
+  async getStatusLabelsByType(type: string): Promise<StatusLabel[]> {
+    return Array.from(this.statusLabels.values())
+      .filter(label => label.type === type)
+      .sort((a, b) => {
+        // Sort by sortOrder first (ascending)
+        if (a.sortOrder !== b.sortOrder) {
+          return (a.sortOrder || 0) - (b.sortOrder || 0);
+        }
+        
+        // Then by name (alphabetical)
+        return a.name.localeCompare(b.name);
+      });
+  }
+  
+  async getDefaultStatusLabel(type: string): Promise<StatusLabel | undefined> {
+    return Array.from(this.statusLabels.values())
+      .find(label => label.type === type && label.isDefault);
+  }
+  
+  async createStatusLabel(insertStatusLabel: InsertStatusLabel): Promise<StatusLabel> {
+    // If this is being set as default, first clear any existing defaults of the same type
+    if (insertStatusLabel.isDefault) {
+      const existingDefaults = Array.from(this.statusLabels.values())
+        .filter(label => label.type === insertStatusLabel.type && label.isDefault);
+        
+      for (const label of existingDefaults) {
+        label.isDefault = false;
+        this.statusLabels.set(label.id, label);
+      }
+    }
+    
+    const id = this.statusLabelCurrentId++;
+    const now = new Date();
+    const statusLabel: StatusLabel = { 
+      ...insertStatusLabel, 
+      id, 
+      createdAt: now, 
+      updatedAt: now 
+    };
+    
+    this.statusLabels.set(id, statusLabel);
+    return statusLabel;
+  }
+  
+  async updateStatusLabel(id: number, statusLabelData: Partial<InsertStatusLabel>): Promise<StatusLabel | undefined> {
+    const existingLabel = this.statusLabels.get(id);
+    if (!existingLabel) return undefined;
+    
+    // If this is being set as default and the type is the same, clear other defaults
+    if (statusLabelData.isDefault && statusLabelData.type === existingLabel.type) {
+      const existingDefaults = Array.from(this.statusLabels.values())
+        .filter(label => 
+          label.type === existingLabel.type && 
+          label.isDefault && 
+          label.id !== id
+        );
+        
+      for (const label of existingDefaults) {
+        label.isDefault = false;
+        this.statusLabels.set(label.id, label);
+      }
+    }
+    
+    const updatedLabel = { 
+      ...existingLabel, 
+      ...statusLabelData, 
+      updatedAt: new Date() 
+    };
+    
+    this.statusLabels.set(id, updatedLabel);
+    return updatedLabel;
+  }
+  
+  async deleteStatusLabel(id: number): Promise<boolean> {
+    const label = this.statusLabels.get(id);
+    
+    // Don't allow deleting default status labels
+    if (label && label.isDefault) {
+      return false;
+    }
+    
+    if (!this.statusLabels.has(id)) return false;
+    return this.statusLabels.delete(id);
   }
 
   async setTimeframeActive(id: number, isActive: boolean): Promise<Timeframe | undefined> {
