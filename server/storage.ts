@@ -245,6 +245,105 @@ export class MemStorage implements IStorage {
     ];
 
     resources.forEach(resource => this.createResource(resource));
+    
+    // Seed Status Labels
+    const statusLabels = [
+      // Objective status labels
+      { 
+        name: "Not Started", 
+        type: "objective", 
+        color: "#6c757d", 
+        description: "This objective has not been started yet", 
+        isDefault: true, 
+        isActive: true, 
+        sortOrder: 10 
+      },
+      { 
+        name: "In Progress", 
+        type: "objective", 
+        color: "#0d6efd", 
+        description: "Work on this objective is currently in progress", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 20 
+      },
+      { 
+        name: "At Risk", 
+        type: "objective", 
+        color: "#dc3545", 
+        description: "This objective is at risk of not being completed on time", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 30 
+      },
+      { 
+        name: "On Track", 
+        type: "objective", 
+        color: "#198754", 
+        description: "This objective is progressing as expected", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 40 
+      },
+      { 
+        name: "Completed", 
+        type: "objective", 
+        color: "#20c997", 
+        description: "This objective has been completed", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 50 
+      },
+      
+      // Key Result status labels
+      { 
+        name: "Not Started", 
+        type: "key_result", 
+        color: "#6c757d", 
+        description: "This key result has not been started yet", 
+        isDefault: true, 
+        isActive: true, 
+        sortOrder: 10 
+      },
+      { 
+        name: "Behind", 
+        type: "key_result", 
+        color: "#fd7e14", 
+        description: "This key result is behind schedule", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 20 
+      },
+      { 
+        name: "At Risk", 
+        type: "key_result", 
+        color: "#dc3545", 
+        description: "This key result is at risk of not being achieved", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 30 
+      },
+      { 
+        name: "On Track", 
+        type: "key_result", 
+        color: "#198754", 
+        description: "This key result is on track to be achieved", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 40 
+      },
+      { 
+        name: "Achieved", 
+        type: "key_result", 
+        color: "#20c997", 
+        description: "This key result has been achieved", 
+        isDefault: false, 
+        isActive: true, 
+        sortOrder: 50 
+      }
+    ];
+    
+    statusLabels.forEach(label => this.createStatusLabel(label));
   }
 
   // User implementations
