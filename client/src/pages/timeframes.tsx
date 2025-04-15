@@ -421,14 +421,14 @@ export default function TimeframesPage() {
       >
         <div className="flex items-center gap-3">
           <Select
-            value={selectedCadenceId || ""}
-            onValueChange={(value) => setSelectedCadenceId(value || null)}
+            value={selectedCadenceId || "all_cadences"}
+            onValueChange={(value) => setSelectedCadenceId(value === "all_cadences" ? null : value)}
           >
             <SelectTrigger className="w-[220px]">
               <SelectValue placeholder="All Cadences" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Cadences</SelectItem>
+              <SelectItem value="all_cadences">All Cadences</SelectItem>
               {cadences?.map((cadence) => (
                 <SelectItem key={cadence.id} value={cadence.id.toString()}>
                   {cadence.name}
