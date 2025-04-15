@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema, insertCheckInSchema, insertCadenceSchema, insertTimeframeSchema } from "@shared/schema";
+import { insertUserSchema, insertTeamSchema, insertObjectiveSchema, insertKeyResultSchema, insertMeetingSchema, insertResourceSchema, insertFinancialDataSchema, insertCycleSchema, insertCheckInSchema, insertCadenceSchema, insertTimeframeSchema, insertStatusLabelSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -889,6 +889,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json({ message: "Timeframe deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete timeframe" });
+    }
+  });
+
+  // Status Labels endpoints
+  app.get('/api/status-labels', async (req, res) => {
+    try {
+      const statusLabels = await storage.getAllStatusLabels();
+      res.json(statusLabels);
+    } catch (error) {
+      console.error("Error fetching status labels:", error);
+      res.status(500).json({ message: "Failed to fetch status labels" });
+    }
+  });
+
+  app.get('/api/status-labels/type/:type', async (req, res) => {
+    try {
+      const { type } = req.params;
+      if (!type || (type !== 'objective' && type !== 'key_result')) {
+        return res.status(400).json({ message: "Invalid status label type. Must be 'objective' or 'key_result'" });
+      }
+      
+      const statusLabels = await storage.getStatusLabelsByType(type);
+      res.json(statusLabels);
+    } catch (error) {
+      console.error("Error fetching status labels by type:", error);
+      res.status(500).json({ message: "Failed to fetch status labels by type" });
+    }
+  });
+
+  app.get('/api/status-labels/default/:type', async (req, res) => {
+    try {
+      const { type } = req.params;
+      if (!type || (type !== 'objective' && type !== 'key_result')) {
+        return res.status(400).json({ message: "Invalid status label type. Must be 'objective' or 'key_result'" });
+      }
+      
+      const defaultLabel = await storage.getDefaultStatusLabel(type);
+      if (!defaultLabel) {
+        return res.status(404).json({ message: `No default status label found for type: ${type}` });
+      }
+      
+      res.json(defaultLabel);
+    } catch (error) {
+      console.error("Error fetching default status label:", error);
+      res.status(500).json({ message: "Failed to fetch default status label" });
+    }
+  });
+
+  app.get('/api/status-labels/:id', async (req, res) => {
+    try {
+      const labelId = parseInt(req.params.id);
+      if (isNaN(labelId)) {
+        return res.status(400).json({ message: "Invalid status label ID" });
+      }
+      
+      const statusLabel = await storage.getStatusLabel(labelId);
+      if (!statusLabel) {
+        return res.status(404).json({ message: "Status label not found" });
+      }
+      
+      res.json(statusLabel);
+    } catch (error) {
+      console.error("Error fetching status label:", error);
+      res.status(500).json({ message: "Failed to fetch status label" });
+    }
+  });
+
+  app.post('/api/status-labels', async (req, res) => {
+    try {
+      const statusLabelData = insertStatusLabelSchema.parse(req.body);
+      
+      // Validate type field
+      if (!statusLabelData.type || (statusLabelData.type !== 'objective' && statusLabelData.type !== 'key_result')) {
+        return res.status(400).json({ message: "Invalid status label type. Must be 'objective' or 'key_result'" });
+      }
+      
+      const statusLabel = await storage.createStatusLabel(statusLabelData);
+      res.status(201).json(statusLabel);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid status label data", errors: error.errors });
+      }
+      console.error("Error creating status label:", error);
+      res.status(500).json({ message: "Failed to create status label" });
+    }
+  });
+
+  app.patch('/api/status-labels/:id', async (req, res) => {
+    try {
+      const labelId = parseInt(req.params.id);
+      if (isNaN(labelId)) {
+        return res.status(400).json({ message: "Invalid status label ID" });
+      }
+      
+      const updateData = req.body;
+      
+      // Validate type field if it's being updated
+      if (updateData.type && updateData.type !== 'objective' && updateData.type !== 'key_result') {
+        return res.status(400).json({ message: "Invalid status label type. Must be 'objective' or 'key_result'" });
+      }
+      
+      const updatedLabel = await storage.updateStatusLabel(labelId, updateData);
+      
+      if (!updatedLabel) {
+        return res.status(404).json({ message: "Status label not found" });
+      }
+      
+      res.json(updatedLabel);
+    } catch (error) {
+      console.error("Error updating status label:", error);
+      res.status(500).json({ message: "Failed to update status label" });
+    }
+  });
+
+  app.delete('/api/status-labels/:id', async (req, res) => {
+    try {
+      const labelId = parseInt(req.params.id);
+      if (isNaN(labelId)) {
+        return res.status(400).json({ message: "Invalid status label ID" });
+      }
+      
+      const deleted = await storage.deleteStatusLabel(labelId);
+      
+      if (!deleted) {
+        return res.status(404).json({ 
+          message: "Status label not found or cannot be deleted (default labels cannot be deleted)" 
+        });
+      }
+      
+      res.status(200).json({ message: "Status label deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting status label:", error);
+      res.status(500).json({ message: "Failed to delete status label" });
     }
   });
 
