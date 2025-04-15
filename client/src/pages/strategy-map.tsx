@@ -1,15 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Download, Edit, Plus, ZoomIn, ZoomOut } from "lucide-react";
+import { Download, Edit, Plus, ZoomIn, ZoomOut, Save, X, Check, Presentation } from "lucide-react";
 import { useState } from "react";
 import CompanyAlignmentMap from "@/components/strategy/company-alignment-map";
 import TeamsOKRView from "@/components/strategy/teams-okr-view";
 import KeyResultSummary from "@/components/strategy/key-results-summary";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 // Component to render strategy map elements
-const StrategyMap = () => {
+const StrategyMap = ({ strategy }: { strategy: any }) => {
   const [zoomLevel, setZoomLevel] = useState(100);
   
   // Increment/decrement zoom level
@@ -50,24 +54,25 @@ const StrategyMap = () => {
             <div className="w-full max-w-md p-4 bg-neutral-100 rounded-lg text-center mb-8">
               <h3 className="font-medium text-lg text-neutral-900 mb-2">Company Mission</h3>
               <p className="text-sm text-neutral-700">
-                To empower teams with tools and methodologies for achieving measurable success
+                {strategy.mission}
+              </p>
+              <p className="text-xs text-neutral-500 mt-2">
+                Owner: {strategy.owner}, {strategy.title}
               </p>
             </div>
             
             {/* Strategic Pillars */}
-            <div className="grid grid-cols-4 gap-8 mb-8 w-full max-w-5xl">
-              <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
-                <h4 className="font-medium text-primary-900">Financial</h4>
-              </div>
-              <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
-                <h4 className="font-medium text-primary-900">Customer</h4>
-              </div>
-              <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
-                <h4 className="font-medium text-primary-900">Internal Process</h4>
-              </div>
-              <div className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
-                <h4 className="font-medium text-primary-900">Learning & Growth</h4>
-              </div>
+            <div className={`grid grid-cols-${Math.min(strategy.pillars.length, 4)} gap-8 mb-8 w-full max-w-5xl`}>
+              {strategy.pillars.map((pillar: any) => (
+                <div key={pillar.id} className="bg-primary-50 p-4 rounded-lg text-center border border-primary-200">
+                  <h4 className="font-medium text-primary-900">{pillar.name}</h4>
+                  {pillar.description && (
+                    <p className="text-xs text-primary-700 mt-1">
+                      {pillar.description}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
             
             {/* Company Objectives */}
@@ -132,6 +137,200 @@ const StrategyMap = () => {
 };
 
 export default function StrategyMapPage() {
+  // State for edit mode
+  const [editMode, setEditMode] = useState(false);
+  
+  // Strategy state with default values
+  const [strategy, setStrategy] = useState({
+    mission: "To empower teams with tools and methodologies for achieving measurable success",
+    owner: "Jane Smith",
+    title: "Head of Strategy",
+    pillars: [
+      { id: 1, name: "Financial", description: "Ensure sustainable growth and profitability" },
+      { id: 2, name: "Customer", description: "Deliver exceptional customer experiences" },
+      { id: 3, name: "Internal Process", description: "Optimize operations and workflows" },
+      { id: 4, name: "Learning & Growth", description: "Develop talent and foster innovation" }
+    ]
+  });
+  
+  // Draft state for editing
+  const [strategyDraft, setStrategyDraft] = useState({ ...strategy });
+  
+  // Handle saving the strategy changes
+  const saveStrategy = () => {
+    setStrategy({ ...strategyDraft });
+    setEditMode(false);
+  };
+  
+  // Handle canceling the strategy edit
+  const cancelEdit = () => {
+    setStrategyDraft({ ...strategy });
+    setEditMode(false);
+  };
+  
+  // Handle adding a new pillar
+  const addPillar = () => {
+    const newPillar = { 
+      id: strategyDraft.pillars.length + 1, 
+      name: "New Pillar", 
+      description: "Description for new strategic pillar" 
+    };
+    setStrategyDraft({
+      ...strategyDraft,
+      pillars: [...strategyDraft.pillars, newPillar]
+    });
+  };
+  
+  // Handle removing a pillar
+  const removePillar = (id: number) => {
+    setStrategyDraft({
+      ...strategyDraft,
+      pillars: strategyDraft.pillars.filter(pillar => pillar.id !== id)
+    });
+  };
+  
+  // Handle updating a pillar
+  const updatePillar = (id: number, field: 'name' | 'description', value: string) => {
+    setStrategyDraft({
+      ...strategyDraft,
+      pillars: strategyDraft.pillars.map(pillar => 
+        pillar.id === id ? { ...pillar, [field]: value } : pillar
+      )
+    });
+  };
+  
+  // If in edit mode, show the strategy editing form
+  if (editMode) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">FY24 Strategy</h1>
+          
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Strategic Direction</CardTitle>
+              <CardDescription>Define your organization's strategic direction</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Owner and Title */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="owner" className="text-sm font-medium">
+                    Owner <span className="text-red-500">*</span>
+                  </Label>
+                  <Input 
+                    id="owner"
+                    value={strategyDraft.owner}
+                    onChange={(e) => setStrategyDraft({...strategyDraft, owner: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="title" className="text-sm font-medium">
+                    Title <span className="text-red-500">*</span>
+                  </Label>
+                  <Input 
+                    id="title"
+                    value={strategyDraft.title}
+                    onChange={(e) => setStrategyDraft({...strategyDraft, title: e.target.value})}
+                  />
+                </div>
+              </div>
+              
+              {/* Mission Statement */}
+              <div className="space-y-2">
+                <Label htmlFor="mission" className="text-sm font-medium">
+                  Mission Statement <span className="text-red-500">*</span>
+                </Label>
+                <Textarea 
+                  id="mission"
+                  value={strategyDraft.mission}
+                  onChange={(e) => setStrategyDraft({...strategyDraft, mission: e.target.value})}
+                  className="min-h-[100px]"
+                />
+              </div>
+              
+              {/* Strategic Pillars */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center mb-2">
+                  <Label className="text-sm font-medium">
+                    Strategic Pillars <span className="text-red-500">*</span>
+                  </Label>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addPillar}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Pillar
+                  </Button>
+                </div>
+                
+                <div className="space-y-4">
+                  {strategyDraft.pillars.map((pillar) => (
+                    <div key={pillar.id} className="border rounded-md p-4 relative">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        className="absolute top-2 right-2 text-gray-500 hover:text-red-500 p-1 h-auto"
+                        onClick={() => removePillar(pillar.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                      
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor={`pillar-name-${pillar.id}`} className="text-sm font-medium">
+                            Pillar Name
+                          </Label>
+                          <Input 
+                            id={`pillar-name-${pillar.id}`}
+                            value={pillar.name}
+                            onChange={(e) => updatePillar(pillar.id, 'name', e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`pillar-desc-${pillar.id}`} className="text-sm font-medium">
+                            Description
+                          </Label>
+                          <Textarea 
+                            id={`pillar-desc-${pillar.id}`}
+                            value={pillar.description}
+                            onChange={(e) => updatePillar(pillar.id, 'description', e.target.value)}
+                            className="min-h-[60px]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex space-x-3 mt-6">
+                <Button 
+                  onClick={saveStrategy}
+                  className="flex items-center gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  Save Changes
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={cancelEdit}
+                  className="flex items-center gap-2"
+                >
+                  <X className="h-4 w-4" />
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
@@ -144,7 +343,13 @@ export default function StrategyMapPage() {
             <Download className="h-4 w-4" />
             Export
           </Button>
-          <Button className="flex items-center gap-1">
+          <Button 
+            className="flex items-center gap-1"
+            onClick={() => {
+              setStrategyDraft({...strategy});
+              setEditMode(true);
+            }}
+          >
             <Edit className="h-4 w-4" />
             Edit Strategy
           </Button>
@@ -199,7 +404,7 @@ export default function StrategyMapPage() {
               <CardTitle>Strategic Alignment Visualization</CardTitle>
             </CardHeader>
             <CardContent>
-              <StrategyMap />
+              <StrategyMap strategy={strategy} />
             </CardContent>
           </Card>
         </TabsContent>
