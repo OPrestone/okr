@@ -225,7 +225,8 @@ export const objectives = pgTable("objectives", {
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   cycleId: integer("cycle_id").references(() => cycles.id),
-  status: varchar("status", { length: 20 }).default("active"), // active, completed, cancelled
+  statusId: integer("status_id").references(() => statusLabels.id),
+  status: varchar("status", { length: 20 }).default("active"), // legacy field - will use statusId for new records
   priority: varchar("priority", { length: 20 }).default("medium"), // low, medium, high
   parentObjectiveId: integer("parent_objective_id").references(() => objectives.id),
   createdById: integer("created_by_id").references(() => users.id),
@@ -257,6 +258,10 @@ export const objectivesRelations = relations(objectives, ({ one, many }) => ({
   cycle: one(cycles, {
     fields: [objectives.cycleId],
     references: [cycles.id],
+  }),
+  status: one(statusLabels, {
+    fields: [objectives.statusId],
+    references: [statusLabels.id],
   }),
   parentObjective: one(objectives, {
     fields: [objectives.parentObjectiveId],
@@ -294,6 +299,7 @@ export const keyResults = pgTable("key_results", {
   isCompleted: boolean("is_completed").default(false),
   unit: varchar("unit", { length: 50 }),
   format: varchar("format", { length: 20 }).default("number"), // number, percentage, currency, boolean
+  statusId: integer("status_id").references(() => statusLabels.id),
   direction: varchar("direction", { length: 10 }).default("increasing"), // increasing, decreasing
   confidenceScore: integer("confidence_score").default(5), // 1-10 scale
   lastUpdated: timestamp("last_updated"),
@@ -315,6 +321,10 @@ export const keyResultsRelations = relations(keyResults, ({ one }) => ({
   owner: one(users, {
     fields: [keyResults.ownerId],
     references: [users.id],
+  }),
+  status: one(statusLabels, {
+    fields: [keyResults.statusId],
+    references: [statusLabels.id],
   })
 }));
 
@@ -877,6 +887,42 @@ export type InsertTimeframe = z.infer<typeof insertTimeframeSchema>;
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+
+// Status Labels schema - for customizable status labels with colors
+export const statusLabels = pgTable("status_labels", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 50 }).notNull(),
+  description: text("description"),
+  color: varchar("color", { length: 7 }).notNull(), // Hex color code
+  type: varchar("type", { length: 20 }).notNull(), // 'objective' or 'key_result'
+  isDefault: boolean("is_default").default(false),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdById: integer("created_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => {
+  return {
+    typeIdx: index("status_labels_type_idx").on(table.type),
+    createdByIdIdx: index("status_labels_created_by_id_idx").on(table.createdById),
+  };
+});
+
+export const statusLabelsRelations = relations(statusLabels, ({ one }) => ({
+  createdBy: one(users, {
+    fields: [statusLabels.createdById],
+    references: [users.id],
+  }),
+}));
+
+export const insertStatusLabelSchema = createInsertSchema(statusLabels).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type StatusLabel = typeof statusLabels.$inferSelect;
+export type InsertStatusLabel = z.infer<typeof insertStatusLabelSchema>;
 
 export type Integration = typeof integrations.$inferSelect;
 export type InsertIntegration = z.infer<typeof insertIntegrationSchema>;

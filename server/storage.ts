@@ -2,7 +2,7 @@ import {
   User, InsertUser, Team, InsertTeam, Objective, InsertObjective, 
   KeyResult, InsertKeyResult, Meeting, InsertMeeting, Resource, InsertResource,
   FinancialData, InsertFinancialData, Cycle, InsertCycle, CheckIn, InsertCheckIn,
-  Cadence, InsertCadence, Timeframe, InsertTimeframe
+  Cadence, InsertCadence, Timeframe, InsertTimeframe, StatusLabel, InsertStatusLabel
 } from "@shared/schema";
 
 // Storage interface for all CRUD operations
@@ -91,6 +91,15 @@ export interface IStorage {
   updateTimeframe(id: number, timeframe: Partial<InsertTimeframe>): Promise<Timeframe | undefined>;
   deleteTimeframe(id: number): Promise<boolean>;
   setTimeframeActive(id: number, isActive: boolean): Promise<Timeframe | undefined>;
+  
+  // Status Label operations
+  getStatusLabel(id: number): Promise<StatusLabel | undefined>;
+  getAllStatusLabels(): Promise<StatusLabel[]>;
+  getStatusLabelsByType(type: string): Promise<StatusLabel[]>; // 'objective' or 'key_result'
+  getDefaultStatusLabel(type: string): Promise<StatusLabel | undefined>;
+  createStatusLabel(statusLabel: InsertStatusLabel): Promise<StatusLabel>;
+  updateStatusLabel(id: number, statusLabel: Partial<InsertStatusLabel>): Promise<StatusLabel | undefined>;
+  deleteStatusLabel(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
